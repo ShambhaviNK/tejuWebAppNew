@@ -10,6 +10,7 @@ export default function MainInterface() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
+  const accumulatedTranscriptRef = useRef("");
 
   const handleRecognizeSpeech = () => {
     if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -19,13 +20,21 @@ export default function MainInterface() {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!recognitionRef.current) {
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
+      recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = "en-US";
       recognitionRef.current.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setText(transcript);
-        setRecognizing(false);
+        let fullTranscript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          let transcript = event.results[i][0].transcript.trim();
+          transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
+          if (!/[.!?]$/.test(transcript)) {
+            transcript += ".";
+          }
+          transcript = transcript.replace(/\s(and|but|so|or)\s/gi, ", $1 ");
+          fullTranscript += (fullTranscript ? " " : "") + transcript;
+        }
+        setText(fullTranscript);
       };
       recognitionRef.current.onerror = (event: any) => {
         alert("Speech recognition error: " + event.error);
@@ -36,6 +45,7 @@ export default function MainInterface() {
       };
     }
     if (!recognizing) {
+      accumulatedTranscriptRef.current = "";
       recognitionRef.current.start();
       setRecognizing(true);
     } else {
