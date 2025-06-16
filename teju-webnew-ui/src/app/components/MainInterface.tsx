@@ -1,62 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
-import styled from "styled-components";
-
-const Container = styled.div`
-  background: #23242a;
-  border-radius: 24px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
-  margin: 40px auto;
-  padding: 32px 24px;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-const Title = styled.h2`
-  color: #fff;
-  margin-bottom: 24px;
-  font-weight: 400;
-`;
-const Button = styled.button<{ $green?: boolean }>`
-  background: ${({ $green }) => ($green ? "#22c55e" : "#2196f3")};
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  margin: 12px 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.2s;
-  &:hover {
-    background: ${({ $green }) => ($green ? "#16a34a" : "#1976d2")};
-  }
-`;
-const TextArea = styled.textarea`
-  background: #23242a;
-  color: #ccc;
-  border: 2px solid #333;
-  border-radius: 8px;
-  width: 100%;
-  min-height: 60px;
-  margin: 12px 0;
-  padding: 12px;
-  font-size: 1rem;
-  resize: none;
-`;
-const OptionsRow = styled.div`
-  display: flex;
-  gap: 16px;
-  width: 100%;
-  margin: 8px 0;
-`;
-const OptionButton = styled(Button)`
-  width: 100%;
-  margin: 0;
-  font-size: 1.1rem;
-`;
+import { FaMicrophone, FaStop } from "react-icons/fa";
+import { Container, Title, Button, TextArea, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 export default function MainInterface() {
   const [text, setText] = useState("");
@@ -64,6 +9,7 @@ export default function MainInterface() {
   const [options, setOptions] = useState(["Option A", "Option B", "Option C", "Option D"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [recognizing, setRecognizing] = useState(false);
 
   const handleRecognizeSpeech = () => {
     if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -79,12 +25,23 @@ export default function MainInterface() {
       recognitionRef.current.onresult = (event: any) => {
         const transcript = event.results[0][0].transcript;
         setText(transcript);
+        setRecognizing(false);
       };
       recognitionRef.current.onerror = (event: any) => {
         alert("Speech recognition error: " + event.error);
+        setRecognizing(false);
+      };
+      recognitionRef.current.onend = () => {
+        setRecognizing(false);
       };
     }
-    recognitionRef.current.start();
+    if (!recognizing) {
+      recognitionRef.current.start();
+      setRecognizing(true);
+    } else {
+      recognitionRef.current.stop();
+      setRecognizing(false);
+    }
   };
 
   const handleGenerateOptions = async () => {
@@ -115,7 +72,6 @@ export default function MainInterface() {
         if (opts.length === 4) {
           setOptions(opts);
         } else {
-          // Show the raw response in the first option, others blank
           setOptions([data.options, "", "", ""]);
         }
       } else {
@@ -131,6 +87,10 @@ export default function MainInterface() {
   };
 
   const handleSpeakText = () => {
+    if (!text.trim()) {
+      alert("Please enter text or recognize speech first.");
+      return;
+    }
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       alert("Text-to-speech is not supported in this browser.");
       return;
@@ -170,17 +130,20 @@ export default function MainInterface() {
   return (
     <Container>
       <Title>Model loaded successfully</Title>
-      <Button onClick={handleRecognizeSpeech}>Recognize Speech</Button>
+      <Button onClick={handleRecognizeSpeech} $green={recognizing && !recognizing} $red={recognizing}>
+        {recognizing ? <FaStop style={{ marginRight: 8 }} /> : <FaMicrophone style={{ marginRight: 8 }} />}
+        {recognizing ? "Stop Recognizing" : "Recognize Speech"}
+      </Button>
       <TextArea
         placeholder="Type or speak your question here..."
         value={text}
         onChange={e => setText(e.target.value)}
       />
-      <Button $green onClick={handleSpeakText} disabled={!text}>Speak Text</Button>
+      <Button $green onClick={handleSpeakText}>Speak Text</Button>
       <Button onClick={handleGenerateOptions} disabled={loading || !text}>
         {loading ? "Generating..." : "Generate Options"}
       </Button>
-      {error && <div style={{ color: 'red', margin: '8px 0' }}>{error}</div>}
+      {error && <ErrorMsg>{error}</ErrorMsg>}
       <Button onClick={handleSpeakOptions} disabled={options.some(o => !o)}>Speak 4 Options</Button>
       <OptionsRow>
         <OptionButton onClick={() => handleSpeakOption(options[0])}>{options[0]}</OptionButton>
