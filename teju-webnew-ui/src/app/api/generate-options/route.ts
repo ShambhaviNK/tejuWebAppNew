@@ -20,14 +20,17 @@ interface OpenAIChatResult {
   alternatives?: { transcript: string }[];
 }
 
-function cosineSimilarity(tensorA: { dot: (arg0: any) => any; norm: () => any; }, tensorB: { transpose: () => any; norm: () => any; }) {
-        const dotProduct = tensorA.dot(tensorB.transpose());
-        const normA = tensorA.norm();
-        const normB = tensorB.norm();
-        return dotProduct.div(normA.mul(normB));
+function cosineSimilarity(
+  tensorA: { dot: (arg0: unknown) => unknown; norm: () => unknown },
+  tensorB: { transpose: () => unknown; norm: () => unknown }
+) {
+  const dotProduct = tensorA.dot(tensorB.transpose());
+  const normA = tensorA.norm();
+  const normB = tensorB.norm();
+  return (dotProduct as { div: (b: unknown) => unknown }).div((normA as { mul: (b: unknown) => unknown }).mul(normB));
 }
 
-async function similarityOnAllKeys(prompt: string, cache: { [x: string]: any; }) {
+async function similarityOnAllKeys(prompt: string, cache: { [x: string]: unknown }) {
   for(const key in cache) {
     console.log("AAAAAA key: ", key);
     console.log("BBBBBB prompt: ", prompt);
@@ -39,12 +42,12 @@ async function similarityOnAllKeys(prompt: string, cache: { [x: string]: any; })
     const emb1 = embeddings.slice([0, 0], [1, 512]);
     const emb2 = embeddings.slice([1, 0], [1, 512]);
 
-    const sim = cosineSimilarity(emb1, emb2);
+    const sim = cosineSimilarity(emb1, emb2) as { data: () => Promise<number[]> };
     const result = await sim.data();
     console.log('Cosine similarity:', result[0]);
     if(result[0] > cos_sim) {
         cos_sim = result[0];
-        answer = cache[key];
+        answer = cache[key] as string;
     }
 }
 }
@@ -76,7 +79,8 @@ export async function POST(req: NextRequest) {
     const text = completion.choices[0].message?.content || "";
     cache[prompt] = text; // Store in cache
     return NextResponse.json({ options: text, cached: false });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const err = error as { message: string };
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
