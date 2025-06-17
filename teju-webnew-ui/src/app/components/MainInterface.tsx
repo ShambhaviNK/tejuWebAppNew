@@ -3,14 +3,32 @@ import React, { useState, useRef } from "react";
 import { FaMicrophone, FaStop } from "react-icons/fa";
 import { Container, Title, Button, TextArea, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
+// Minimal type definitions for SpeechRecognition API if not present
+declare global {
+  interface Window {
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
+    SpeechRecognitionEvent: any;
+    SpeechRecognitionErrorEvent: any;
+  }
+}
+
+// Type declarations for SpeechRecognition API (for TypeScript compatibility)
+type SpeechRecognition = typeof window.SpeechRecognition;
+type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
+type SpeechRecognitionErrorEvent = typeof window.SpeechRecognitionErrorEvent;
+
 export default function MainInterface() {
   const [text, setText] = useState("");
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [options, setOptions] = useState(["Option A", "Option B", "Option C", "Option D"]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
-  const accumulatedTranscriptRef = useRef("");
+  const accumulatedTranscriptRef = useRef<string>("");
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const handleRecognizeSpeech = () => {
     if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -23,10 +41,11 @@ export default function MainInterface() {
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = false;
       recognitionRef.current.lang = "en-US";
-      recognitionRef.current.onresult = (event: any) => {
+      recognitionRef.current.onresult = (event: unknown) => {
+        const speechEvent = event as SpeechRecognitionEvent;
         let fullTranscript = "";
-        for (let i = 0; i < event.results.length; i++) {
-          let transcript = event.results[i][0].transcript.trim();
+        for (let i = 0; i < speechEvent.results.length; i++) {
+          let transcript = speechEvent.results[i][0].transcript.trim();
           transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
           if (!/[.!?]$/.test(transcript)) {
             transcript += ".";
@@ -36,8 +55,9 @@ export default function MainInterface() {
         }
         setText(fullTranscript);
       };
-      recognitionRef.current.onerror = (event: any) => {
-        alert("Speech recognition error: " + event.error);
+      recognitionRef.current.onerror = (event: unknown) => {
+        const errorEvent = event as { error: string };
+        alert("Speech recognition error: " + errorEvent.error);
         setRecognizing(false);
       };
       recognitionRef.current.onend = () => {
@@ -88,7 +108,8 @@ export default function MainInterface() {
         setError("No options returned from API.");
         setOptions(["", "", "", ""]);
       }
-    } catch (err: any) {
+    } catch {
+      alert("Audio recognition failed.");
       setError("Failed to generate options.");
       setOptions(["", "", "", ""]);
     } finally {

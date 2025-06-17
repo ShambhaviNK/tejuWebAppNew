@@ -11,6 +11,15 @@ const openai = new OpenAI({
 
 // Simple in-memory cache (lives as long as the serverless instance is alive)
 const cache: Record<string, string> = {};
+
+interface SpeechResult {
+  alternatives?: { transcript: string }[];
+}
+
+interface OpenAIChatResult {
+  alternatives?: { transcript: string }[];
+}
+
 function cosineSimilarity(tensorA: { dot: (arg0: any) => any; norm: () => any; }, tensorB: { transpose: () => any; norm: () => any; }) {
         const dotProduct = tensorA.dot(tensorB.transpose());
         const normA = tensorA.norm();
