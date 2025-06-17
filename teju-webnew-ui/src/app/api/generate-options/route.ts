@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import * as tf from '@tensorflow/tfjs';
 import * as use from '@tensorflow-models/universal-sentence-encoder';
-let cos_sim = 0;
-let answer = "";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -23,6 +21,8 @@ function cosineSimilarity(
 }
 
 async function similarityOnAllKeys(prompt: string, cache: { [x: string]: unknown }) {
+  let cos_sim = 0;
+  let answer = "";
   for(const key in cache) {
     const model = await use.load();
     const sentences = [key, prompt];
@@ -36,6 +36,7 @@ async function similarityOnAllKeys(prompt: string, cache: { [x: string]: unknown
         answer = cache[key] as string;
     }
   }
+  return { cos_sim, answer };
 }
 
 export async function POST(req: NextRequest) {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
   }
 
-  await similarityOnAllKeys(prompt, cache);
+  const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
   if(cos_sim > 0.5) {
     return NextResponse.json({ options: answer, cached: true });
   }
