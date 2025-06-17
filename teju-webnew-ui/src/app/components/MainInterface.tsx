@@ -9,14 +9,12 @@ declare global {
     webkitSpeechRecognition: any;
     SpeechRecognition: any;
     SpeechRecognitionEvent: any;
-    SpeechRecognitionErrorEvent: any;
   }
 }
 
 // Type declarations for SpeechRecognition API (for TypeScript compatibility)
 type SpeechRecognition = typeof window.SpeechRecognition;
 type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
-type SpeechRecognitionErrorEvent = typeof window.SpeechRecognitionErrorEvent;
 
 export default function MainInterface() {
   const [text, setText] = useState("");
