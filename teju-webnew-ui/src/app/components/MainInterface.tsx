@@ -26,9 +26,6 @@ export default function MainInterface() {
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef<string>("");
-  const [recording, setRecording] = useState(false);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
 
   const handleRecognizeSpeech = () => {
     if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
