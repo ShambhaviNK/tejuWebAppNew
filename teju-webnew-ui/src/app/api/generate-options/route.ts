@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
-  if(cos_sim > 0.5) {
+  if(cos_sim > 0.85) {
     return NextResponse.json({ options: answer, cached: true });
   }
   try {
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       n: 1,
     });
     const text = completion.choices[0].message?.content || "";
-    var temp = text.replace(/\\n/g, "\n");
+    let temp = text.replace(/\\n/g, "\n");
     cache[prompt] = temp; // Store in cache
     return NextResponse.json({ options: temp, cached: false });
   } catch (error: any) {

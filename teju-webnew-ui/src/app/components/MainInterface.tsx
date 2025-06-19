@@ -13,7 +13,7 @@ declare global {
 }
 
 // Type declarations for SpeechRecognition API (for TypeScript compatibility)
-type SpeechRecognition = typeof window.SpeechRecognition;
+// type SpeechRecognition = typeof window.SpeechRecognition;
 type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
