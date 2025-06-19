@@ -54,12 +54,13 @@ export async function POST(req: NextRequest) {
   }
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4-turbo-preview",
       messages: [
-        { role: "system", content: "You are a helpful assistant. For any question provided, generate exactly four distinct multiple-choice options. Each option must start with A), B), C), or D), and each must be on a new line. Do not include explanations or answers, only the options." },
+        { role: "system", content: "You are an expert at generating high-quality multiple choice options. For any question provided, generate exactly four distinct, well-thought-out multiple-choice options that are relevant and meaningful. Each option must start with A), B), C), or D), and each must be on a new line. Make the options clear, concise, and directly related to the question. Do not include explanations or answers, only the options." },
         { role: "user", content: prompt },
       ],
-      max_tokens: 100,
+      max_tokens: 150,
+      temperature: 0.7,
       n: 1,
     });
     const text = completion.choices[0].message?.content || "";
