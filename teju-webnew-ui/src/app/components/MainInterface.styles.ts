@@ -57,10 +57,17 @@ export const OptionsRow = styled.div`
   margin: 8px 0;
 `;
 
-export const OptionButton = styled(Button)`
+export const OptionButton = styled(Button)<{$clicked?: boolean;}>`
   width: 100%;
-  margin: 0;
+  margin: 0px;
   font-size: 1.1rem;
+  padding: 50px;
+  background: ${({$clicked}) =>
+    $clicked ? "#b71c1c" : "#16a34a"};
+  &:hover {
+    background: ${({ $clicked }) =>
+      $clicked ? "#8b1a1a" : "#128c3c"};
+  }
 `;
 
 export const ErrorMsg = styled.div`

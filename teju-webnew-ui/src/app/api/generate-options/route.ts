@@ -60,10 +60,10 @@ export async function POST(req: NextRequest) {
       n: 1,
     });
     const text = completion.choices[0].message?.content || "";
-    cache[prompt] = text; // Store in cache
-    return NextResponse.json({ options: text, cached: false });
-  } catch (error: unknown) {
-    const err = error as { message: string };
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    var temp = text.replace(/\\n/g, "\n");
+    cache[prompt] = temp; // Store in cache
+    return NextResponse.json({ options: temp, cached: false });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

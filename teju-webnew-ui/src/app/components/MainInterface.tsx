@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop } from "react-icons/fa";
 import { Container, Title, Button, TextArea, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
@@ -18,12 +18,16 @@ type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
   const [text, setText] = useState("");
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const [options, setOptions] = useState(["Option A", "Option B", "Option C", "Option D"]);
+  const recognitionRef = useRef<any>(null);
+  const [options, setOptions] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
-  const accumulatedTranscriptRef = useRef<string>("");
+  const accumulatedTranscriptRef = useRef("");
+  const [clicked, setClicked] = useState(-1);
+  useEffect(() => {
+  console.log("Updated options:", options);
+}, [options]);
 
   const handleRecognizeSpeech = () => {
     if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -88,10 +92,13 @@ export default function MainInterface() {
         // Try to split the response into four options
         let opts = data.options
           .split(/\n|\r/)
-          .map((o: string) => o.trim())
-          .filter((o: string) => o && /[A-D][).]/.test(o));
+          .map((o: string) => {
+            const match = o.match(/^[A-D][).]\s*(.*)$/);
+            return match ? match[1].trim() : null;
+          })
+          .filter((o: string | null) => o !== null);
+
         if (opts.length < 4) {
-          // fallback: try splitting by numbers or just lines
           opts = data.options.split(/\n|\r/).filter((o: string) => o.trim()).slice(0, 4);
         }
         if (opts.length === 4) {
@@ -133,7 +140,11 @@ export default function MainInterface() {
     // Speak each option with a pause between
     let idx = 0;
     const speakNext = () => {
-      if (idx >= options.length) return;
+      if (idx >= options.length) {
+        setClicked(-1);
+        return;
+      }
+      setClicked(idx);
       const utterance = new window.SpeechSynthesisUtterance(options[idx]);
       utterance.onend = () => {
         idx++;
@@ -144,12 +155,16 @@ export default function MainInterface() {
     speakNext();
   };
 
-  const handleSpeakOption = (option: string) => {
+  const handleSpeakOption = (option: string, btn_idx: number) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       alert("Text-to-speech is not supported in this browser.");
       return;
     }
+    setClicked(btn_idx);
     const utterance = new window.SpeechSynthesisUtterance(option);
+    utterance.onend = () => {
+      setClicked(-1);
+    }
     window.speechSynthesis.speak(utterance);
   };
 
@@ -172,12 +187,12 @@ export default function MainInterface() {
       {error && <ErrorMsg>{error}</ErrorMsg>}
       <Button onClick={handleSpeakOptions} disabled={options.some(o => !o)}>Speak 4 Options</Button>
       <OptionsRow>
-        <OptionButton onClick={() => handleSpeakOption(options[0])}>{options[0]}</OptionButton>
-        <OptionButton onClick={() => handleSpeakOption(options[1])}>{options[1]}</OptionButton>
+        <OptionButton $clicked = {clicked === 0} onClick={() => handleSpeakOption(options[0], 0)}>{options[0]}</OptionButton>
+        <OptionButton $clicked = {clicked === 1} onClick={() => handleSpeakOption(options[1], 1)}>{options[1]}</OptionButton>
       </OptionsRow>
       <OptionsRow>
-        <OptionButton onClick={() => handleSpeakOption(options[2])}>{options[2]}</OptionButton>
-        <OptionButton onClick={() => handleSpeakOption(options[3])}>{options[3]}</OptionButton>
+        <OptionButton $clicked = {clicked === 2} onClick={() => handleSpeakOption(options[2], 2)}>{options[2]}</OptionButton>
+        <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
       </OptionsRow>
     </Container>
   );
