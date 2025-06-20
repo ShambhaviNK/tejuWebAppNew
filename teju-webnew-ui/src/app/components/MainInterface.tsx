@@ -131,7 +131,7 @@ export default function MainInterface() {
     setError("");
     try {
       const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
-      const res = await fetch("/api/generate-options", {
+      const res = await fetch("/api/generate-options-ollama", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: fullPrompt, regenerate: true }),

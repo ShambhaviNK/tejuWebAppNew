@@ -13,6 +13,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@types/styled-components": "^5.1.34",
     "next": "^15.3.3",
+    "ollama": "^0.5.16",
     "openai": "^5.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
