@@ -132,29 +132,6 @@ export default function MainInterface() {
     window.speechSynthesis.speak(utterance);
   };
 
-  const handleSpeakOptions = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("Text-to-speech is not supported in this browser.");
-      return;
-    }
-    // Speak each option with a pause between
-    let idx = 0;
-    const speakNext = () => {
-      if (idx >= options.length) {
-        setClicked(-1);
-        return;
-      }
-      setClicked(idx);
-      const utterance = new window.SpeechSynthesisUtterance(options[idx]);
-      utterance.onend = () => {
-        idx++;
-        setTimeout(speakNext, 400); // 400ms pause between options
-      };
-      window.speechSynthesis.speak(utterance);
-    };
-    speakNext();
-  };
-
   const handleSpeakOption = (option: string, btn_idx: number) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       alert("Text-to-speech is not supported in this browser.");
@@ -185,7 +162,6 @@ export default function MainInterface() {
         {loading ? "Generating..." : "Generate Options"}
       </Button>
       {error && <ErrorMsg>{error}</ErrorMsg>}
-      <Button onClick={handleSpeakOptions} disabled={options.some(o => !o)}>Speak 4 Options</Button>
       <OptionsRow>
         <OptionButton $clicked = {clicked === 0} onClick={() => handleSpeakOption(options[0], 0)}>{options[0]}</OptionButton>
         <OptionButton $clicked = {clicked === 1} onClick={() => handleSpeakOption(options[1], 1)}>{options[1]}</OptionButton>
