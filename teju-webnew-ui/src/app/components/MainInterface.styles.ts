@@ -63,14 +63,14 @@ export const TextAreaWithIcon = styled.textarea`
   border-radius: 8px;
   width: 100%;
   min-height: 60px;
-  padding: 12px 50px 12px 12px;
+  padding: 12px 90px 12px 12px;
   font-size: 1rem;
   resize: none;
 `;
 
 export const MicIcon = styled.button<{ $recognizing?: boolean }>`
   position: absolute;
-  right: 12px;
+  right: 56px;
   top: 50%;
   transform: translateY(-50%);
   background: ${({ $recognizing }) => $recognizing ? "#e53935" : "#22c55e"};
@@ -86,6 +86,27 @@ export const MicIcon = styled.button<{ $recognizing?: boolean }>`
   transition: background 0.2s;
   &:hover {
     background: ${({ $recognizing }) => $recognizing ? "#b71c1c" : "#16a34a"};
+  }
+`;
+
+export const SpeakerIcon = styled.button`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: #1976d2;
   }
 `;
 
