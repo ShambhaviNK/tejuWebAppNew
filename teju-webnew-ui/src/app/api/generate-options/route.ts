@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
 
   // If no user options detected, proceed with cache check and AI generation
   const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
-  if(cos_sim > 0.85) {
+  if(cos_sim > 0.95) {
     return NextResponse.json({ options: answer, cached: true });
   }
   try {
