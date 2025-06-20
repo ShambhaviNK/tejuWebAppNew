@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp } from "react-icons/fa";
-import { Container, Title, Button, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { Container, Title, Button, ContextLabel, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -18,11 +18,14 @@ type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
   const [text, setText] = useState("");
+  const [context, setContext] = useState("");
   const recognitionRef = useRef<any>(null);
+  const contextRecognitionRef = useRef<any>(null);
   const [options, setOptions] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
+  const [contextRecognizing, setContextRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
   useEffect(() => {
@@ -73,14 +76,58 @@ export default function MainInterface() {
     }
   };
 
+  const handleRecognizeContextSpeech = () => {
+    if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!contextRecognitionRef.current) {
+      contextRecognitionRef.current = new SpeechRecognition();
+      contextRecognitionRef.current.continuous = true;
+      contextRecognitionRef.current.interimResults = false;
+      contextRecognitionRef.current.lang = "en-US";
+      contextRecognitionRef.current.onresult = (event: unknown) => {
+        const speechEvent = event as SpeechRecognitionEvent;
+        let fullTranscript = "";
+        for (let i = 0; i < speechEvent.results.length; i++) {
+          let transcript = speechEvent.results[i][0].transcript.trim();
+          transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
+          if (!/[.!?]$/.test(transcript)) {
+            transcript += ".";
+          }
+          transcript = transcript.replace(/\s(and|but|so|or)\s/gi, ", $1 ");
+          fullTranscript += (fullTranscript ? " " : "") + transcript;
+        }
+        setContext(fullTranscript);
+      };
+      contextRecognitionRef.current.onerror = (event: unknown) => {
+        const errorEvent = event as { error: string };
+        alert("Speech recognition error: " + errorEvent.error);
+        setContextRecognizing(false);
+      };
+      contextRecognitionRef.current.onend = () => {
+        setContextRecognizing(false);
+      };
+    }
+    if (!contextRecognizing) {
+      contextRecognitionRef.current.start();
+      setContextRecognizing(true);
+    } else {
+      contextRecognitionRef.current.stop();
+      setContextRecognizing(false);
+    }
+  };
+
   const handleGenerateOptions = async () => {
     setLoading(true);
     setError("");
     try {
+      const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
       const res = await fetch("/api/generate-options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text }),
+        body: JSON.stringify({ prompt: fullPrompt }),
       });
       const data = await res.json();
       if (data.error) {
@@ -148,6 +195,16 @@ export default function MainInterface() {
   return (
     <Container>
       <Title>Model loaded successfully</Title>
+      <ContextTextAreaContainer>
+        <ContextTextArea
+          placeholder="Add any context or background information here..."
+          value={context}
+          onChange={e => setContext(e.target.value)}
+        />
+        <ContextMicIcon $recognizing={contextRecognizing} onClick={handleRecognizeContextSpeech}>
+          {contextRecognizing ? <FaStop /> : <FaMicrophone />}
+        </ContextMicIcon>
+      </ContextTextAreaContainer>
       <TextAreaContainer>
         <TextAreaWithIcon
           placeholder="Type or speak your question here..."
