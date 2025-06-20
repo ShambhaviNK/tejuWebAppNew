@@ -134,7 +134,7 @@ export default function MainInterface() {
       const res = await fetch("/api/generate-options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: fullPrompt }),
+        body: JSON.stringify({ prompt: fullPrompt, regenerate: true }),
       });
       const data = await res.json();
       if (data.error) {
@@ -226,7 +226,7 @@ export default function MainInterface() {
         </SpeakerIcon>
       </TextAreaContainer>
       <Button onClick={handleGenerateOptions} disabled={loading || !text}>
-        {loading ? "Generating..." : "Generate Options"}
+        {loading ? "Generating..." : "Regenerate Options"}
       </Button>
       {error && <ErrorMsg>{error}</ErrorMsg>}
       <OptionsRow>

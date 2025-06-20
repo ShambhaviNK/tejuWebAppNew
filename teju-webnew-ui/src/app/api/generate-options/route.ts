@@ -94,7 +94,7 @@ async function similarityOnAllKeys(prompt: string, cache: { [x: string]: unknown
 }
 
 export async function POST(req: NextRequest) {
-  const { prompt } = await req.json();
+  const { prompt, regenerate } = await req.json();
   if (!prompt) {
     return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
   }
@@ -110,11 +110,14 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // If no user options detected, proceed with cache check and AI generation
-  const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
-  if(cos_sim > 0.95) {
-    return NextResponse.json({ options: answer, cached: true });
+  // If regenerating, skip cache check and generate new options
+  if (!regenerate) {
+    const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
+    if(cos_sim > 0.85) {
+      return NextResponse.json({ options: answer, cached: true });
+    }
   }
+  
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo-preview",
