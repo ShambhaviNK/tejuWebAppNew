@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop } from "react-icons/fa";
-import { Container, Title, Button, TextArea, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { Container, Title, Button, TextAreaContainer, TextAreaWithIcon, MicIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -148,15 +148,16 @@ export default function MainInterface() {
   return (
     <Container>
       <Title>Model loaded successfully</Title>
-      <Button onClick={handleRecognizeSpeech} $green={recognizing && !recognizing} $red={recognizing}>
-        {recognizing ? <FaStop style={{ marginRight: 8 }} /> : <FaMicrophone style={{ marginRight: 8 }} />}
-        {recognizing ? "Stop Recognizing" : "Recognize Speech"}
-      </Button>
-      <TextArea
-        placeholder="Type or speak your question here..."
-        value={text}
-        onChange={e => setText(e.target.value)}
-      />
+      <TextAreaContainer>
+        <TextAreaWithIcon
+          placeholder="Type or speak your question here..."
+          value={text}
+          onChange={e => setText(e.target.value)}
+        />
+        <MicIcon $recognizing={recognizing} onClick={handleRecognizeSpeech}>
+          {recognizing ? <FaStop /> : <FaMicrophone />}
+        </MicIcon>
+      </TextAreaContainer>
       <Button $green onClick={handleSpeakText}>Speak Text</Button>
       <Button onClick={handleGenerateOptions} disabled={loading || !text}>
         {loading ? "Generating..." : "Generate Options"}

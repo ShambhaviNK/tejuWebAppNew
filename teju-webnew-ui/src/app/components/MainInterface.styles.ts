@@ -50,6 +50,45 @@ export const TextArea = styled.textarea`
   resize: none;
 `;
 
+export const TextAreaContainer = styled.div`
+  position: relative;
+  width: 100%;
+  margin: 12px 0;
+`;
+
+export const TextAreaWithIcon = styled.textarea`
+  background: #23242a;
+  color: #ccc;
+  border: 2px solid #333;
+  border-radius: 8px;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 50px 12px 12px;
+  font-size: 1rem;
+  resize: none;
+`;
+
+export const MicIcon = styled.button<{ $recognizing?: boolean }>`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: ${({ $recognizing }) => $recognizing ? "#e53935" : "#22c55e"};
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover {
+    background: ${({ $recognizing }) => $recognizing ? "#b71c1c" : "#16a34a"};
+  }
+`;
+
 export const OptionsRow = styled.div`
   display: flex;
   gap: 16px;
