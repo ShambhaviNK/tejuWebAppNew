@@ -33,46 +33,53 @@ export default function MainInterface() {
 }, [options]);
 
   const handleRecognizeSpeech = () => {
-    if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
-      alert("Speech recognition is not supported in this browser.");
-      return;
-    }
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!recognitionRef.current) {
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = "en-US";
-      recognitionRef.current.onresult = (event: unknown) => {
-        const speechEvent = event as SpeechRecognitionEvent;
-        let fullTranscript = "";
-        for (let i = 0; i < speechEvent.results.length; i++) {
-          let transcript = speechEvent.results[i][0].transcript.trim();
-          transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
-          if (!/[.!?]$/.test(transcript)) {
-            transcript += ".";
-          }
-          transcript = transcript.replace(/\s(and|but|so|or)\s/gi, ", $1 ");
-          fullTranscript += (fullTranscript ? " " : "") + transcript;
-        }
-        setText(fullTranscript);
-      };
-      recognitionRef.current.onerror = (event: unknown) => {
-        const errorEvent = event as { error: string };
-        alert("Speech recognition error: " + errorEvent.error);
-        setRecognizing(false);
-      };
-      recognitionRef.current.onend = () => {
-        setRecognizing(false);
-      };
-    }
-    if (!recognizing) {
-      accumulatedTranscriptRef.current = "";
-      recognitionRef.current.start();
-      setRecognizing(true);
-    } else {
+    if(recognizing && text.trim()) {
       recognitionRef.current.stop();
       setRecognizing(false);
+      handleGenerateOptions();
+    }
+    else {
+      if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+        alert("Speech recognition is not supported in this browser.");
+        return;
+      }
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!recognitionRef.current) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = false;
+        recognitionRef.current.lang = "en-US";
+        recognitionRef.current.onresult = (event: unknown) => {
+          const speechEvent = event as SpeechRecognitionEvent;
+          let fullTranscript = "";
+          for (let i = 0; i < speechEvent.results.length; i++) {
+            let transcript = speechEvent.results[i][0].transcript.trim();
+            transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
+            if (!/[.!?]$/.test(transcript)) {
+              transcript += ".";
+            }
+            transcript = transcript.replace(/\s(and|but|so|or)\s/gi, ", $1 ");
+            fullTranscript += (fullTranscript ? " " : "") + transcript;
+          }
+          setText(fullTranscript);
+        };
+        recognitionRef.current.onerror = (event: unknown) => {
+          const errorEvent = event as { error: string };
+          alert("Speech recognition error: " + errorEvent.error);
+          setRecognizing(false);
+        };
+        recognitionRef.current.onend = () => {
+          setRecognizing(false);
+        };
+      }
+      if (!recognizing) {
+        accumulatedTranscriptRef.current = "";
+        recognitionRef.current.start();
+        setRecognizing(true);
+      } else {
+        recognitionRef.current.stop();
+        setRecognizing(false);
+      }
     }
   };
 
