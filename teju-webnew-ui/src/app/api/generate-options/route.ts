@@ -7,7 +7,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-
+//
 // Simple in-memory cache (lives as long as the serverless instance is alive)
 const cache: Record<string, string> = {};
 
