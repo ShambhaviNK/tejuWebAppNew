@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
   // If regenerating, skip cache check and generate new options
   if (!regenerate) {
     const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
-    if(cos_sim > 0.85) {
+    if(cos_sim > 0.95) {
       return NextResponse.json({ options: answer, cached: true });
     }
   }
