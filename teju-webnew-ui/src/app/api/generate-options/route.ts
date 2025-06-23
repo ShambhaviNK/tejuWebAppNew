@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     const completion = await openai.chat.completions.create({
       model: "gpt-4-turbo-preview",
       messages: [
-        { role: "system", content: "You are an expert at generating high-quality multiple choice options. For any question provided, generate exactly four distinct, well-thought-out multiple-choice options that are relevant and meaningful. Each option must start with A), B), C), or D), and each must be on a new line. Make the options clear, concise, and directly related to the question. Do not include explanations or answers, only the options." },
+        { role: "system", content: "Generate exactly 4 multiple choice options (A, B, C, D) for any question. For yes/no questions, use: A) Yes B) No C) [relevant third option] D) [blank/other]. Keep options simple and concise unless the user provides long contextual text. No explanations - only the lettered options." },
         { role: "user", content: prompt },
       ],
       max_tokens: 150,
