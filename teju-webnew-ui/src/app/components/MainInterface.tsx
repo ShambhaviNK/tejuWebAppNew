@@ -131,9 +131,12 @@ export default function MainInterface() {
     setError("");
     try {
       const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
-      const res = await fetch("/api/generate-options", {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Authorization": `Bearer ${process.env.deepseek_openrouter_api_key}`,
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ prompt: fullPrompt, regenerate: true }),
       });
       const data = await res.json();

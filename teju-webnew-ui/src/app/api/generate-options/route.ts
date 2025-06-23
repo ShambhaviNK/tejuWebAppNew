@@ -4,7 +4,8 @@ import OpenAI from "openai";
 import type { Tensor } from '@tensorflow/tfjs';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.deepseek_openrouter_api_key,
 });
 
 
@@ -119,21 +120,40 @@ export async function POST(req: NextRequest) {
   }
   
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      messages: [
-        { role: "system", content: "You are an expert at generating high-quality multiple choice options. For any question provided, generate exactly four distinct, well-thought-out multiple-choice options that are relevant and meaningful. Each option must start with A), B), C), or D), and each must be on a new line. Make the options clear, concise, and directly related to the question. Do not include explanations or answers, only the options." },
-        { role: "user", content: prompt },
-      ],
-      max_tokens: 150,
-      temperature: 0.7,
-      n: 1,
+    const completionRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.deepseek_openrouter_api_key}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are an expert at generating high-quality multiple choice options. For any question provided, generate exactly four distinct, well-thought-out multiple-choice options that are relevant and meaningful. Each option must start with A), B), C), or D), and each must be on a new line. Do not include explanations or answers, only the options.",
+          },
+          { role: "user", content: prompt },
+        ],
+        max_tokens: 150,
+        temperature: 0.7,
+      }),
     });
-    const text = completion.choices[0].message?.content || "";
-    const temp = text.replace(/\\n/g, "\n");
-    cache[prompt] = temp; // Store in cache
-    return NextResponse.json({ options: temp, cached: false });
+
+    if (!completionRes.ok) {
+      const errorText = await completionRes.text();
+      return NextResponse.json({ error: errorText }, { status: completionRes.status });
+    }
+
+    const completion = await completionRes.json();
+    const rawText = completion.choices?.[0]?.message?.content ?? "";
+    const formattedText = rawText.replace(/\\n/g, "\n");
+
+    cache[prompt] = formattedText;
+
+    return NextResponse.json({ options: formattedText, cached: false });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
