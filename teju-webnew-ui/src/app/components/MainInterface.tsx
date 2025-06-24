@@ -355,23 +355,29 @@ export default function MainInterface() {
       }
       
       if (data.options) {
-        // Try to split the response into four options
-        let opts = data.options
-          .split(/\n|\r/)
-          .map((o: string) => {
-            const match = o.match(/^[A-D][).]\s*(.*)$/);
-            return match ? match[1].trim() : null;
-          })
-          .filter((o: string | null) => o !== null);
-
-        if (opts.length < 4) {
-          opts = data.options.split(/\n|\r/).filter((o: string) => o.trim()).slice(0, 4);
-        }
+        console.log('Raw options from API:', data.options);
+        
+        // Parse options from the API response
+        let opts: string[] = [];
+        
+        // Split by newlines and parse A) B) C) D) format
+        const lines = data.options.split(/\n|\r/).filter((line: string) => line.trim());
+        opts = lines.slice(0, 4).map((line: string) => {
+          // Remove the A) B) C) D) prefix and trim
+          const match = line.match(/^[A-D]\)\s*(.*)$/);
+          return match ? match[1].trim() : line.trim();
+        });
+        
+        console.log('Parsed options:', opts);
+        
+        // Ensure we have exactly 4 options
         if (opts.length === 4) {
           setOptions(opts);
           console.log(`Options set (cached: ${data.cached})`);
         } else {
+          // Fallback: put the entire response in first option, others empty
           setOptions([data.options, "", "", ""]);
+          console.log('Fallback: using entire response as first option');
         }
       } else {
         setError("No options returned from API.");
