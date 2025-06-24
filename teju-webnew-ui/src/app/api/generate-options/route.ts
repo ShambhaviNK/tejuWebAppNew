@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
       messages: [
         { 
           role: "system", 
-          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]" 
+          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD)" 
         },
         { role: "user", content: optimizedPrompt },
       ],
