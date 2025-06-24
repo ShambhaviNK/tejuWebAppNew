@@ -330,7 +330,6 @@ export default function MainInterface() {
   };
 
   const handleGenerateOptions = async () => {
-    const startTime = Date.now();
     setLoading(true);
     setError("");
     

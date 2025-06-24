@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import type { Tensor } from '@tensorflow/tfjs';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
