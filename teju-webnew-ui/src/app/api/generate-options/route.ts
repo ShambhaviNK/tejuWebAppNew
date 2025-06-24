@@ -7,9 +7,10 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-
-// Simple in-memory cache (lives as long as the serverless instance is alive)
-const cache: Record<string, string> = {};
+// Enhanced cache with TTL and size limits
+const cache: Record<string, { data: string; timestamp: number }> = {};
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+const MAX_CACHE_SIZE = 1000; // Maximum cache entries
 
 // Function to detect and extract user-provided options
 function extractUserOptions(text: string): string[] | null {
@@ -62,35 +63,57 @@ function formatOptions(options: string[]): string {
   }).join('\n');
 }
 
-function cosineSimilarity(
-  tensorA: Tensor,
-  tensorB: Tensor
-) {
-  const dotProduct = tensorA.dot(tensorB.transpose());
-  const normA = tensorA.norm();
-  const normB = tensorB.norm();
-  return dotProduct.div(normA.mul(normB));
-}
-
-async function similarityOnAllKeys(prompt: string, cache: { [x: string]: unknown }) {
-  const tf = await import('@tensorflow/tfjs');
-  const use = await import('@tensorflow-models/universal-sentence-encoder');
-  let cos_sim = 0;
-  let answer = "";
-  for(const key in cache) {
-    const model = await use.load();
-    const sentences = [key, prompt];
-    const embeddings = await model.embed(sentences);
-    const emb1 = tf.slice(embeddings as unknown as Tensor, [0, 0], [1, 512]);
-    const emb2 = tf.slice(embeddings as unknown as Tensor, [1, 0], [1, 512]);
-    const sim = cosineSimilarity(emb1, emb2) as Tensor;
-    const result = await sim.data();
-    if(result[0] > cos_sim) {
-        cos_sim = result[0];
-        answer = cache[key] as string;
+// Optimized cache management
+function cleanCache() {
+  const now = Date.now();
+  const keys = Object.keys(cache);
+  
+  // Remove expired entries
+  for (const key of keys) {
+    if (now - cache[key].timestamp > CACHE_TTL) {
+      delete cache[key];
     }
   }
-  return { cos_sim, answer };
+  
+  // If still too many entries, remove oldest
+  const remainingKeys = Object.keys(cache);
+  if (remainingKeys.length > MAX_CACHE_SIZE) {
+    const sortedKeys = remainingKeys.sort((a, b) => cache[a].timestamp - cache[b].timestamp);
+    const keysToRemove = sortedKeys.slice(0, remainingKeys.length - MAX_CACHE_SIZE);
+    for (const key of keysToRemove) {
+      delete cache[key];
+    }
+  }
+}
+
+// Simple and fast similarity check (no TensorFlow)
+function simpleSimilarity(prompt1: string, prompt2: string): number {
+  const words1 = new Set(prompt1.toLowerCase().split(/\s+/));
+  const words2 = new Set(prompt2.toLowerCase().split(/\s+/));
+  
+  const intersection = new Set([...words1].filter(x => words2.has(x)));
+  const union = new Set([...words1, ...words2]);
+  
+  return intersection.size / union.size;
+}
+
+// Fast cache lookup without TensorFlow
+function fastCacheLookup(prompt: string): { found: boolean; data: string } {
+  cleanCache(); // Clean cache periodically
+  
+  let bestMatch = { similarity: 0, data: "" };
+  
+  for (const [key, value] of Object.entries(cache)) {
+    const similarity = simpleSimilarity(prompt, key);
+    if (similarity > bestMatch.similarity) {
+      bestMatch = { similarity, data: value.data };
+    }
+  }
+  
+  return {
+    found: bestMatch.similarity > 0.8, // Higher threshold for simple similarity
+    data: bestMatch.data
+  };
 }
 
 export async function POST(req: NextRequest) {
@@ -110,30 +133,43 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // If regenerating, skip cache check and generate new options
+  // Fast cache lookup (no TensorFlow)
   if (!regenerate) {
-    const { cos_sim, answer } = await similarityOnAllKeys(prompt, cache);
-    if(cos_sim > 0.95) {
-      return NextResponse.json({ options: answer, cached: true });
+    const cacheResult = fastCacheLookup(prompt);
+    if (cacheResult.found) {
+      return NextResponse.json({ options: cacheResult.data, cached: true });
     }
   }
   
   try {
+    // Optimize prompt for faster generation
+    const optimizedPrompt = prompt.length > 200 ? prompt.substring(0, 200) + "..." : prompt;
+    
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-3.5-turbo", // Faster model for speed
       messages: [
-        { role: "system", content: "Generate exactly 4 multiple choice options (A, B, C, D) for any question. For yes/no questions, use: A) Yes B) No C) [relevant third option] D) [blank/other]. Keep options simple and concise unless the user provides long contextual text. No explanations - only the lettered options." },
-        { role: "user", content: prompt },
+        { 
+          role: "system", 
+          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format: A) option B) option C) option D) option" 
+        },
+        { role: "user", content: optimizedPrompt },
       ],
-      max_tokens: 150,
-      temperature: 0.7,
+      max_tokens: 100, // Reduced for speed
+      temperature: 0.5, // Lower temperature for more consistent results
       n: 1,
+      presence_penalty: 0, // Disable penalties for speed
+      frequency_penalty: 0,
     });
+    
     const text = completion.choices[0].message?.content || "";
     const temp = text.replace(/\\n/g, "\n");
-    cache[prompt] = temp; // Store in cache
+    
+    // Store in cache with timestamp
+    cache[prompt] = { data: temp, timestamp: Date.now() };
+    
     return NextResponse.json({ options: temp, cached: false });
   } catch (error: any) {
+    console.error('OpenAI API error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
