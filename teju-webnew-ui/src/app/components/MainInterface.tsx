@@ -37,7 +37,7 @@ export default function MainInterface() {
     if(recognizing && text.trim()) {
       recognitionRef.current.stop();
       setRecognizing(false);
-      handleGenerateOptions();
+      handleCheckCacheAndGenerateOptions();
     }
     else {
       if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -329,6 +329,63 @@ export default function MainInterface() {
     }
   };
 
+  const handleCheckCacheAndGenerateOptions = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
+      
+      console.log('Making single API call for prompt:', fullPrompt);
+      
+      // Single API call - backend will check cache first, then generate if needed
+      const res = await fetch("/api/generate-options", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: fullPrompt, regenerate: false }),
+      });
+      
+      const data = await res.json();
+      console.log('API response:', data);
+      
+      if (data.error) {
+        setError(data.error);
+        setOptions(["", "", "", ""]);
+        return;
+      }
+      
+      if (data.options) {
+        // Try to split the response into four options
+        let opts = data.options
+          .split(/\n|\r/)
+          .map((o: string) => {
+            const match = o.match(/^[A-D][).]\s*(.*)$/);
+            return match ? match[1].trim() : null;
+          })
+          .filter((o: string | null) => o !== null);
+
+        if (opts.length < 4) {
+          opts = data.options.split(/\n|\r/).filter((o: string) => o.trim()).slice(0, 4);
+        }
+        if (opts.length === 4) {
+          setOptions(opts);
+          console.log(`Options set (cached: ${data.cached})`);
+        } else {
+          setOptions([data.options, "", "", ""]);
+        }
+      } else {
+        setError("No options returned from API.");
+        setOptions(["", "", "", ""]);
+      }
+    } catch (error) {
+      console.error('API call failed:', error);
+      setError("Failed to generate options. Please try again.");
+      setOptions(["", "", "", ""]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleGenerateOptions = async () => {
     setLoading(true);
     setError("");
@@ -381,7 +438,7 @@ export default function MainInterface() {
     }
   };
 
-  const handleSpeakText = () => {
+  const handleSpeakText = async () => {
     if (!text.trim()) {
       alert("Please enter text or recognize speech first.");
       return;
@@ -390,8 +447,35 @@ export default function MainInterface() {
       alert("Text-to-speech is not supported in this browser.");
       return;
     }
-    const utterance = new window.SpeechSynthesisUtterance(text);
-    window.speechSynthesis.speak(utterance);
+
+    // Check if we have cached options for this question
+    try {
+      const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
+      const res = await fetch("/api/generate-options", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: fullPrompt, regenerate: false }), // Don't regenerate, just check cache
+      });
+      
+      const data = await res.json();
+      if (data.options && data.cached) {
+        // Speak the cached options
+        const optionsText = data.options.split('\n').join('. ');
+        const utterance = new window.SpeechSynthesisUtterance(`Here are the options: ${optionsText}`);
+        window.speechSynthesis.speak(utterance);
+        console.log('Speaking cached options');
+      } else {
+        // Speak the question text
+        const utterance = new window.SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+        console.log('Speaking question text');
+      }
+    } catch (error) {
+      console.error('Error checking cache:', error);
+      // Fallback to speaking the question text
+      const utterance = new window.SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   const handleSpeakOption = (option: string, btn_idx: number) => {
@@ -433,7 +517,7 @@ export default function MainInterface() {
           <FaVolumeUp />
         </SpeakerIcon>
       </TextAreaContainer>
-      <Button onClick={handleGenerateOptions} disabled={loading || !text}>
+      <Button onClick={handleCheckCacheAndGenerateOptions} disabled={loading || !text}>
         {loading ? "Generating..." : "Regenerate Options"}
       </Button>
       {error && <ErrorMsg>{error}</ErrorMsg>}

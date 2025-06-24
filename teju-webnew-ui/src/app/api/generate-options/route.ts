@@ -110,7 +110,7 @@ function fastCacheLookup(prompt: string): { found: boolean; data: string } {
   }
   
   return {
-    found: bestMatch.similarity > 0.8, // Higher threshold for simple similarity
+    found: bestMatch.similarity > 0.9, 
     data: bestMatch.data
   };
 }
@@ -132,12 +132,16 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Fast cache lookup (no TensorFlow)
+  // Always check cache first (unless explicitly regenerating)
   if (!regenerate) {
     const cacheResult = fastCacheLookup(prompt);
     if (cacheResult.found) {
       return NextResponse.json({ options: cacheResult.data, cached: true });
+    } else {
+      console.log('No cache hit, will generate new options');
     }
+  } else {
+    console.log('Regenerate requested, skipping cache check');
   }
   
   try {
