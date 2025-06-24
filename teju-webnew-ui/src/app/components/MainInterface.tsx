@@ -386,58 +386,6 @@ export default function MainInterface() {
     }
   };
 
-  const handleGenerateOptions = async () => {
-    setLoading(true);
-    setError("");
-    
-    try {
-      const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
-      
-      const res = await fetch("/api/generate-options", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: fullPrompt, regenerate: true }),
-      });
-      
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-        setOptions(["", "", "", ""]);
-        return;
-      }
-      
-      if (data.options) {
-        // Try to split the response into four options
-        let opts = data.options
-          .split(/\n|\r/)
-          .map((o: string) => {
-            const match = o.match(/^[A-D][).]\s*(.*)$/);
-            return match ? match[1].trim() : null;
-          })
-          .filter((o: string | null) => o !== null);
-
-        if (opts.length < 4) {
-          opts = data.options.split(/\n|\r/).filter((o: string) => o.trim()).slice(0, 4);
-        }
-        if (opts.length === 4) {
-          setOptions(opts);
-          console.log(`Options generated (cached: ${data.cached})`);
-        } else {
-          setOptions([data.options, "", "", ""]);
-        }
-      } else {
-        setError("No options returned from API.");
-        setOptions(["", "", "", ""]);
-      }
-    } catch (error) {
-      console.error('API call failed:', error);
-      setError("Failed to generate options. Please try again.");
-      setOptions(["", "", "", ""]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSpeakText = async () => {
     if (!text.trim()) {
       alert("Please enter text or recognize speech first.");
