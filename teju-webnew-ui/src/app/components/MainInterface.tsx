@@ -33,6 +33,63 @@ export default function MainInterface() {
     console.log("Updated options:", options);
   }, [options]);
 
+  // Enhanced punctuation processing function
+  const improvePunctuation = (text: string): string => {
+    let processed = text.trim();
+    
+    // Capitalize first letter
+    processed = processed.charAt(0).toUpperCase() + processed.slice(1);
+    
+    // Remove filler words and sounds
+    processed = processed
+      .replace(/\b(um|uh|er|ah|hmm|well|like|you know|i mean)\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    
+    // Add question marks for question words
+    const questionWords = /\b(what|when|where|who|why|how|which|whose|whom|is|are|was|were|do|does|did|can|could|will|would|should|may|might)\b/i;
+    if (questionWords.test(processed) && !/[?]$/.test(processed)) {
+      processed = processed.replace(/[.!]$/, '') + '?';
+    }
+    
+    // Add exclamation marks for emphasis words
+    const emphasisWords = /\b(wow|amazing|incredible|fantastic|terrible|awful|great|excellent|perfect|horrible|wonderful|awesome)\b/i;
+    if (emphasisWords.test(processed) && !/[!]$/.test(processed)) {
+      processed = processed.replace(/[.?]$/, '') + '!';
+    }
+    
+    // Improve conjunction punctuation
+    processed = processed.replace(/\s(and|but|so|or|however|therefore|meanwhile|furthermore|moreover|nevertheless|consequently|accordingly|thus|hence|as\s+a\s+result)\s/gi, ', $1 ');
+    
+    // Add commas before conjunctions in compound sentences
+    processed = processed.replace(/(\w+)\s+(and|but|or)\s+(\w+)/gi, '$1, $2 $3');
+    
+    // Fix spacing around punctuation
+    processed = processed
+      .replace(/\s+([,.!?])/g, '$1') // Remove spaces before punctuation
+      .replace(/([,.!?])([A-Za-z])/g, '$1 $2') // Add space after punctuation if followed by letter
+      .replace(/\s+/g, ' ') // Fix multiple spaces
+      .trim();
+    
+    // Ensure proper sentence ending
+    if (!/[.!?]$/.test(processed)) {
+      // If it ends with a question word or sounds like a question, add ?
+      if (/\b(what|when|where|who|why|how|which|whose|whom|is|are|was|were|do|does|did|can|could|will|would|should|may|might)\b/i.test(processed)) {
+        processed += '?';
+      } else {
+        processed += '.';
+      }
+    }
+    
+    // Fix common speech recognition errors
+    processed = processed
+      .replace(/\b(um|uh|er|ah)\b/gi, '') // Remove any remaining filler words
+      .replace(/\s+/g, ' ') // Final space cleanup
+      .trim();
+    
+    return processed;
+  };
+
   const handleRecognizeSpeech = () => {
     if(recognizing && text.trim()) {
       recognitionRef.current.stop();
@@ -72,22 +129,7 @@ export default function MainInterface() {
                 let processedTranscript = transcript;
                 
                 // Enhanced text processing
-                processedTranscript = processedTranscript.charAt(0).toUpperCase() + processedTranscript.slice(1);
-                
-                // Better punctuation handling
-                if (!/[.!?]$/.test(processedTranscript)) {
-                  processedTranscript += ".";
-                }
-                
-                // Enhanced conjunction formatting
-                processedTranscript = processedTranscript.replace(/\s(and|but|so|or|however|therefore|meanwhile|furthermore|moreover|nevertheless|consequently|accordingly|thus|hence|as\s+a\s+result)\s/gi, ", $1 ");
-                
-                // Fix common speech recognition errors
-                processedTranscript = processedTranscript
-                  .replace(/\b(um|uh|er|ah)\b/gi, '') // Remove filler words
-                  .replace(/\s+/g, ' ') // Fix multiple spaces
-                  .replace(/\s+([,.!?])/g, '$1') // Fix spacing around punctuation
-                  .trim();
+                processedTranscript = improvePunctuation(transcript);
                 
                 fullTranscript += (fullTranscript ? " " : "") + processedTranscript;
               } else {
@@ -218,22 +260,7 @@ export default function MainInterface() {
               let processedTranscript = transcript;
               
               // Enhanced text processing
-              processedTranscript = processedTranscript.charAt(0).toUpperCase() + processedTranscript.slice(1);
-              
-              // Better punctuation handling
-              if (!/[.!?]$/.test(processedTranscript)) {
-                processedTranscript += ".";
-              }
-              
-              // Enhanced conjunction formatting
-              processedTranscript = processedTranscript.replace(/\s(and|but|so|or|however|therefore|meanwhile|furthermore|moreover|nevertheless|consequently|accordingly|thus|hence|as\s+a\s+result)\s/gi, ", $1 ");
-              
-              // Fix common speech recognition errors
-              processedTranscript = processedTranscript
-                .replace(/\b(um|uh|er|ah)\b/gi, '') // Remove filler words
-                .replace(/\s+/g, ' ') // Fix multiple spaces
-                .replace(/\s+([,.!?])/g, '$1') // Fix spacing around punctuation
-                .trim();
+              processedTranscript = improvePunctuation(transcript);
               
               fullTranscript += (fullTranscript ? " " : "") + processedTranscript;
             } else {
