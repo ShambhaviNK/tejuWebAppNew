@@ -17,6 +17,9 @@ declare global {
 type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [text, setText] = useState("");
   const [context, setContext] = useState("");
   const recognitionRef = useRef<any>(null);
@@ -28,6 +31,23 @@ export default function MainInterface() {
   const [contextRecognizing, setContextRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
+
+  const handleLogin = () => {
+    // In real app, call backend API here
+    if (username === "admin" && password === "1234") {
+      localStorage.setItem("auth", "true"); // persist login
+      setIsLoggedIn(true);
+      setUsername("");
+      setPassword("");
+    } else {
+      alert("Invalid credentials");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth");
+    setIsLoggedIn(false);
+  };
 
   useEffect(() => {
     console.log("Updated options:", options);
@@ -232,6 +252,8 @@ export default function MainInterface() {
       alert("Speech recognition is not supported in this browser.");
       return;
     }
+    // var endSpeechTime: number;
+    const startSpeechTime = performance.now();
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!contextRecognitionRef.current) {
       contextRecognitionRef.current = new SpeechRecognition();
@@ -352,8 +374,11 @@ export default function MainInterface() {
       }
     } else {
       contextRecognitionRef.current.stop();
+      const endSpeechTime = performance.now();
+      console.log(`SPEECH RECOGNITION took ${endSpeechTime - startSpeechTime} milliseconds`)
       setContextRecognizing(false);
     }
+
   };
 
   const handleCheckCacheAndGenerateOptions = async () => {
@@ -361,6 +386,7 @@ export default function MainInterface() {
     setError("");
     
     try {
+      const startGenerateTime = performance.now();
       const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
       
       console.log('Making single API call for prompt:', fullPrompt);
@@ -406,6 +432,8 @@ export default function MainInterface() {
           setOptions([data.options, "", "", ""]);
           console.log('Fallback: using entire response as first option');
         }
+        const endGenerateTime = performance.now();
+        console.log(`GENERATING OPTIONS took ${endGenerateTime - startGenerateTime} milliseconds`)
       } else {
         setError("No options returned from API.");
         setOptions(["", "", "", ""]);
@@ -472,8 +500,27 @@ export default function MainInterface() {
     window.speechSynthesis.speak(utterance);
   };
 
-  return (
-    <Container>
+  return (<div>
+    {!isLoggedIn ? (
+  <div className="login-form">
+    <input
+      type="text"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      placeholder="Username"
+    />
+    <input
+      type="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      placeholder="Password"
+    />
+    <button onClick={handleLogin}>Login</button>
+  </div>
+) : (
+  <div>
+    <Button onClick={handleLogout}>Logout</Button>
+      <Container>
       <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>
         <ContextTextArea
@@ -511,5 +558,7 @@ export default function MainInterface() {
         <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
       </OptionsRow>
     </Container>
+  </div>
+)}</div>
   );
 } 
