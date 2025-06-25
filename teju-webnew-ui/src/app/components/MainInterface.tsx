@@ -428,35 +428,9 @@ export default function MainInterface() {
       alert("Text-to-speech is not supported in this browser.");
       return;
     }
-
-    // Check if we have cached options for this question
-    try {
-      const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
-      const res = await fetch("/api/generate-options", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: fullPrompt, regenerate: false }), // Don't regenerate, just check cache
-      });
-      
-      const data = await res.json();
-      if (data.options && data.cached) {
-        // Speak the cached options
-        const optionsText = data.options.split('\n').join('. ');
-        const utterance = new window.SpeechSynthesisUtterance(`Here are the options: ${optionsText}`);
-        window.speechSynthesis.speak(utterance);
-        console.log('Speaking cached options');
-      } else {
-        // Speak the question text
-        const utterance = new window.SpeechSynthesisUtterance(text);
-        window.speechSynthesis.speak(utterance);
-        console.log('Speaking question text');
-      }
-    } catch (error) {
-      console.error('Error checking cache:', error);
-      // Fallback to speaking the question text
-      const utterance = new window.SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    }
+    // Just speak the text in the text box, no API call
+    const utterance = new window.SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
   };
 
   const handleSpeakOption = (option: string, btn_idx: number) => {
