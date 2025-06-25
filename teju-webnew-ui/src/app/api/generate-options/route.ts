@@ -146,8 +146,8 @@ export async function POST(req: NextRequest) {
   
   try {
     // Optimize prompt for faster generation
-    const optimizedPrompt = prompt.length > 200 ? prompt.substring(0, 200) + "..." : prompt;
-    
+    // const optimizedPrompt = prompt.length > 200 ? prompt.substring(0, 200) + "..." : prompt;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo", // Faster model for speed
       messages: [
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
           role: "system", 
           content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD)" 
         },
-        { role: "user", content: optimizedPrompt },
+        { role: "user", content: prompt },
       ],
       max_tokens: 100, // Reduced for speed
       temperature: 0.5, // Lower temperature for more consistent results
