@@ -94,7 +94,7 @@ export default function MainInterface() {
     if(recognizing && text.trim()) {
       recognitionRef.current.stop();
       setRecognizing(false);
-      handleCheckCacheAndGenerateOptions();
+      handleCheckCacheAndGenerateOptions(false);
     }
     else {
       if (typeof window === "undefined" || !("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -356,7 +356,7 @@ export default function MainInterface() {
     }
   };
 
-  const handleCheckCacheAndGenerateOptions = async () => {
+  const handleCheckCacheAndGenerateOptions = async (isRegen: boolean) => {
     setLoading(true);
     setError("");
     
@@ -369,7 +369,7 @@ export default function MainInterface() {
       const res = await fetch("/api/generate-options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: fullPrompt, regenerate: false }),
+        body: JSON.stringify({ prompt: fullPrompt, regenerate: isRegen }),
       });
       
       const data = await res.json();
@@ -472,7 +472,7 @@ export default function MainInterface() {
           <FaVolumeUp />
         </SpeakerIcon>
       </TextAreaContainer>
-      <Button onClick={handleCheckCacheAndGenerateOptions} disabled={loading || !text}>
+      <Button onClick={() => handleCheckCacheAndGenerateOptions(true)} disabled={loading || !text}>
         {loading ? "Generating..." : "Regenerate Options"}
       </Button>
       {error && <ErrorMsg>{error}</ErrorMsg>}
