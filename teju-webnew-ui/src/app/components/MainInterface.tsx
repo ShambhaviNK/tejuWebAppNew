@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp } from "react-icons/fa";
-import { Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { LoginBox, Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -519,8 +519,8 @@ export default function MainInterface() {
   </div>
 ) : (
   <div>
-    <Button onClick={handleLogout}>Logout</Button>
-      <Container>
+    <LoginBox><Button onClick={handleLogout}>Logout</Button></LoginBox>
+    <Container>
       <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>
         <ContextTextArea

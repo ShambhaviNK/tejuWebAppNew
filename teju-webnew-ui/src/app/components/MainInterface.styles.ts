@@ -1,5 +1,17 @@
 import styled from "styled-components";
 
+export const LoginBox = styled.div`
+  background: #23242a;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+  margin: auto auto;
+  padding 24px 24px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: row;
+  align-item: center;
+  float: right;
+`;
 export const Container = styled.div`
   background: #23242a;
   border-radius: 24px;
