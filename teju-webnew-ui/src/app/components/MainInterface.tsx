@@ -42,7 +42,7 @@ export default function MainInterface() {
     
     // Remove filler words and sounds
     processed = processed
-      .replace(/\b(um|uh|er|ah|hmm|well|like|you know|i mean)\b/gi, '')
+      .replace(/\b(um|uh|er|ah|hmm)\b/gi, '')
       .replace(/\s+/g, ' ')
       .trim();
     
