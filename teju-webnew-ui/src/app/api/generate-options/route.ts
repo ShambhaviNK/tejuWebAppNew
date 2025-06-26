@@ -115,6 +115,16 @@ function fastCacheLookup(prompt: string): { found: boolean; data: string } {
   };
 }
 
+// Fisher-Yates shuffle
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 export async function POST(req: NextRequest) {
   const { prompt, regenerate } = await req.json();
   if (!prompt) {
@@ -124,7 +134,8 @@ export async function POST(req: NextRequest) {
   // First, check if the user is providing their own options
   const userOptions = extractUserOptions(prompt);
   if (userOptions && userOptions.length >= 4) {
-    const formattedOptions = formatOptions(userOptions);
+    const shuffledUserOptions = shuffleArray(userOptions);
+    const formattedOptions = formatOptions(shuffledUserOptions);
     return NextResponse.json({ 
       options: formattedOptions, 
       cached: false, 
@@ -166,11 +177,20 @@ export async function POST(req: NextRequest) {
     
     const text = completion.choices[0].message?.content || "";
     const temp = text.replace(/\\n/g, "\n");
-    
-    // Store in cache with timestamp
-    cache[prompt] = { data: temp, timestamp: Date.now() };
-    
-    return NextResponse.json({ options: temp, cached: false });
+
+    // Parse options from the AI response, shuffle, then format
+    const lines = temp.split(/\n|\r/).filter((line: string) => line.trim());
+    const aiOptions = lines.slice(0, 4).map((line: string) => {
+      const match = line.match(/^[A-D]\)\s*(.*)$/);
+      return match ? match[1].trim() : line.trim();
+    });
+    const shuffledAIOptions = shuffleArray(aiOptions);
+    const formattedAIOptions = formatOptions(shuffledAIOptions);
+
+    // Store in cache with timestamp (store the formatted/shuffled options)
+    cache[prompt] = { data: formattedAIOptions, timestamp: Date.now() };
+
+    return NextResponse.json({ options: formattedAIOptions, cached: false });
   } catch (error: any) {
     console.error('OpenAI API error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
