@@ -146,6 +146,10 @@ export default function MainInterface() {
         // Enhanced error handling
         recognitionRef.current.onerror = (event: unknown) => {
           const errorEvent = event as { error: string };
+          if (errorEvent.error === "aborted") {
+            setRecognizing(false);
+            return;
+          }
           console.error('Speech recognition error:', errorEvent.error);
           
           let errorMessage = "Speech recognition error: ";
@@ -277,6 +281,10 @@ export default function MainInterface() {
       // Enhanced error handling
       contextRecognitionRef.current.onerror = (event: unknown) => {
         const errorEvent = event as { error: string };
+        if (errorEvent.error === "aborted") {
+          setContextRecognizing(false);
+          return;
+        }
         console.error('Context speech recognition error:', errorEvent.error);
         
         let errorMessage = "Context speech recognition error: ";
