@@ -18,6 +18,7 @@ type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
   const [text, setText] = useState("");
+  const [backgroundInfo, setBackgroundInfo] = useState("");
   const [context, setContext] = useState("");
   const recognitionRef = useRef<any>(null);
   const contextRecognitionRef = useRef<any>(null);
@@ -89,6 +90,10 @@ export default function MainInterface() {
     
     return processed;
   };
+  
+  const handleBackgroundInformation = () => {
+    console.log("Background Info: ", backgroundInfo);
+  }
 
   const handleRecognizeSpeech = () => {
     if(recognizing && text.trim()) {
@@ -449,6 +454,10 @@ export default function MainInterface() {
   return (
     <Container>
       <Title>Model loaded successfully</Title>
+      <ContextTextArea placeholder="Add any background information like names, age, or interests here..."
+                        value={backgroundInfo}
+                        onChange={e => setBackgroundInfo(e.target.value)}/>
+      <Button onClick={handleBackgroundInformation}>Add Background Information</Button>
       <ContextTextAreaContainer>
         <ContextTextArea
           placeholder="Add any context or background information here..."
