@@ -24,6 +24,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp } from "react-icons/fa";
-import { LoginBox, Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { LoginBox, Container, Title, Button, InputArea, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -42,6 +42,11 @@ export default function MainInterface() {
     } else {
       alert("Invalid credentials");
     }
+  };
+
+  const handleSignup = () => {
+    // In real app, call backend API here
+    // setIsLoggedIn(null);
   };
 
   const handleLogout = () => {
@@ -502,24 +507,32 @@ export default function MainInterface() {
 
   return (<div>
     {!isLoggedIn ? (
-  <div className="login-form">
-    <input
-      type="text"
-      value={username}
-      onChange={(e) => setUsername(e.target.value)}
-      placeholder="Username"
-    />
-    <input
-      type="password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      placeholder="Password"
-    />
-    <button onClick={handleLogin}>Login</button>
-  </div>
+    <div>
+      <div className="header">
+      <div className="spacer"></div>
+      <Button onClick={() => handleSignup()}>Sign Up</Button>
+      </div>
+      <Container>
+        <InputArea
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+        />
+        <InputArea
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+        />
+        <Button onClick={handleLogin}>Login</Button>
+      </Container>
+    </div>
 ) : (
   <div>
-    <LoginBox><Button onClick={handleLogout}>Logout</Button></LoginBox>
+    <div className="header">
+      <div className="spacer"></div>
+      <LoginBox><Button onClick={handleLogout}>Logout</Button></LoginBox>
+    </div>
     <Container>
       <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>

@@ -2,11 +2,7 @@ import styled from "styled-components";
 
 export const LoginBox = styled.div`
   background: #23242a;
-  border-radius: 24px;
-  box-shadow: 0 4px 32px rgba(0,0,0,0.4);
   margin: auto auto;
-  padding 24px 24px;
-  max-width: 600px;
   display: flex;
   flex-direction: row;
   align-item: center;
@@ -47,6 +43,19 @@ export const Button = styled.button<{ $green?: boolean; $red?: boolean }>`
     background: ${({ $green, $red }) =>
       $red ? "#b71c1c" : $green ? "#16a34a" : "#1976d2"};
   }
+`;
+
+export const InputArea = styled.input`
+  background: #23242a;
+  color: #ccc;
+  border: 2px solid #333;
+  border-radius: 8px;
+  width: 100%;
+  min-height: 60px;
+  margin: 12px 0;
+  padding: 12px;
+  font-size: 1rem;
+  resize: none;
 `;
 
 export const TextArea = styled.textarea`
