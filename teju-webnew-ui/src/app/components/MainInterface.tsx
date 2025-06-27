@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { Container, Title, Button, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -454,6 +454,41 @@ export default function MainInterface() {
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleSpeakAllOptions = () => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      alert("Text-to-speech is not supported in this browser.");
+      return;
+    }
+    
+    // Filter out empty options
+    const nonEmptyOptions = options.filter(option => option.trim() !== "");
+    
+    if (nonEmptyOptions.length === 0) {
+      alert("No options available to speak.");
+      return;
+    }
+    
+    // Create a queue of utterances
+    const utterances = nonEmptyOptions.map((option, index) => {
+      const utterance = new window.SpeechSynthesisUtterance(option);
+      
+      // Add a small pause between options
+      utterance.onend = () => {
+        if (index < nonEmptyOptions.length - 1) {
+          // Add a small delay before speaking the next option
+          setTimeout(() => {
+            window.speechSynthesis.speak(utterances[index + 1]);
+          }, 500);
+        }
+      };
+      
+      return utterance;
+    });
+    
+    // Start speaking the first option
+    window.speechSynthesis.speak(utterances[0]);
+  };
+
   return (
     <Container>
       <Title>Model loaded successfully</Title>
@@ -488,18 +523,25 @@ export default function MainInterface() {
           <FaVolumeUp />
         </SpeakerIcon>
       </TextAreaContainer>
-      <Button onClick={() => handleCheckCacheAndGenerateOptions(true)} disabled={loading || !text}>
-        {loading ? "Generating..." : "Regenerate Options"}
-      </Button>
-      {error && <ErrorMsg>{error}</ErrorMsg>}
-      <OptionsRow>
-        <OptionButton $clicked = {clicked === 0} onClick={() => handleSpeakOption(options[0], 0)}>{options[0]}</OptionButton>
-        <OptionButton $clicked = {clicked === 1} onClick={() => handleSpeakOption(options[1], 1)}>{options[1]}</OptionButton>
-      </OptionsRow>
-      <OptionsRow>
-        <OptionButton $clicked = {clicked === 2} onClick={() => handleSpeakOption(options[2], 2)}>{options[2]}</OptionButton>
-        <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
-      </OptionsRow>
+      <OptionsContainer>
+        <ButtonRow>
+          <SmallButton onClick={() => handleCheckCacheAndGenerateOptions(true)} disabled={loading || !text}>
+            {loading ? "Generating options..." : "Regenerate Options"}
+          </SmallButton>
+          <SmallButton onClick={handleSpeakAllOptions} disabled={options.every(option => option.trim() === "")}>
+            Speak All Options
+          </SmallButton>
+        </ButtonRow>
+        {error && <ErrorMsg>{error}</ErrorMsg>}
+        <OptionsRow>
+          <OptionButton $clicked = {clicked === 0} onClick={() => handleSpeakOption(options[0], 0)}>{options[0]}</OptionButton>
+          <OptionButton $clicked = {clicked === 1} onClick={() => handleSpeakOption(options[1], 1)}>{options[1]}</OptionButton>
+        </OptionsRow>
+        <OptionsRow>
+          <OptionButton $clicked = {clicked === 2} onClick={() => handleSpeakOption(options[2], 2)}>{options[2]}</OptionButton>
+          <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
+        </OptionsRow>
+      </OptionsContainer>
     </Container>
   );
 } 

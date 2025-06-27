@@ -37,6 +37,40 @@ export const Button = styled.button<{ $green?: boolean; $red?: boolean }>`
   }
 `;
 
+export const SmallButton = styled.button<{ $green?: boolean; $red?: boolean }>`
+  background: ${({ $green, $red }) =>
+    $red ? "#e53935" : $green ? "#22c55e" : "#2196f3"};
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+  &:hover {
+    background: ${({ $green, $red }) =>
+      $red ? "#b71c1c" : $green ? "#16a34a" : "#1976d2"};
+  }
+`;
+
+export const ButtonRow = styled.div`
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+`;
+
+export const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+  margin: 12px 0;
+`;
+
 export const TextArea = styled.textarea`
   background: #23242a;
   color: #ccc;
@@ -164,12 +198,12 @@ export const OptionsRow = styled.div`
   display: flex;
   gap: 16px;
   width: 100%;
-  margin: 8px 0;
+  margin: 0;
 `;
 
 export const OptionButton = styled(Button)<{$clicked?: boolean;}>`
   width: 100%;
-  margin: 0px;
+  margin: 0;
   font-size: 1.1rem;
   padding: 50px;
   background: ${({$clicked}) =>
@@ -185,7 +219,7 @@ export const ErrorMsg = styled.div`
   background: #e53935;
   border-radius: 6px;
   padding: 10px 16px;
-  margin: 12px 0;
+  margin: 0;
   width: 100%;
   text-align: center;
   font-weight: 500;
