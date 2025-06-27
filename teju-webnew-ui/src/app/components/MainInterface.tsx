@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
-import { FaMicrophone, FaStop, FaVolumeUp, FaTimes, FaExpand, FaCompress } from "react-icons/fa";
-import { Container, Title, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, FullscreenButton } from "./MainInterface.styles";
+import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
+import { Container, Title, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -28,53 +28,10 @@ export default function MainInterface() {
   const [contextRecognizing, setContextRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     console.log("Updated options:", options);
   }, [options]);
-
-  // Fullscreen functionality
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      // Enter fullscreen
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if ((document.documentElement as any).webkitRequestFullscreen) {
-        (document.documentElement as any).webkitRequestFullscreen();
-      } else if ((document.documentElement as any).msRequestFullscreen) {
-        (document.documentElement as any).msRequestFullscreen();
-      }
-      setIsFullscreen(true);
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if ((document as any).webkitExitFullscreen) {
-        (document as any).webkitExitFullscreen();
-      } else if ((document as any).msExitFullscreen) {
-        (document as any).msExitFullscreen();
-      }
-      setIsFullscreen(false);
-    }
-  };
-
-  // Listen for fullscreen changes
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('msfullscreenchange', handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.removeEventListener('msfullscreenchange', handleFullscreenChange);
-    };
-  }, []);
 
   // Enhanced punctuation processing function
   const improvePunctuation = (text: string): string => {
@@ -534,9 +491,6 @@ export default function MainInterface() {
 
   return (
     <Container>
-      <FullscreenButton onClick={toggleFullscreen} title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}>
-        {isFullscreen ? <FaCompress /> : <FaExpand />}
-      </FullscreenButton>
       <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>
         <ContextTextArea
