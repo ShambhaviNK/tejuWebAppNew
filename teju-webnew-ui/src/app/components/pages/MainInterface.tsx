@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp } from "react-icons/fa";
-import { LoginBox, Container, Title, Button, InputArea, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { LoginBox, Container, Title, Button, InputArea, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, TextArea } from "../MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -17,6 +17,7 @@ declare global {
 type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
+  const [signupStep, setSignupStep] = useState(1);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [username, setUsername] = useState("");
@@ -32,12 +33,102 @@ export default function MainInterface() {
   const [contextRecognizing, setContextRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const handleNext = (next_num: number) => {
+    const form = formRef.current;
+    if (form && form.checkValidity()) {
+      setSignupStep(next_num);
+    } else {
+      form?.reportValidity();
+    }
+  };
+  const renderSignupForm = () => {
+    switch(signupStep) {
+      case 1:
+        console.log(1);
+        return (
+          <form id="form-1">
+          <h1>Sign Up</h1>
+          <h2>Basic Information</h2>
+          <InputArea
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <InputArea
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          <InputArea
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" onClick={()=>handleNext(2)}>Next</Button>
+          </form>
+        );
+      case 2:
+        console.log(2);
+        return (
+          <form id="form-2">
+          <h1>Sign Up</h1>
+          <h2>Basic Information</h2>
+            <InputArea
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+            <InputArea
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <Button onClick={() => setSignupStep(1)}>Back</Button>
+            <Button type="submit" onClick={()=>handleNext(3)}>Next</Button>
+          </form>
+        );
+      case 3:
+        console.log(3);
+        return (
+          <form id="form-3">
+            <h1>Sign Up</h1>
+            <Button onClick={() => setSignupStep(2)}>Back</Button>
+            <Button type="submit" onClick={()=>handleNext(4)}>Next</Button>
+          </form>
+        );
+      case 4:
+        console.log(4);
+        return (
+          <>
+            <p>Confirm your details:</p>
+            <p>Username: {username}</p>
+            <p>Email: {email}</p>
+            <Button onClick={() => setSignupStep(2)}>Back</Button>
+            <Button onClick={handleSignup}>Submit</Button>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
   const handleLogin = () => {
     // In real app, call backend API here
-    if (username === "admin" && password === "1234") {
+    if (name === "admin" && password === "1234") {
       localStorage.setItem("auth", "true"); // persist login
       setIsLoggedIn(true);
+      localStorage.setItem('isLoggedIn', 'true');
       setUsername("");
       setPassword("");
     } else {
@@ -53,6 +144,7 @@ export default function MainInterface() {
   const handleLogout = () => {
     localStorage.removeItem("auth");
     setIsLoggedIn(false);
+    localStorage.removeItem('isLoggedIn');
   };
 
   useEffect(() => {
@@ -515,9 +607,9 @@ export default function MainInterface() {
       </div>
       <Container>
         <InputArea
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
         />
         <InputArea
           type="password"
@@ -528,7 +620,7 @@ export default function MainInterface() {
         <Button onClick={handleLogin}>Login</Button>
       </Container>
     </div>
-): (<div>HELP</div>))
+): (renderSignupForm()))
 : (
   <div>
     <div className="header">
@@ -576,4 +668,4 @@ export default function MainInterface() {
   </div>
 )}</div>
   );
-} 
+}
