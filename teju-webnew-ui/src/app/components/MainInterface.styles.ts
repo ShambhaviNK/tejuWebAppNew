@@ -69,9 +69,9 @@ export const ContextTextAreaContainer = styled.div`
   margin: 12px 0;
 `;
 
-export const ContextMicIcon = styled.button<{ $recognizing?: boolean }>`
+export const ContextMicIcon = styled.button<{ $recognizing?: boolean; $right?: number }>`
   position: absolute;
-  right: 12px;
+  right: ${({ $right }) => ($right !== undefined ? `${$right}px` : '12px')};
   top: 50%;
   transform: translateY(-50%);
   background: ${({ $recognizing }) => $recognizing ? "#e53935" : "#22c55e"};
@@ -189,4 +189,24 @@ export const ErrorMsg = styled.div`
   width: 100%;
   text-align: center;
   font-weight: 500;
+`;
+
+export const ContextClearButton = styled.button`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #e53935;
+  color: #111;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  outline: none;
+  padding: 0;
 `; 

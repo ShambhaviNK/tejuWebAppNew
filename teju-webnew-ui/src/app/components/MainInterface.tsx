@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
-import { FaMicrophone, FaStop, FaVolumeUp } from "react-icons/fa";
-import { Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
+import { Container, Title, Button, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -463,9 +463,17 @@ export default function MainInterface() {
           value={context}
           onChange={e => setContext(e.target.value)}
         />
-        <ContextMicIcon $recognizing={contextRecognizing} onClick={handleRecognizeContextSpeech}>
+        <ContextMicIcon $recognizing={contextRecognizing} onClick={handleRecognizeContextSpeech} $right={52}>
           {contextRecognizing ? <FaStop /> : <FaMicrophone />}
         </ContextMicIcon>
+        <ContextClearButton
+          type="button"
+          aria-label="Clear context"
+          onMouseDown={e => e.preventDefault()}
+          onClick={() => setContext("")}
+        >
+          <FaTimes />
+        </ContextClearButton>
       </ContextTextAreaContainer>
       <TextAreaContainer>
         <TextAreaWithIcon
