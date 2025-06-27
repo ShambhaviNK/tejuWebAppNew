@@ -18,6 +18,7 @@ type SpeechRecognitionEvent = typeof window.SpeechRecognitionEvent;
 
 export default function MainInterface() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [text, setText] = useState("");
@@ -46,7 +47,7 @@ export default function MainInterface() {
 
   const handleSignup = () => {
     // In real app, call backend API here
-    // setIsLoggedIn(null);
+    setIsSigningUp(true);
   };
 
   const handleLogout = () => {
@@ -506,7 +507,7 @@ export default function MainInterface() {
   };
 
   return (<div>
-    {!isLoggedIn ? (
+    {!isLoggedIn ? (!isSigningUp ? (
     <div>
       <div className="header">
       <div className="spacer"></div>
@@ -527,7 +528,8 @@ export default function MainInterface() {
         <Button onClick={handleLogin}>Login</Button>
       </Container>
     </div>
-) : (
+): (<div>HELP</div>))
+: (
   <div>
     <div className="header">
       <div className="spacer"></div>

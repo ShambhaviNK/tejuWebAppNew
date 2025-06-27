@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const LoginBox = styled.div`
-  background: #23242a;
   margin: auto auto;
   display: flex;
   flex-direction: row;
