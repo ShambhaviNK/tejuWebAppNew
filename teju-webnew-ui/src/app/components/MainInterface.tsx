@@ -460,7 +460,7 @@ export default function MainInterface() {
       return;
     }
     
-    // Filter out empty options
+    // Filter out empty options 
     const nonEmptyOptions = options.filter(option => option.trim() !== "");
     
     if (nonEmptyOptions.length === 0) {
