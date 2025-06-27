@@ -485,7 +485,7 @@ export default function MainInterface() {
       return utterance;
     });
     
-    // Start speaking the first option
+    // Start speaking the first option 
     window.speechSynthesis.speak(utterances[0]);
   };
 
