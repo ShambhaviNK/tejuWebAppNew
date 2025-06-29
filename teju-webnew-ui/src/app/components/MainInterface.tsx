@@ -460,32 +460,44 @@ export default function MainInterface() {
       return;
     }
     
-    // Filter out empty options 
-    const nonEmptyOptions = options.filter(option => option.trim() !== "");
+    // // Filter out empty options 
+    // const nonEmptyOptions = options.filter(option => option.trim() !== "");
     
-    if (nonEmptyOptions.length === 0) {
-      alert("No options available to speak.");
-      return;
-    }
+    // if (nonEmptyOptions.length === 0) {
+    //   alert("No options available to speak.");
+    //   return;
+    // }
     
     // Create a queue of utterances
-    const utterances = nonEmptyOptions.map((option, index) => {
+    const utterances = options.map((option, index) => {
       const utterance = new window.SpeechSynthesisUtterance(option);
-      
-      // Add a small pause between options
-      utterance.onend = () => {
-        if (index < nonEmptyOptions.length - 1) {
-          // Add a small delay before speaking the next option
-          setTimeout(() => {
-            window.speechSynthesis.speak(utterances[index + 1]);
-          }, 500);
+        // Add a small pause between options
+        utterance.onstart = () => {
+          if(option.trim() !== "") {
+            setClicked(index);
+          }
         }
-      };
-      
+        utterance.onend = () => {
+          if (index < options.length - 1) {
+            if(options[index+1].trim() !== "") {
+              // Add a small delay before speaking the next option
+              setTimeout(() => {
+                // setClicked(index+1);
+                console.log("speaking this now : ", index+1);
+                window.speechSynthesis.speak(utterances[index + 1]);
+              }, 500);
+            }
+            else {
+              window.speechSynthesis.speak(utterances[index + 1]);
+            }
+          }
+          setClicked(-1);
+        };
       return utterance;
     });
     
     // Start speaking the first option 
+    // setClicked(0);
     window.speechSynthesis.speak(utterances[0]);
   };
 
