@@ -71,6 +71,19 @@ export const OptionsContainer = styled.div`
   margin: 12px 0;
 `;
 
+export const InputArea = styled.input`
+  background: #23242a;
+  color: #ccc;
+  border: 2px solid #333;
+  border-radius: 8px;
+  width: 100%;
+  min-height: 60px;
+  margin: 12px 0;
+  padding: 12px;
+  font-size: 1rem;
+  resize: none;
+`;
+
 export const TextArea = styled.textarea`
   background: #23242a;
   color: #ccc;
@@ -243,4 +256,4 @@ export const ContextClearButton = styled.button`
   font-size: 18px;
   outline: none;
   padding: 0;
-`;
+`;  
