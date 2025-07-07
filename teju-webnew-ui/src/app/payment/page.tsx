@@ -80,7 +80,7 @@ export default function PaymentPage() {
           setError(stripeError.message || 'Payment failed');
         }
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -149,7 +149,7 @@ export default function PaymentPage() {
             marginBottom: 16,
             lineHeight: 1.5
           }}>
-            Hi {user.name}, let's get you started with the best communication experience.
+            Hi {user.name}, let&apos;s get you started with the best communication experience.
           </p>
         </div>
 
@@ -227,7 +227,7 @@ export default function PaymentPage() {
             marginBottom: 16,
             textAlign: "center"
           }}>
-            What's included:
+            What&apos;s included:
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {PLAN.features.map((feature, index) => (

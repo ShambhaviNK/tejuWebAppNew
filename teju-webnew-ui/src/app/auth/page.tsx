@@ -115,7 +115,7 @@ export default function AuthPage() {
       } else {
         setError(data.error || 'An error occurred. Please try again.');
       }
-    } catch (err) {
+    } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
@@ -151,7 +151,7 @@ export default function AuthPage() {
         setError('Google sign-in failed. Please try again.');
       }
       // Supabase will redirect, so no need to handle success here
-    } catch (err) {
+    } catch {
       setError('Google sign-in failed. Please try again.');
     } finally {
       setLoading(false);

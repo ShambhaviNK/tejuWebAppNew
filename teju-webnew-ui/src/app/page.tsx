@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import MainInterface from "./components/MainInterface";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);

@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Return user data without password
-    const { password: _, ...userWithoutPassword } = user;
+    const userWithoutPassword = { ...user };
+    delete userWithoutPassword.password;
 
     return NextResponse.json({
       message: 'Sign in successful',
