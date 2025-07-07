@@ -214,7 +214,7 @@ export default function PaymentPage() {
             position: "relative",
             zIndex: 1
           }}>
-            Start your free trial today
+            Start your Subscription today
           </p>
         </div>
 
