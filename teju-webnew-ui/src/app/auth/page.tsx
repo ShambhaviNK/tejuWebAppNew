@@ -87,6 +87,9 @@ export default function AuthPage() {
         password: formData.password
       };
 
+      //this adds your info to the db 
+      await supabase.auth.signUp(formData);
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
