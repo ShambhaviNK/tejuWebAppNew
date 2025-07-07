@@ -104,9 +104,13 @@ export default function AuthPage() {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
         
-        // Redirect to onboarding after a short delay
+        // Redirect to payment after sign-up, onboarding after sign-in
         setTimeout(() => {
-          router.push('/onboarding');
+          if (isSignUp) {
+            router.push('/payment');
+          } else {
+            router.push('/onboarding');
+          }
         }, 1500);
       } else {
         setError(data.error || 'An error occurred. Please try again.');
@@ -178,7 +182,7 @@ export default function AuthPage() {
       <AuthForm onSubmit={handleSubmit}>
         <AuthTitle>{isSignUp ? 'Create Account' : 'Sign In'}</AuthTitle>
         
-        {/* Email and password fields */}
+        {/* Email field */}
         <div style={{ position: 'relative' }}>
           <FaEnvelope style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
           <Input
@@ -192,6 +196,23 @@ export default function AuthPage() {
           />
         </div>
 
+        {/* Full Name field (only for sign up) */}
+        {isSignUp && (
+          <div style={{ position: 'relative' }}>
+            <FaUser style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
+            <Input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              style={{ paddingLeft: '40px' }}
+              required
+            />
+          </div>
+        )}
+
+        {/* Password field */}
         <div style={{ position: 'relative' }}>
           <FaLock style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
           <Input
@@ -289,21 +310,6 @@ export default function AuthPage() {
               </button>
             </div>
             {forgotMsg && <div style={{ color: forgotMsg.includes('sent') ? '#22c55e' : '#e53935', marginTop: 8, fontSize: '0.98rem', textAlign: 'center' }}>{forgotMsg}</div>}
-          </div>
-        )}
-
-        {isSignUp && (
-          <div style={{ position: 'relative' }}>
-            <FaUser style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} />
-            <Input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleInputChange}
-              style={{ paddingLeft: '40px' }}
-              required
-            />
           </div>
         )}
 

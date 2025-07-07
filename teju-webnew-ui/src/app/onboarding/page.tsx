@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const questions = [
@@ -24,7 +24,19 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if user came from successful payment
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      setPaymentSuccess(true);
+      // Store payment success in localStorage
+      localStorage.setItem('payment_success', 'true');
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setAnswers({ ...answers, [questions[step].key]: e.target.value });
@@ -86,6 +98,23 @@ export default function OnboardingPage() {
         position: "relative",
         overflow: "hidden",
       }}>
+        {/* Payment Success Message */}
+        {paymentSuccess && (
+          <div style={{
+            background: "rgba(34, 197, 94, 0.13)",
+            border: "1.5px solid #22c55e",
+            color: "#22c55e",
+            padding: "12px 16px",
+            borderRadius: 7,
+            marginBottom: 12,
+            fontSize: "1rem",
+            textAlign: "center",
+            width: "100%"
+          }}>
+            🎉 Payment successful! Welcome to Teju Web Premium!
+          </div>
+        )}
+
         <div style={{ width: "100%", minHeight: 120, transition: "all 0.4s cubic-bezier(.77,0,.18,1)", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <label htmlFor={questions[step].key} style={{ color: "#fff", fontSize: "1.18rem", fontWeight: 600, textAlign: "center", width: '100%' }}>
             {questions[step].label}
