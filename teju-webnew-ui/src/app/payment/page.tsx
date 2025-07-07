@@ -297,7 +297,7 @@ export default function PaymentPage() {
               boxShadow: "0 4px 16px rgba(33,150,243,0.3)",
             }}
           >
-            {loading ? "Processing..." : `Start Free Trial - $${PLAN.price}/${PLAN.interval}`}
+            {loading ? "Processing..." : `Start Subscription - $${PLAN.price}/${PLAN.interval}`}
           </button>
           
           <button
