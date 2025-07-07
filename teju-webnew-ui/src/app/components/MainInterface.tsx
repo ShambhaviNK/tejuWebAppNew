@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, Title, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, MainHeading, SubHeading } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -382,7 +382,6 @@ export default function MainInterface() {
 
   return (
     <Container>
-      <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>
         <ContextTextArea
           placeholder="Add any context or background information here..."

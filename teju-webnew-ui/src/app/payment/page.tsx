@@ -2,12 +2,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadStripe } from '@stripe/stripe-js';
+import { MainHeading, SubHeading } from '../components/MainInterface.styles';
 
 // Initialize Stripe (you'll need to add your publishable key to .env.local)
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const PLAN = {
-  name: "Teju Web Premium",
+  name: "Teju Talks Premium",
   price: 19.99,
   currency: "USD",
   interval: "month",
@@ -112,16 +113,21 @@ export default function PaymentPage() {
     <div style={{
       minHeight: "100vh",
       display: "flex",
+      flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       background: "linear-gradient(135deg, #23242a 0%, #181920 100%)",
       padding: 20,
     }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32, marginTop: 32 }}>
+        <MainHeading style={{ marginBottom: 8, fontSize: '2.5rem' }}>Teju Talks</MainHeading>
+        <SubHeading style={{ marginBottom: 0, fontSize: '1.15rem', maxWidth: 400 }}>AI-Powered Communication Assistant</SubHeading>
+      </div>
       <div style={{
         background: "rgba(34, 36, 44, 0.98)",
         borderRadius: 20,
         padding: "44px 32px 32px 32px",
-        maxWidth: 480,
+        maxWidth: 600,
         width: "100%",
         boxShadow: "0 8px 32px rgba(0,0,0,0.22), 0 1.5px 0 rgba(255,255,255,0.04)",
         border: "1.5px solid #292a33",
@@ -141,7 +147,7 @@ export default function PaymentPage() {
             marginBottom: 8,
             letterSpacing: "-0.5px"
           }}>
-            Welcome to Teju Web! 🎉
+            Welcome to Teju Talks! 🎉
           </h1>
           <p style={{ 
             color: "#ccc", 

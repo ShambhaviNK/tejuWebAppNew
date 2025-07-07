@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { AuthContainer, AuthForm, AuthToggle, AuthTitle, Input, Button, ErrorMessage, SuccessMessage, Divider } from './auth.styles';
 import { FaEye, FaEyeSlash, FaUser, FaEnvelope, FaLock, FaGoogle } from 'react-icons/fa';
 import { supabase } from '@/lib/supabase';
+import { MainHeading, SubHeading } from '../components/MainInterface.styles';
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -178,7 +179,11 @@ export default function AuthPage() {
   };
 
   return (
-    <AuthContainer>
+    <AuthContainer style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '0', background: 'none' }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32, marginTop: 32 }}>
+        <MainHeading style={{ marginBottom: 8, fontSize: '2.5rem' }}>Teju Talks</MainHeading>
+        <SubHeading style={{ marginBottom: 0, fontSize: '1.15rem', maxWidth: 400 }}>AI-Powered Communication Assistant</SubHeading>
+      </div>
       <AuthForm onSubmit={handleSubmit}>
         <AuthTitle>{isSignUp ? 'Create Account' : 'Sign In'}</AuthTitle>
         

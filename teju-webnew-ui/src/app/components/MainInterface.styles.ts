@@ -27,6 +27,37 @@ export const Title = styled.h2`
   letter-spacing: -0.5px;
 `;
 
+export const MainHeading = styled.h1`
+  background: linear-gradient(135deg, #2196f3 0%, #21cbf3 50%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  
+  @media (max-width: 700px) {
+    font-size: 2.2rem;
+  }
+`;
+
+export const SubHeading = styled.p`
+  color: #ccc;
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 32px;
+  font-weight: 400;
+  line-height: 1.4;
+  
+  @media (max-width: 700px) {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+`;
+
 export const Button = styled.button<{ $green?: boolean; $red?: boolean }>`
   background: ${({ $green, $red }) =>
     $red ? "#e53935" : $green ? "#22c55e" : "linear-gradient(90deg, #2196f3 60%, #21cbf3 100%)"};

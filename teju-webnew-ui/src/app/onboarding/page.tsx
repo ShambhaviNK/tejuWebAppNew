@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { MainHeading, SubHeading } from '../components/MainInterface.styles';
 
 const questions = [
   { key: "name", label: "What is your name?", type: "text" },
@@ -78,11 +79,16 @@ export default function OnboardingPage() {
     <div style={{
       minHeight: "100vh",
       display: "flex",
+      flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       background: "linear-gradient(135deg, #23242a 0%, #181920 100%)",
       padding: 20,
     }}>
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 32, marginTop: 32 }}>
+        <MainHeading style={{ marginBottom: 8, fontSize: '2.5rem' }}>Teju Talks</MainHeading>
+        <SubHeading style={{ marginBottom: 0, fontSize: '1.15rem', maxWidth: 400 }}>AI-Powered Communication Assistant</SubHeading>
+      </div>
       <div style={{
         background: "rgba(34, 36, 44, 0.98)",
         borderRadius: 20,
@@ -100,18 +106,15 @@ export default function OnboardingPage() {
       }}>
         {/* Payment Success Message */}
         {paymentSuccess && (
-          <div style={{
-            background: "rgba(34, 197, 94, 0.13)",
-            border: "1.5px solid #22c55e",
-            color: "#22c55e",
-            padding: "12px 16px",
-            borderRadius: 7,
-            marginBottom: 12,
-            fontSize: "1rem",
-            textAlign: "center",
-            width: "100%"
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '20px', 
+            backgroundColor: '#d4edda', 
+            color: '#155724', 
+            borderRadius: '8px', 
+            marginBottom: '20px' 
           }}>
-            🎉 Payment successful! Welcome to Teju Web Premium!
+            🎉 Payment successful! Welcome to Teju Talks Premium!
           </div>
         )}
 
