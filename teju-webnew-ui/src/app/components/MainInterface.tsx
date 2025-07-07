@@ -26,12 +26,26 @@ export default function MainInterface() {
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
   const [contextRecognizing, setContextRecognizing] = useState(false);
-  const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     console.log("Updated options:", options);
   }, [options]);
+
+  // Load user profile data on component mount
+  useEffect(() => {
+    try {
+      const profileData = localStorage.getItem('user_profile');
+      if (profileData) {
+        const parsed = JSON.parse(profileData);
+        setUserProfile(parsed);
+        console.log('User profile loaded:', parsed);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }, []);
 
   // Enhanced punctuation processing function
   const improvePunctuation = (text: string): string => {
@@ -61,31 +75,10 @@ export default function MainInterface() {
     // Improve conjunction punctuation
     processed = processed.replace(/\s(and|but|so|or|however|therefore|meanwhile|furthermore|moreover|nevertheless|consequently|accordingly|thus|hence|as\s+a\s+result)\s/gi, ', $1 ');
     
-    // Add commas before conjunctions in compound sentences
-    processed = processed.replace(/(\w+)\s+(and|but|or)\s+(\w+)/gi, '$1, $2 $3');
-    
-    // Fix spacing around punctuation
-    processed = processed
-      .replace(/\s+([,.!?])/g, '$1') // Remove spaces before punctuation
-      .replace(/([,.!?])([A-Za-z])/g, '$1 $2') // Add space after punctuation if followed by letter
-      .replace(/\s+/g, ' ') // Fix multiple spaces
-      .trim();
-    
     // Ensure proper sentence ending
     if (!/[.!?]$/.test(processed)) {
-      // If it ends with a question word or sounds like a question, add ?
-      if (/\b(what|when|where|who|why|how|which|whose|whom|is|are|was|were|do|does|did|can|could|will|would|should|may|might)\b/i.test(processed)) {
-        processed += '?';
-      } else {
-        processed += '.';
-      }
+      processed = processed + '.';
     }
-    
-    // Fix common speech recognition errors
-    processed = processed
-      .replace(/\b(um|uh|er|ah)\b/gi, '') // Remove any remaining filler words
-      .replace(/\s+/g, ' ') // Final space cleanup
-      .trim();
     
     return processed;
   };
@@ -110,7 +103,7 @@ export default function MainInterface() {
         recognitionRef.current.interimResults = true; // Enable interim results for better UX
         recognitionRef.current.lang = "en-US";
         recognitionRef.current.maxAlternatives = 3; // Get multiple alternatives
-        recognitionRef.current.serviceURI = ""; // Use default service
+        recognitionRef.current.serviceURI = "";
         
         // Enhanced result processing
         recognitionRef.current.onresult = (event: unknown) => {
@@ -143,91 +136,30 @@ export default function MainInterface() {
           setText(displayText);
         };
         
-        // Enhanced error handling
-        recognitionRef.current.onerror = (event: unknown) => {
-          const errorEvent = event as { error: string };
-          if (errorEvent.error === "aborted") {
-            setRecognizing(false);
-            return;
-          }
-          console.error('Speech recognition error:', errorEvent.error);
-          
-          let errorMessage = "Speech recognition error: ";
-          switch (errorEvent.error) {
-            case 'no-speech':
-              errorMessage += "No speech detected. Please try speaking again.";
-              break;
-            case 'audio-capture':
-              errorMessage += "Audio capture failed. Please check your microphone.";
-              break;
-            case 'not-allowed':
-              errorMessage += "Microphone access denied. Please allow microphone access.";
-              break;
-            case 'network':
-              errorMessage += "Network error. Please check your internet connection.";
-              break;
-            case 'service-not-allowed':
-              errorMessage += "Speech recognition service not available.";
-              break;
-            default:
-              errorMessage += errorEvent.error;
-          }
-          
-          setError(errorMessage);
+        recognitionRef.current.onerror = (event: any) => {
+          console.error('Speech recognition error:', event.error);
           setRecognizing(false);
+          if (event.error === 'no-speech') {
+            alert('No speech detected. Please try again.');
+          } else if (event.error === 'audio-capture') {
+            alert('Microphone access denied. Please allow microphone access and try again.');
+          } else if (event.error === 'not-allowed') {
+            alert('Microphone access denied. Please allow microphone access and try again.');
+          } else {
+            alert(`Speech recognition error: ${event.error}`);
+          }
         };
         
-        // Enhanced end handling
         recognitionRef.current.onend = () => {
-          console.log('Speech recognition ended');
           setRecognizing(false);
-        };
-        
-        // Add start handling
-        recognitionRef.current.onstart = () => {
-          console.log('Speech recognition started');
-          setError(""); // Clear any previous errors
-        };
-        
-        // Add audio start/end handling
-        recognitionRef.current.onaudiostart = () => {
-          console.log('Audio capturing started');
-        };
-        
-        recognitionRef.current.onaudioend = () => {
-          console.log('Audio capturing ended');
-        };
-        
-        recognitionRef.current.onsoundstart = () => {
-          console.log('Sound detected');
-        };
-        
-        recognitionRef.current.onsoundend = () => {
-          console.log('Sound ended');
-        };
-        
-        recognitionRef.current.onspeechstart = () => {
-          console.log('Speech started');
-        };
-        
-        recognitionRef.current.onspeechend = () => {
-          console.log('Speech ended');
+          if (text.trim()) {
+            handleCheckCacheAndGenerateOptions(false);
+          }
         };
       }
       
-      if (!recognizing) {
-        accumulatedTranscriptRef.current = "";
-        try {
-          recognitionRef.current.start();
-          setRecognizing(true);
-        } catch (error) {
-          console.error('Failed to start speech recognition:', error);
-          setError("Failed to start speech recognition. Please try again.");
-        }
-      } else {
-        recognitionRef.current.stop();
-        setRecognizing(false);
-      }
+      recognitionRef.current.start();
+      setRecognizing(true);
     }
   };
 
@@ -245,7 +177,7 @@ export default function MainInterface() {
       contextRecognitionRef.current.interimResults = true; // Enable interim results for better UX
       contextRecognitionRef.current.lang = "en-US";
       contextRecognitionRef.current.maxAlternatives = 3; // Get multiple alternatives
-      contextRecognitionRef.current.serviceURI = ""; // Use default service
+      contextRecognitionRef.current.serviceURI = "";
       
       // Enhanced result processing
       contextRecognitionRef.current.onresult = (event: unknown) => {
@@ -278,89 +210,31 @@ export default function MainInterface() {
         setContext(displayText);
       };
       
-      // Enhanced error handling
-      contextRecognitionRef.current.onerror = (event: unknown) => {
-        const errorEvent = event as { error: string };
-        if (errorEvent.error === "aborted") {
-          setContextRecognizing(false);
-          return;
-        }
-        console.error('Context speech recognition error:', errorEvent.error);
-        
-        let errorMessage = "Context speech recognition error: ";
-        switch (errorEvent.error) {
-          case 'no-speech':
-            errorMessage += "No speech detected. Please try speaking again.";
-            break;
-          case 'audio-capture':
-            errorMessage += "Audio capture failed. Please check your microphone.";
-            break;
-          case 'not-allowed':
-            errorMessage += "Microphone access denied. Please allow microphone access.";
-            break;
-          case 'network':
-            errorMessage += "Network error. Please check your internet connection.";
-            break;
-          case 'service-not-allowed':
-            errorMessage += "Speech recognition service not available.";
-            break;
-          default:
-            errorMessage += errorEvent.error;
-        }
-        
-        setError(errorMessage);
+      contextRecognitionRef.current.onerror = (event: any) => {
+        console.error('Context speech recognition error:', event.error);
         setContextRecognizing(false);
+        if (event.error === 'no-speech') {
+          alert('No speech detected. Please try again.');
+        } else if (event.error === 'audio-capture') {
+          alert('Microphone access denied. Please allow microphone access and try again.');
+        } else if (event.error === 'not-allowed') {
+          alert('Microphone access denied. Please allow microphone access and try again.');
+        } else {
+          alert(`Speech recognition error: ${event.error}`);
+        }
       };
       
-      // Enhanced end handling
       contextRecognitionRef.current.onend = () => {
-        console.log('Context speech recognition ended');
         setContextRecognizing(false);
-      };
-      
-      // Add start handling
-      contextRecognitionRef.current.onstart = () => {
-        console.log('Context speech recognition started');
-        setError(""); // Clear any previous errors
-      };
-      
-      // Add audio start/end handling
-      contextRecognitionRef.current.onaudiostart = () => {
-        console.log('Context audio capturing started');
-      };
-      
-      contextRecognitionRef.current.onaudioend = () => {
-        console.log('Context audio capturing ended');
-      };
-      
-      contextRecognitionRef.current.onsoundstart = () => {
-        console.log('Context sound detected');
-      };
-      
-      contextRecognitionRef.current.onsoundend = () => {
-        console.log('Context sound ended');
-      };
-      
-      contextRecognitionRef.current.onspeechstart = () => {
-        console.log('Context speech started');
-      };
-      
-      contextRecognitionRef.current.onspeechend = () => {
-        console.log('Context speech ended');
       };
     }
     
-    if (!contextRecognizing) {
-      try {
-        contextRecognitionRef.current.start();
-        setContextRecognizing(true);
-      } catch (error) {
-        console.error('Failed to start context speech recognition:', error);
-        setError("Failed to start context speech recognition. Please try again.");
-      }
-    } else {
+    if (contextRecognizing) {
       contextRecognitionRef.current.stop();
       setContextRecognizing(false);
+    } else {
+      contextRecognitionRef.current.start();
+      setContextRecognizing(true);
     }
   };
 
@@ -372,12 +246,17 @@ export default function MainInterface() {
       const fullPrompt = context ? `Context: ${context}\n\nQuestion: ${text}` : text;
       
       console.log('Making single API call for prompt:', fullPrompt);
+      console.log('User profile being sent:', userProfile);
       
       // Single API call - backend will check cache first, then generate if needed
       const res = await fetch("/api/generate-options", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: fullPrompt, regenerate: isRegen }),
+        body: JSON.stringify({ 
+          prompt: fullPrompt, 
+          regenerate: isRegen,
+          userProfile: userProfile // Send user profile data
+        }),
       });
       
       const data = await res.json();

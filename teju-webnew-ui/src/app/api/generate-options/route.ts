@@ -62,6 +62,34 @@ function formatOptions(options: string[]): string {
   }).join('\n');
 }
 
+// Function to create personalized prompt with user profile data
+function createPersonalizedPrompt(basePrompt: string, userProfile: any): string {
+  if (!userProfile) {
+    return basePrompt;
+  }
+
+  const profileContext = `
+User Profile Context:
+- Name: ${userProfile.name || 'Not specified'}
+- Age: ${userProfile.age || 'Not specified'}
+- Likes: ${userProfile.likes_food || 'Not specified'}
+- Important People: ${userProfile.important_people || 'Not specified'}
+- Activities: ${userProfile.activities || 'Not specified'}
+- Classmates: ${userProfile.classmates || 'Not specified'}
+- Family: ${userProfile.family || 'Not specified'}
+- Teachers: ${userProfile.teachers || 'Not specified'}
+- Parent Names: ${userProfile.call_parents || 'Not specified'}
+- Siblings: ${userProfile.siblings || 'Not specified'}
+- Nicknames: ${userProfile.nicknames || 'Not specified'}
+- Things that frustrate: ${userProfile.frustrate || 'Not specified'}
+- Things that make happy: ${userProfile.happy || 'Not specified'}
+
+Please consider this user's personal context when generating options. Make the responses more relevant and personalized to their specific situation, preferences, and relationships.
+`;
+
+  return `${profileContext}\n\nQuestion: ${basePrompt}`;
+}
+
 // Optimized cache management
 function cleanCache() {
   const now = Date.now();
@@ -126,10 +154,13 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export async function POST(req: NextRequest) {
-  const { prompt, regenerate } = await req.json();
+  const { prompt, regenerate, userProfile } = await req.json();
   if (!prompt) {
     return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
   }
+
+  // Create personalized prompt with user profile data
+  const personalizedPrompt = createPersonalizedPrompt(prompt, userProfile);
 
   // First, check if the user is providing their own options
   const userOptions = extractUserOptions(prompt);
@@ -145,7 +176,7 @@ export async function POST(req: NextRequest) {
 
   // Always check cache first (unless explicitly regenerating)
   if (!regenerate) {
-    const cacheResult = fastCacheLookup(prompt);
+    const cacheResult = fastCacheLookup(personalizedPrompt);
     if (cacheResult.found) {
       return NextResponse.json({ options: cacheResult.data, cached: true });
     } else {
@@ -166,7 +197,7 @@ export async function POST(req: NextRequest) {
           role: "system", 
           content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD)" 
         },
-        { role: "user", content: prompt },
+        { role: "user", content: personalizedPrompt },
       ],
       max_tokens: 100, // Reduced for speed
       temperature: 0.5, // Lower temperature for more consistent results
@@ -188,7 +219,7 @@ export async function POST(req: NextRequest) {
     const formattedAIOptions = formatOptions(shuffledAIOptions);
 
     // Store in cache with timestamp (store the formatted/shuffled options)
-    cache[prompt] = { data: formattedAIOptions, timestamp: Date.now() };
+    cache[personalizedPrompt] = { data: formattedAIOptions, timestamp: Date.now() };
 
     return NextResponse.json({ options: formattedAIOptions, cached: false });
   } catch (error: any) {
