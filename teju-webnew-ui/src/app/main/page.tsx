@@ -125,15 +125,7 @@ export default function MainPage() {
             userSelect: 'none',
           }}
         >
-          <span style={{fontSize: '1.5rem', lineHeight: 1, marginRight: 2}}>👋</span>
-          <span style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '7px',
-          }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{verticalAlign: 'middle'}}><circle cx="12" cy="8" r="4" fill="#fff" fillOpacity="0.18"/><circle cx="12" cy="8" r="3.2" fill="#fff" fillOpacity="0.32"/><ellipse cx="12" cy="17" rx="7" ry="4" fill="#fff" fillOpacity="0.13"/></svg>
-            {username && <span style={{fontWeight: 700}}>{username}</span>}
-          </span>
+          {username && <span style={{fontWeight: 700}}>Hi, {username}</span>}
         </div>
         <button
           onClick={handleSignOut}
