@@ -344,7 +344,7 @@ export default function PaymentPage() {
                 transition: "all 0.2s",
               }}
             >
-              Free Demo Trial
+              Free 14 Day Demo Trial
             </button>
           )}
         </div>

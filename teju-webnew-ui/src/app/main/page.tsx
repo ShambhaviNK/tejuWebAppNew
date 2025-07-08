@@ -36,7 +36,7 @@ export default function MainPage() {
       if (isTrial && trialStart) {
         const now = Date.now();
         const trialStartTime = parseInt(trialStart, 10);
-        const oneDay = 24 * 60 * 60 * 1000;
+        const oneDay = 14 * 24 * 60 * 60 * 1000;
         if (now - trialStartTime > oneDay) {
           // Trial expired
           localStorage.removeItem('payment_success');
