@@ -32,7 +32,14 @@ export default function VerifyEmailPage() {
     setResendLoading(true);
     setResendMsg("");
     if (!userEmail) return;
-    const { error } = await supabase.auth.resend({ type: "signup", email: userEmail });
+    // const { error } = await supabase.auth.resend({ type: "signup", email: userEmail });
+    const { error } = await supabase.auth.resend(
+      {type: 'signup',
+        email: userEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}/payment`
+        }
+      })
     if (error) {
       setResendMsg("Failed to resend confirmation email.");
     } else {
