@@ -24,6 +24,8 @@ export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [trialExpired, setTrialExpired] = useState(false);
+  const [trialUsed, setTrialUsed] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -41,6 +43,16 @@ export default function PaymentPage() {
       router.push('/auth');
     }
   }, [router]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('trial_expired') === '1') {
+      setTrialExpired(true);
+    }
+    if (localStorage.getItem('trial_demo_used') === 'true') {
+      setTrialUsed(true);
+    }
+  }, []);
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -89,8 +101,11 @@ export default function PaymentPage() {
   };
 
   const handleSkip = () => {
-    // Skip payment and go to onboarding
+    // Set trial start time and mark as trial
+    localStorage.setItem('trial_start', Date.now().toString());
     localStorage.setItem('payment_success', 'true');
+    localStorage.setItem('trial_demo', 'true');
+    localStorage.setItem('trial_demo_used', 'true'); // Mark trial as used
     router.push('/onboarding');
   };
 
@@ -279,6 +294,12 @@ export default function PaymentPage() {
           </div>
         )}
 
+        {trialExpired && (
+          <div style={{ color: '#e53935', marginBottom: 16, fontWeight: 600 }}>
+            Your free trial has expired. Please complete payment to continue using Teju Talks.
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div style={{ 
           display: "flex", 
@@ -306,25 +327,26 @@ export default function PaymentPage() {
           >
             {loading ? "Processing..." : `Start Subscription - $${PLAN.price}/${PLAN.interval}`}
           </button>
-          
-          <button
-            onClick={handleSkip}
-            disabled={loading}
-            style={{
-              background: "transparent",
-              color: "#ccc",
-              border: "1.5px solid #444",
-              borderRadius: 12,
-              fontWeight: 500,
-              fontSize: "1rem",
-              padding: "14px 24px",
-              cursor: loading ? "not-allowed" : "pointer",
-              width: "100%",
-              transition: "all 0.2s",
-            }}
-          >
-            Free Demo Trial
-          </button>
+          {!trialUsed && (
+            <button
+              onClick={handleSkip}
+              disabled={loading}
+              style={{
+                background: "transparent",
+                color: "#ccc",
+                border: "1.5px solid #444",
+                borderRadius: 12,
+                fontWeight: 500,
+                fontSize: "1rem",
+                padding: "14px 24px",
+                cursor: loading ? "not-allowed" : "pointer",
+                width: "100%",
+                transition: "all 0.2s",
+              }}
+            >
+              Free Demo Trial
+            </button>
+          )}
         </div>
 
         {/* Security Notice */}

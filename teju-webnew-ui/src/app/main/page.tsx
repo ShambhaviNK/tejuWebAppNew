@@ -30,6 +30,23 @@ export default function MainPage() {
         return;
       }
       
+      // Check for trial demo
+      const isTrial = localStorage.getItem('trial_demo') === 'true';
+      const trialStart = localStorage.getItem('trial_start');
+      if (isTrial && trialStart) {
+        const now = Date.now();
+        const trialStartTime = parseInt(trialStart, 10);
+        const oneDay = 24 * 60 * 60 * 1000;
+        if (now - trialStartTime > oneDay) {
+          // Trial expired
+          localStorage.removeItem('payment_success');
+          localStorage.removeItem('trial_demo');
+          localStorage.removeItem('trial_start');
+          router.push('/payment?trial_expired=1');
+          return;
+        }
+      }
+
       // User is authenticated and has completed profile
       setIsAuthenticated(true);
     } catch {
