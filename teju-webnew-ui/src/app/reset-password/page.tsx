@@ -2,10 +2,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { FaEye, FaEyeSlash} from 'react-icons/fa';
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -118,7 +121,7 @@ export default function ResetPasswordPage() {
         <form onSubmit={handleSubmit} style={{ width: "100%", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ position: "relative" }}>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="New Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -134,11 +137,27 @@ export default function ResetPasswordPage() {
                 transition: "border 0.2s, box-shadow 0.2s",
               }}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: '#666',
+                cursor: 'pointer'
+              }}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           <div style={{ position: "relative" }}>
             <input
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Confirm New Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -154,6 +173,22 @@ export default function ResetPasswordPage() {
                 transition: "border 0.2s, box-shadow 0.2s",
               }}
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                color: '#666',
+                cursor: 'pointer'
+              }}
+            >
+              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
 
           {error && (
