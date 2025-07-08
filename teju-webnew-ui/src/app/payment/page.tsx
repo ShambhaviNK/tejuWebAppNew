@@ -90,6 +90,7 @@ export default function PaymentPage() {
 
   const handleSkip = () => {
     // Skip payment and go to onboarding
+    localStorage.setItem('payment_success', 'true');
     router.push('/onboarding');
   };
 

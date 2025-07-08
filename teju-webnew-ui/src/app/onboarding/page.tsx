@@ -22,13 +22,19 @@ const questions = [
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<any>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start as true
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    // Check if payment is complete
+    const paymentComplete = localStorage.getItem('payment_success');
+    if (!paymentComplete) {
+      router.push('/payment');
+      return;
+    }
     // Check if user came from successful payment
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
@@ -37,7 +43,24 @@ export default function OnboardingPage() {
       // Store payment success in localStorage
       localStorage.setItem('payment_success', 'true');
     }
-  }, []);
+    setLoading(false); // Only set loading to false if allowed to proceed
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#23242a',
+        color: '#fff',
+        fontSize: '1.2rem'
+      }}>
+        Loading...
+      </div>
+    );
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setAnswers({ ...answers, [questions[step].key]: e.target.value });
