@@ -101,19 +101,24 @@ export default function AuthPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(isSignUp ? 'Account created successfully! Redirecting...' : 'Signed in successfully! Redirecting...');
+        setSuccess(isSignUp ? 'Account created successfully! Please check your email to confirm your account.' : 'Signed in successfully! Redirecting...');
         
         // Store user data in localStorage
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
         
-        // Redirect to payment after sign-up, onboarding after sign-in
-        setTimeout(() => {
+        setTimeout(async () => {
           if (isSignUp) {
-            router.push('/payment');
+            router.push('/verify-email');
           } else {
-            router.push('/onboarding');
+            // For sign in, check if confirmed
+            const { data: authData } = await supabase.auth.getUser();
+            if (authData?.user && !authData.user.email_confirmed_at) {
+              router.push('/verify-email');
+            } else {
+              router.push('/payment');
+            }
           }
         }, 1500);
       } else {
