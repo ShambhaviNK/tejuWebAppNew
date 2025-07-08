@@ -29,14 +29,40 @@ export default function ResetPasswordPage() {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { data, error } = await supabase.auth.getSession();
       if (error) {
-        setError(error.message || "Failed to reset password.");
-      } else {
-        setSuccess("Password reset successful! Redirecting to sign in...");
-        setTimeout(() => {
-          router.push("/auth");
-        }, 1800);
+        console.error('Session error:', error.message);
+      } else if (data.session && data.session.user) {
+        const email = data.session.user.email;
+        console.log('User email:', email);
+        console.log("data: ", data)
+        const payload = {
+            email: email, 
+            password: password
+          };
+
+        const response = await fetch('/api/auth/update-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const response_data = await response.json();
+        // if (error) {
+        //   setError(error.message || "Failed to reset password.");
+
+        if (!response.ok) {
+          console.log("HIHIIHIHIHIHIIHI");
+          console.log("data.error: ", response_data.error);
+          setError(response_data.error || "Failed to reset password.");
+        } else {
+          setSuccess("Password reset successful! Redirecting to sign in...");
+          setTimeout(() => {
+            router.push("/auth");
+          }, 1800);
+        }
       }
     } catch {
       setError("Failed to reset password. Please try again.");
