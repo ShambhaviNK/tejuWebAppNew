@@ -23,6 +23,7 @@ export default function AuthPage() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotMsg, setForgotMsg] = useState('');
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,43 +87,48 @@ export default function AuthPage() {
         email: formData.email,
         password: formData.password
       };
+      if(isSignUp && !agreed) {
+        setError('Please check the TOS agreement to continue');
+      }
+      else {
 
-      //this adds your info to the db 
-      await supabase.auth.signUp(formData);
+        //this adds your info to the db 
+        await supabase.auth.signUp(formData);
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        setSuccess(isSignUp ? 'Account created successfully! Please check your email to confirm your account.' : 'Signed in successfully! Redirecting...');
-        
-        // Store user data in localStorage
-        if (data.user) {
-          localStorage.setItem('user', JSON.stringify(data.user));
-        }
-        
-        setTimeout(async () => {
-          if (isSignUp) {
-            router.push('/verify-email');
-          } else {
-            // For sign in, check if confirmed
-            const { data: authData } = await supabase.auth.getUser();
-            if (authData?.user && !authData.user.email_confirmed_at) {
+        if (response.ok) {
+          setSuccess(isSignUp ? 'Account created successfully! Please check your email to confirm your account.' : 'Signed in successfully! Redirecting...');
+          
+          // Store user data in localStorage
+          if (data.user) {
+            localStorage.setItem('user', JSON.stringify(data.user));
+          }
+          
+          setTimeout(async () => {
+            if (isSignUp) {
               router.push('/verify-email');
             } else {
-              router.push('/payment');
+              // For sign in, check if confirmed
+              const { data: authData } = await supabase.auth.getUser();
+              if (authData?.user && !authData.user.email_confirmed_at) {
+                router.push('/verify-email');
+              } else {
+                router.push('/payment');
+              }
             }
-          }
-        }, 1500);
-      } else {
-        setError(data.error || 'An error occurred. Please try again.');
+          }, 1500);
+        } else {
+          setError(data.error || 'An error occurred. Please try again.');
+        }
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -356,8 +362,19 @@ export default function AuthPage() {
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            <div style={{ marginTop: '1rem' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+          />
+          I agree to the <a href="/tos" target="_blank" style={{ color: '#2196f3' }}>Terms of Service</a>
+        </label>
+      </div>
           </>
         )}
+        
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {success && <SuccessMessage>{success}</SuccessMessage>}
