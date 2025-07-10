@@ -90,11 +90,11 @@ export const ContextTextArea = styled.textarea`
   border: 2px solid #333;
   border-radius: 8px;
   width: 100%;
-  min-height: 40px;
+  min-height: 100px;
   margin: 12px 0;
-  padding: 12px 50px 12px 12px;
+  padding: 18px 50px 18px 16px;
   font-size: 0.9rem;
-  resize: none;
+  resize: vertical;
 `;
 
 export const ContextTextAreaContainer = styled.div`

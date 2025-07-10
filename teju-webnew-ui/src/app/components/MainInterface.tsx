@@ -503,7 +503,6 @@ export default function MainInterface() {
 
   return (
     <Container>
-      <Title>Model loaded successfully</Title>
       <ContextTextAreaContainer>
         <ContextTextArea
           placeholder="Add any context or background information here..."
