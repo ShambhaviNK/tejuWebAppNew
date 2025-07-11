@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useRef, useEffect} from "react";
-import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
-import { Analytics } from "@vercel/analytics/react"
+import { useEffect, useRef, useState } from "react";
+import { FaMicrophone, FaStop, FaTimes, FaVolumeUp } from "react-icons/fa";
+import { ButtonRow, Container, ContextClearButton, ContextMicIcon, ContextTextArea, ContextTextAreaContainer, ErrorMsg, HelpLink, MicIcon, OptionButton, OptionsContainer, OptionsRow, SmallButton, SpeakerIcon, TextAreaContainer, TextAreaWithIcon } from "./MainInterface.styles";
+import { Analytics } from "@vercel/analytics/next";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
