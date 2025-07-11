@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MainInterface from "../components/MainInterface";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function MainPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -87,6 +88,7 @@ export default function MainPage() {
 
   return (
     <div>
+      
       {/* Beautified glassy top bar */}
       <div
         style={{
@@ -166,6 +168,7 @@ export default function MainPage() {
       </div>
       {/* Add margin to main content so it doesn't go under the bar */}
       <div style={{ marginTop: TOP_BAR_HEIGHT + 16, transition: 'margin-top 0.2s' }}>
+        <Analytics/>
         <MainInterface />
       </div>
     </div>
