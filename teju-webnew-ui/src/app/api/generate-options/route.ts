@@ -15,21 +15,21 @@ const MAX_CACHE_SIZE = 1000; // Maximum cache entries
 function extractUserOptions(text: string): string[] | null {
   // Patterns to match user-provided options
   const optionPatterns = [
-    // Pattern 1: "A) option A, B) option B, C) option C, D) option D"
-    /(?:^|\s)([A-D]\)\s*[^A-D]+)(?:\s*,\s*([A-D]\)\s*[^A-D]+))?(?:\s*,\s*([A-D]\)\s*[^A-D]+))?(?:\s*,\s*([A-D]\)\s*[^A-D]+))?/gi,
-    // Pattern 2: "Option A is..., Option B is..., Option C is..., Option D is..."
-    /(?:^|\s)(?:option\s+([A-D])\s+is\s+[^A-D]+)(?:\s*,\s*(?:option\s+([A-D])\s+is\s+[^A-D]+))?(?:\s*,\s*(?:option\s+([A-D])\s+is\s+[^A-D]+))?(?:\s*,\s*(?:option\s+([A-D])\s+is\s+[^A-D]+))?/gi,
-    // Pattern 3: "First option is..., Second option is..., Third option is..., Fourth option is..."
-    /(?:^|\s)(?:first\s+option\s+is\s+[^,]+)(?:\s*,\s*(?:second\s+option\s+is\s+[^,]+))?(?:\s*,\s*(?:third\s+option\s+is\s+[^,]+))?(?:\s*,\s*(?:fourth\s+option\s+is\s+[^,]+))?/gi,
+    // Pattern 1: "A) option A, B) option B, C) option C, D) option D, E) option E"
+    /(?:^|\s)([A-E]\)\s*[^A-E]+)(?:\s*,\s*([A-E]\)\s*[^A-E]+))?(?:\s*,\s*([A-E]\)\s*[^A-E]+))?(?:\s*,\s*([A-E]\)\s*[^A-E]+))?(?:\s*,\s*([A-E]\)\s*[^A-E]+))?/gi,
+    // Pattern 2: "Option A is..., Option B is..., Option C is..., Option D is..., Option E is..."
+    /(?:^|\s)(?:option\s+([A-E])\s+is\s+[^A-E]+)(?:\s*,\s*(?:option\s+([A-E])\s+is\s+[^A-E]+))?(?:\s*,\s*(?:option\s+([A-E])\s+is\s+[^A-E]+))?(?:\s*,\s*(?:option\s+([A-E])\s+is\s+[^A-E]+))?(?:\s*,\s*(?:option\s+([A-E])\s+is\s+[^A-E]+))?/gi,
+    // Pattern 3: "First option is..., Second option is..., Third option is..., Fourth option is..., Fifth option is..."
+    /(?:^|\s)(?:first\s+option\s+is\s+[^,]+)(?:\s*,\s*(?:second\s+option\s+is\s+[^,]+))?(?:\s*,\s*(?:third\s+option\s+is\s+[^,]+))?(?:\s*,\s*(?:fourth\s+option\s+is\s+[^,]+))?(?:\s*,\s*(?:fifth\s+option\s+is\s+[^,]+))?/gi,
   ];
 
   for (const pattern of optionPatterns) {
     const matches = text.match(pattern);
-    if (matches && matches.length >= 4) {
+    if (matches && matches.length >= 5) {
       // Extract the options from the matches
       const options = matches.slice(1).filter(Boolean);
-      if (options.length >= 4) {
-        return options.slice(0, 4);
+      if (options.length >= 5) {
+        return options.slice(0, 5);
       }
     }
   }
@@ -37,13 +37,13 @@ function extractUserOptions(text: string): string[] | null {
   // Try to find options with more flexible patterns
   const lines = text.split(/[.!?]/).map(line => line.trim()).filter(Boolean);
   const optionLines = lines.filter(line => 
-    /^[A-D]\)/.test(line) || 
-    /^option\s+[A-D]/i.test(line) ||
-    /^(first|second|third|fourth)\s+option/i.test(line)
+    /^[A-E]\)/.test(line) || 
+    /^option\s+[A-E]/i.test(line) ||
+    /^(first|second|third|fourth|fifth)\s+option/i.test(line)
   );
 
-  if (optionLines.length >= 4) {
-    return optionLines.slice(0, 4);
+  if (optionLines.length >= 5) {
+    return optionLines.slice(0, 5);
   }
 
   return null;
@@ -52,11 +52,11 @@ function extractUserOptions(text: string): string[] | null {
 // Function to format extracted options consistently
 function formatOptions(options: string[]): string {
   return options.map((option, index) => {
-    const letter = String.fromCharCode(65 + index); // A, B, C, D
+    const letter = String.fromCharCode(65 + index); // A, B, C, D, E
     // Clean up the option text
-    let cleanOption = option.replace(/^[A-D]\)\s*/, ''); // Remove existing A), B), etc.
-    cleanOption = cleanOption.replace(/^option\s+[A-D]\s+/i, ''); // Remove "option A" etc.
-    cleanOption = cleanOption.replace(/^(first|second|third|fourth)\s+option\s+/i, ''); // Remove "first option" etc.
+    let cleanOption = option.replace(/^[A-E]\)\s*/, ''); // Remove existing A), B), etc.
+    cleanOption = cleanOption.replace(/^option\s+[A-E]\s+/i, ''); // Remove "option A" etc.
+    cleanOption = cleanOption.replace(/^(first|second|third|fourth|fifth)\s+option\s+/i, ''); // Remove "first option" etc.
     cleanOption = cleanOption.trim();
     return `${letter}) ${cleanOption}`;
   }).join('\n');
@@ -134,7 +134,10 @@ export async function POST(req: NextRequest) {
   // First, check if the user is providing their own options
   const userOptions = extractUserOptions(prompt);
   if (userOptions && userOptions.length >= 4) {
-    const shuffledUserOptions = shuffleArray(userOptions);
+    // Take only the first 4 options, shuffle them, then add "Something else" as the 5th
+    const limitedUserOptions = userOptions.slice(0, 4);
+    const shuffledUserOptions = shuffleArray(limitedUserOptions);
+    shuffledUserOptions.push("Something else");
     const formattedOptions = formatOptions(shuffledUserOptions);
     return NextResponse.json({ 
       options: formattedOptions, 
@@ -164,7 +167,7 @@ export async function POST(req: NextRequest) {
       messages: [
         { 
           role: "system", 
-          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD)" 
+          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD) Maybe" 
         },
         { role: "user", content: prompt },
       ],
@@ -184,7 +187,10 @@ export async function POST(req: NextRequest) {
       const match = line.match(/^[A-D]\)\s*(.*)$/);
       return match ? match[1].trim() : line.trim();
     });
+    
+    // Shuffle only the first 4 options, then add "Something else" as the 5th
     const shuffledAIOptions = shuffleArray(aiOptions);
+    shuffledAIOptions.push("Something else");
     const formattedAIOptions = formatOptions(shuffledAIOptions);
 
     // Store in cache with timestamp (store the formatted/shuffled options)

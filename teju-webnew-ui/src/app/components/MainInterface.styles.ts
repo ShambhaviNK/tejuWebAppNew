@@ -201,8 +201,15 @@ export const OptionsRow = styled.div`
   margin: 0;
 `;
 
-export const OptionButton = styled(Button)<{$clicked?: boolean;}>`
+export const CenteredOptionsRow = styled.div`
+  display: flex;
+  justify-content: center;
   width: 100%;
+  margin: 0;
+`;
+
+export const OptionButton = styled(Button)<{$clicked?: boolean;}>`
+  width: calc(50% - 8px);
   margin: 0;
   font-size: 1.1rem;
   padding: 50px;
