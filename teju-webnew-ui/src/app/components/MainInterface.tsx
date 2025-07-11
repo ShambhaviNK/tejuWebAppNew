@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
 import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
+import { Analytics } from "@vercel/analytics/next"
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -503,6 +504,7 @@ export default function MainInterface() {
 
   return (
     <Container>
+      <Analytics/>
       <ContextTextAreaContainer>
         <ContextTextArea
           placeholder="Add any context or background information here..."
