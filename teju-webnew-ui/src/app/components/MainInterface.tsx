@@ -558,7 +558,7 @@ export default function MainInterface() {
         target="_blank" 
         rel="noopener noreferrer"
       >
-        Click here to know how to use the website
+        Click here to know how to use this App
       </HelpLink>
     </Container>
   );
