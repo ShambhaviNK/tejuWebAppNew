@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg } from "./MainInterface.styles";
+import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -553,6 +553,13 @@ export default function MainInterface() {
           <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
         </OptionsRow>
       </OptionsContainer>
+      <HelpLink 
+        href="https://drive.google.com/file/d/1atImcQoBWlJf8ELizJYXaGdweGA7cDTP/view?usp=sharing" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        Click here to know how to use the website
+      </HelpLink>
     </Container>
   );
 } 

@@ -244,3 +244,17 @@ export const ContextClearButton = styled.button`
   outline: none;
   padding: 0;
 `;
+
+export const HelpLink = styled.a`
+  color: #2196f3;
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-top: 20px;
+  display: block;
+  text-align: center;
+  transition: color 0.2s;
+  &:hover {
+    color: #1976d2;
+    text-decoration: underline;
+  }
+`;
