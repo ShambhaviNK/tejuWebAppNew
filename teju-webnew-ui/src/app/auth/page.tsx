@@ -88,7 +88,7 @@ export default function AuthPage() {
         password: formData.password
       };
       if(isSignUp && !agreed) {
-        setError('Please check the TOS agreement to continue');
+        setError('Please check the Terms of Service agreement to continue');
       }
       else {
 
