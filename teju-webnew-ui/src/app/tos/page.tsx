@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useState } from "react";
+// import { useRouter } from "next/navigation";
 
 
 export default function TermsOfService() {
@@ -18,7 +18,7 @@ export default function TermsOfService() {
 
       <p>
         By accessing and using this website, you accept and agree to be bound by the terms and provision of this
-        agreement. In addition, when using this website's services, you shall be subject to any posted guidelines or
+        agreement. In addition, when using this website&apos;s services, you shall be subject to any posted guidelines or
         rules applicable to such services.
       </p>
 
@@ -54,7 +54,7 @@ export default function TermsOfService() {
 
       <h2 style={{ marginTop: "1.5rem", color: "#fff" }}>6. Governing Law</h2>
       <p>
-        Any claim relating to this website shall be governed by the laws of the site owner's home jurisdiction without
+        Any claim relating to this website shall be governed by the laws of the site owner&apos;s home jurisdiction without
         regard to its conflict of law provisions.
       </p>
 
