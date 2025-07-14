@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
 import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink, FloatingFeedbackButton } from "./MainInterface.styles";
 import FeedbackPopup from "./FeedbackPopup";
+import { useRouter } from 'next/navigation';
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -30,6 +31,8 @@ export default function MainInterface() {
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     console.log("Updated options:", options);
@@ -556,6 +559,7 @@ export default function MainInterface() {
             <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
           </OptionsRow>
         </OptionsContainer>
+      <SmallButton onClick={() => router.push('/keyboard')}>Keyboard</SmallButton>
         <HelpLink 
           href="https://drive.google.com/file/d/1atImcQoBWlJf8ELizJYXaGdweGA7cDTP/view?usp=sharing" 
           target="_blank" 
