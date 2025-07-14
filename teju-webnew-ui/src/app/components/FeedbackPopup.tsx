@@ -77,7 +77,7 @@ export default function FeedbackPopup({ isOpen, onClose }: FeedbackPopupProps) {
     <FeedbackOverlay onClick={onClose}>
       <FeedbackModal onClick={(e: React.MouseEvent) => e.stopPropagation()}>
         <FeedbackHeader>
-          <h3>We'd love your feedback!</h3>
+          <h3>We&apos;d love your feedback!</h3>
           <CloseButton onClick={onClose}>
             <FaTimes />
           </CloseButton>
