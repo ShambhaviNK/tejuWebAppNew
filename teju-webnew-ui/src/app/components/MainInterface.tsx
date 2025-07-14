@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
+import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink, FloatingFeedbackButton } from "./MainInterface.styles";
+import FeedbackPopup from "./FeedbackPopup";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -28,6 +29,7 @@ export default function MainInterface() {
   const [contextRecognizing, setContextRecognizing] = useState(false);
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   useEffect(() => {
     console.log("Updated options:", options);
@@ -502,6 +504,7 @@ export default function MainInterface() {
   };
 
   return (
+    <>
       <Container>
         <ContextTextAreaContainer>
           <ContextTextArea
@@ -561,5 +564,10 @@ export default function MainInterface() {
           Click here to know how to use this App
         </HelpLink>
       </Container>
+      <FloatingFeedbackButton onClick={() => setShowFeedback(true)}>
+        Feedback
+      </FloatingFeedbackButton>
+      <FeedbackPopup isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
+    </>
   );
 } 
