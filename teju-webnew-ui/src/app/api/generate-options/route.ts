@@ -133,9 +133,9 @@ export async function POST(req: NextRequest) {
 
   // First, check if the user is providing their own options
   const userOptions = extractUserOptions(prompt);
-  if (userOptions && userOptions.length >= 4) {
-    // Take only the first 4 options, shuffle them, then add "Something else" as the 5th
-    const limitedUserOptions = userOptions.slice(0, 4);
+  if (userOptions && userOptions.length >= 3) {
+    // Take only the first 3 options, shuffle them, then add "Something else" as the 4th
+    const limitedUserOptions = userOptions.slice(0, 3);
     const shuffledUserOptions = shuffleArray(limitedUserOptions);
     shuffledUserOptions.push("Something else");
     const formattedOptions = formatOptions(shuffledUserOptions);
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
       messages: [
         { 
           role: "system", 
-          content: "Generate exactly 4 multiple choice options (A, B, C, D). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\nD) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) None\nD) Maybe" 
+          content: "Generate exactly 3 multiple choice options (A, B, C). Keep options concise. Format each option on a separate line:\nA) [option text]\nB) [option text]\nC) [option text]\n\nIf the question is a yes/no question, use these options:\nA) Yes\nB) No\nC) Maybe" 
         },
         { role: "user", content: prompt },
       ],
@@ -183,12 +183,12 @@ export async function POST(req: NextRequest) {
 
     // Parse options from the AI response, shuffle, then format
     const lines = temp.split(/\n|\r/).filter((line: string) => line.trim());
-    const aiOptions = lines.slice(0, 4).map((line: string) => {
-      const match = line.match(/^[A-D]\)\s*(.*)$/);
+    const aiOptions = lines.slice(0, 3).map((line: string) => {
+      const match = line.match(/^[A-C]\)\s*(.*)$/);
       return match ? match[1].trim() : line.trim();
     });
     
-    // Shuffle only the first 4 options, then add "Something else" as the 5th
+    // Shuffle only the first 3 options, then add "Something else" as the 4th
     const shuffledAIOptions = shuffleArray(aiOptions);
     shuffledAIOptions.push("Something else");
     const formattedAIOptions = formatOptions(shuffledAIOptions);

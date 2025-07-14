@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect} from "react";
 import { FaMicrophone, FaStop, FaVolumeUp, FaTimes } from "react-icons/fa";
-import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, CenteredOptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
+import { Container, SmallButton, ButtonRow, OptionsContainer, ContextTextArea, ContextTextAreaContainer, ContextMicIcon, ContextClearButton, TextAreaContainer, TextAreaWithIcon, MicIcon, SpeakerIcon, OptionsRow, OptionButton, ErrorMsg, HelpLink } from "./MainInterface.styles";
 
 // Minimal type definitions for SpeechRecognition API if not present
 declare global {
@@ -21,7 +21,7 @@ export default function MainInterface() {
   const [context, setContext] = useState("");
   const recognitionRef = useRef<any>(null);
   const contextRecognitionRef = useRef<any>(null);
-  const [options, setOptions] = useState(["", "", "", "", ""]);
+  const [options, setOptions] = useState(["", "", "", ""]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
@@ -385,7 +385,7 @@ export default function MainInterface() {
       
       if (data.error) {
         setError(data.error);
-        setOptions(["", "", "", "", ""]);
+        setOptions(["", "", "", ""]);
         return;
       }
       
@@ -395,33 +395,33 @@ export default function MainInterface() {
         // Parse options from the API response
         let opts: string[] = [];
         
-        // Split by newlines and parse A) B) C) D) E) format
+        // Split by newlines and parse A) B) C) D) format
         const lines = data.options.split(/\n|\r/).filter((line: string) => line.trim());
-        opts = lines.slice(0, 5).map((line: string) => {
-          // Remove the A) B) C) D) E) prefix and trim
-          const match = line.match(/^[A-E]\)\s*(.*)$/);
+        opts = lines.slice(0, 4).map((line: string) => {
+          // Remove the A) B) C) D) prefix and trim
+          const match = line.match(/^[A-D]\)\s*(.*)$/);
           return match ? match[1].trim() : line.trim();
         });
         
         console.log('Parsed options:', opts);
         
-        // Ensure we have exactly 5 options
-        if (opts.length === 5) {
+        // Ensure we have exactly 4 options
+        if (opts.length === 4) {
           setOptions(opts);
           console.log(`Options set (cached: ${data.cached})`);
         } else {
           // Fallback: put the entire response in first option, others empty
-          setOptions([data.options, "", "", "", ""]);
+          setOptions([data.options, "", "", ""]);
           console.log('Fallback: using entire response as first option');
         }
       } else {
         setError("No options returned from API.");
-        setOptions(["", "", "", "", ""]);
+        setOptions(["", "", "", ""]);
       }
     } catch (error) {
       console.error('API call failed:', error);
       setError("Failed to generate options. Please try again.");
-      setOptions(["", "", "", "", ""]);
+      setOptions(["", "", "", ""]);
     } finally {
       setLoading(false);
     }
@@ -552,9 +552,6 @@ export default function MainInterface() {
             <OptionButton $clicked = {clicked === 2} onClick={() => handleSpeakOption(options[2], 2)}>{options[2]}</OptionButton>
             <OptionButton $clicked = {clicked === 3} onClick={() => handleSpeakOption(options[3], 3)}>{options[3]}</OptionButton>
           </OptionsRow>
-          <CenteredOptionsRow>
-            <OptionButton $clicked = {clicked === 4} onClick={() => handleSpeakOption(options[4], 4)}>{options[4]}</OptionButton>
-          </CenteredOptionsRow>
         </OptionsContainer>
         <HelpLink 
           href="https://drive.google.com/file/d/1atImcQoBWlJf8ELizJYXaGdweGA7cDTP/view?usp=sharing" 
