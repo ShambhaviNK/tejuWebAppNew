@@ -29,21 +29,26 @@ export default function OnboardingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if payment is complete
+    // Check if user came from successful payment
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    
+    if (sessionId) {
+      // User completed payment successfully
+      setPaymentSuccess(true);
+      localStorage.setItem('payment_success', 'true');
+      setLoading(false);
+      return;
+    }
+    
+    // Check if payment is complete (for users who already have payment_success set)
     const paymentComplete = localStorage.getItem('payment_success');
     if (!paymentComplete) {
       router.push('/payment');
       return;
     }
-    // Check if user came from successful payment
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session_id');
-    if (sessionId) {
-      setPaymentSuccess(true);
-      // Store payment success in localStorage
-      localStorage.setItem('payment_success', 'true');
-    }
-    setLoading(false); // Only set loading to false if allowed to proceed
+    
+    setLoading(false);
   }, [router]);
 
   if (loading) {

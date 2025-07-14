@@ -28,6 +28,23 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         console.log('Payment successful for session:', session.id);
         
+        // Update payment status
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/update-payment-status`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: session.metadata?.userId,
+              sessionId: session.id,
+              status: 'completed'
+            }),
+          });
+        } catch (error) {
+          console.error('Failed to update payment status:', error);
+        }
+        
         // Here you could update your database to mark the user as subscribed
         // For now, we'll just log the success
         console.log('User subscribed:', {
