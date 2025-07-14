@@ -265,3 +265,36 @@ export const HelpLink = styled.a`
     text-decoration: underline;
   }
 `;
+
+export const FloatingFeedbackButton = styled.button`
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  min-width: 120px;
+  height: 48px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
+  transition: all 0.2s;
+  z-index: 100;
+  
+  &:hover {
+    background: #1976d2;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+`;
