@@ -152,6 +152,37 @@
     max-height: 70px !important;
   }
   
+  /* Mobile pastel colors for keyboard rows */
+  .simple-keyboard .hg-row:nth-child(1) .hg-button {
+    background: #FFE5E5 !important; /* Light pink pastel */
+    color: #D63384 !important;
+    border: 1px solid #FFB3B3 !important;
+  }
+  
+  .simple-keyboard .hg-row:nth-child(2) .hg-button {
+    background: #E5F3FF !important; /* Light blue pastel */
+    color: #0D6EFD !important;
+    border: 1px solid #B3D9FF !important;
+  }
+  
+  .simple-keyboard .hg-row:nth-child(3) .hg-button {
+    background: #E5FFE5 !important; /* Light green pastel */
+    color: #198754 !important;
+    border: 1px solid #B3FFB3 !important;
+  }
+  
+  .simple-keyboard .hg-row:nth-child(4) .hg-button {
+    background: #FFF2E5 !important; /* Light orange pastel */
+    color: #FD7E14 !important;
+    border: 1px solid #FFD9B3 !important;
+  }
+  
+  .simple-keyboard .hg-row:nth-child(5) .hg-button {
+    background: #F0E5FF !important; /* Light purple pastel */
+    color: #6F42C1 !important;
+    border: 1px solid #D9B3FF !important;
+  }
+  
   /* Remove column gaps specifically */
   .simple-keyboard .hg-button + .hg-button {
     margin-left: 0 !important;
@@ -312,4 +343,56 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Pastel colors for keyboard rows */
+.simple-keyboard .hg-row:nth-child(1) .hg-button {
+  background: #FFE5E5 !important; /* Light pink pastel */
+  color: #D63384 !important;
+  border: 1px solid #FFB3B3 !important;
+}
+
+.simple-keyboard .hg-row:nth-child(2) .hg-button {
+  background: #E5F3FF !important; /* Light blue pastel */
+  color: #0D6EFD !important;
+  border: 1px solid #B3D9FF !important;
+}
+
+.simple-keyboard .hg-row:nth-child(3) .hg-button {
+  background: #E5FFE5 !important; /* Light green pastel */
+  color: #198754 !important;
+  border: 1px solid #B3FFB3 !important;
+}
+
+.simple-keyboard .hg-row:nth-child(4) .hg-button {
+  background: #FFF2E5 !important; /* Light orange pastel */
+  color: #FD7E14 !important;
+  border: 1px solid #FFD9B3 !important;
+}
+
+.simple-keyboard .hg-row:nth-child(5) .hg-button {
+  background: #F0E5FF !important; /* Light purple pastel */
+  color: #6F42C1 !important;
+  border: 1px solid #D9B3FF !important;
+}
+
+/* Hover effects for pastel buttons */
+.simple-keyboard .hg-row:nth-child(1) .hg-button:hover {
+  background: #FFCCCC !important;
+}
+
+.simple-keyboard .hg-row:nth-child(2) .hg-button:hover {
+  background: #CCE5FF !important;
+}
+
+.simple-keyboard .hg-row:nth-child(3) .hg-button:hover {
+  background: #CCFFCC !important;
+}
+
+.simple-keyboard .hg-row:nth-child(4) .hg-button:hover {
+  background: #FFE5CC !important;
+}
+
+.simple-keyboard .hg-row:nth-child(5) .hg-button:hover {
+  background: #E5CCFF !important;
 }
