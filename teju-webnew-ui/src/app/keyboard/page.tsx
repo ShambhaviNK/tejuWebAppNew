@@ -426,7 +426,6 @@ export default function KeyboardPage() {
           alignItems: 'center', 
           justifyContent: 'center',
           gap: 0,
-          padding: 0,
           margin: 0
         }}>
           <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
