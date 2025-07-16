@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TextArea } from "../components/MainInterface.styles";
 import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
@@ -36,7 +36,15 @@ export default function KeyboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
   const keyboardRef = useRef<any>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+
+  // Focus text area when component mounts
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, []);
 
   const handleClick = () => {
     setChecked(!checked);
@@ -259,6 +267,7 @@ export default function KeyboardPage() {
         <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', marginTop: 32, marginBottom: 32 }}>
           <div style={{ position: 'relative', width: '100%' }}>
             <TextArea
+              ref={textAreaRef}
               placeholder="Enter your message here..."
               value={text}
               onChange={(e) => {
