@@ -51,7 +51,7 @@ export default function KeyboardPage() {
 
   return (
     <>
-      <SmallButton onClick={() => router.push("/")}
+      <button onClick={() => router.push("/")}
         style={{
           position: "fixed",
           top: 18,
@@ -73,7 +73,7 @@ export default function KeyboardPage() {
         }}
         onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
         onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
-        aria-label="Back"><FaArrowLeft></FaArrowLeft></SmallButton>
+        aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
       <div style={{
         width: '100vw',
         height: '100vh',
