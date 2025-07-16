@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TextArea } from "../components/MainInterface.styles";
-import { FaArrowLeft, FaVolumeUp, FaBackspace, FaLock, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "./page.css";
@@ -292,7 +292,7 @@ export default function KeyboardPage() {
         onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
         onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
         aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
-            <div style={{
+      <div style={{
         width: '100vw',
         height: '100vh',
         background: "#23242a",
@@ -329,8 +329,8 @@ export default function KeyboardPage() {
             <div style={{ position: 'relative', width: '100%' }}>
               <TextArea
                 ref={textAreaRef}
-                placeholder="Enter your message here..."
-                value={text}
+            placeholder="Enter your message here..."
+            value={text}
                 onChange={(e) => {
                   setText(e.target.value);
                   getWordPredictions(e.target.value);
@@ -341,50 +341,50 @@ export default function KeyboardPage() {
                     textAreaRef.current.setSelectionRange(text.length, text.length);
                   }
                 }}
-                style={{
+            style={{
                   fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
                   padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
                   borderRadius: isMobile ? 16 : 20,
-                  border: "2px solid #2196f3",
-                  width: "100%",
+              border: "2px solid #2196f3",
+              width: "100%",
                   minHeight: isMobile ? 80 : 100,
-                  background: "#181920",
-                  color: "#fff",
-                  outline: "none",
-                  resize: "none",
-                  boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-                  boxSizing: 'border-box',
+              background: "#181920",
+              color: "#fff",
+              outline: "none",
+              resize: "none",
+              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+              boxSizing: 'border-box',
                   maxWidth: 900,
-                  fontFamily: 'inherit',
-                  transition: 'border 0.2s',
-                }}
-              />
-              <button 
-                onClick={() => handleSpeakOption(text)}
-                style={{
-                  position: 'absolute',
+              fontFamily: 'inherit',
+              transition: 'border 0.2s',
+            }}
+          />
+          <button
+            onClick={() => handleSpeakOption(text)}
+            style={{
+              position: 'absolute',
                   right: isMobile ? 12 : 18,
                   top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: '#2196f3',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '50%',
+              transform: 'translateY(-50%)',
+              background: '#2196f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
                   width: isMobile ? 40 : 48,
                   height: isMobile ? 40 : 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
                   fontSize: isMobile ? 20 : 28,
-                  boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
-                  transition: 'background 0.2s',
-                  zIndex: 2
-                }}
-              >
-                <FaVolumeUp />
-              </button>
-            </div>
+              boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+              transition: 'background 0.2s',
+              zIndex: 2
+            }}
+          >
+            <FaVolumeUp />
+          </button>
+        </div>
           </div>
 
           {/* Word Prediction Bar */}
@@ -457,7 +457,7 @@ export default function KeyboardPage() {
                     };
 
                     return (
-                      <button
+                <button
                         key={index}
                         onClick={() => handlePredictionClick(prediction)}
                         style={buttonStyle}
@@ -480,7 +480,7 @@ export default function KeyboardPage() {
                         title={isCommonWord ? 'Common word' : 'Dictionary word'}
                       >
                         {prediction}
-                      </button>
+                </button>
                     );
                   })
                 )}
