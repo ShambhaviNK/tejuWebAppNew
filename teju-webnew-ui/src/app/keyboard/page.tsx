@@ -1,10 +1,13 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { FaTimes, FaStar } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { TextAreaContainer, TextArea, SmallButton } from "../components/MainInterface.styles";
+import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
+import { ImFontSize } from "react-icons/im";
+import "./page.css";
+
 
 export default function KeyboardPage() {
   const [text, setText] = useState("");
@@ -44,22 +47,99 @@ export default function KeyboardPage() {
 
   return (
     <>
-      <SmallButton onClick={() => router.push("/")}>Back</SmallButton>
-      <TextAreaContainer>
+      <SmallButton onClick={() => router.push("/")}
+        style={{
+          position: "fixed",
+          top: 18,
+          left: 18,
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          background: "#2196f3",
+          color: "#fff",
+          border: "2px solid #fff2",
+          boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 26,
+          cursor: "pointer",
+          transition: "background 0.2s, border 0.2s",
+          zIndex: 10,
+        }}
+        onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
+        onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
+        aria-label="Back"><FaArrowLeft></FaArrowLeft></SmallButton>
+       <div style={{
+        background: "#23242a",
+        borderRadius: 24,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.22)",
+        width: '98vw',
+        maxWidth: 480,
+        margin: '0 auto',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: 'flex-end',
+        padding: '24px 12px 18px 12px',
+        boxSizing: 'border-box',
+        minHeight: '20vh',
+        maxHeight: '1000vh'
+      }}>
+        {/* <div style={{ position: 'relative', width: '100%', maxWidth: 440 }}></div> */}
+      {/* <TextAreaContainer style={{ position: 'relative' }}> */}
         <TextArea
           placeholder="Enter your message here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-        />
-        <SmallButton onClick={() => handleSpeakOption(text)}>Speak Aloud</SmallButton>
-      </TextAreaContainer>
-
+          style={{
+            fontSize: 'clamp(16px, 4vw, 22px)',
+            padding: '16px 60px 16px 16px',
+            borderRadius: 14,
+            border: "2px solid #2196f3",
+            width: "100%",
+            minHeight: 48,
+            background: "#181920",
+            color: "#fff",
+            outline: "none",
+            resize: "none",
+            boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+            boxSizing: 'border-box',
+            maxWidth: 440,
+            fontFamily: 'inherit',
+            transition: 'border 0.2s',
+          }}>
+          </TextArea>
+        <SmallButton onClick={() => handleSpeakOption(text)}
+        style={{
+              position: 'absolute',
+              right: '5%',
+              top: '25%',
+              background: '#2196f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
+              width: 40,
+              height: 40,
+              display: 'flex',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontSize: 50,
+              boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+              transition: 'background 0.2s',
+              zIndex: 10
+            }}
+        >
+            <FaVolumeUp style={{strokeWidth: 2, transformOrigin: '50% 50%', width: '100px', height: '100px'}}></FaVolumeUp></SmallButton>
+      {/* </TextAreaContainer> */}
       <Keyboard
         keyboardRef={r => (keyboardRef.current = r)}
-        // onChange={onChange}
-        useMouseEvents={false}
-        // updateCaretOnSelectionChange={false}
+        theme={"hg-theme-default hg-layout-default myTheme"}
         onKeyPress={onKeyPress}
+        physicalKeyboardHighlight={true}
+        layoutName="default"
         // physicalKeyboardHighlightPress={true}
         layout={{
           default: [
@@ -69,7 +149,14 @@ export default function KeyboardPage() {
             "{space}"
           ]
         }}
+        // buttonTheme={[
+        //   {
+        //     class: "hg-black-text",
+        //     buttons: ""
+        //   }
+        // ]}
       />
+      </div>
     </>
   );
 }
