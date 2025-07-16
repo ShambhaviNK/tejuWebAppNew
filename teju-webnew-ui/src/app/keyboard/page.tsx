@@ -251,8 +251,7 @@ export default function KeyboardPage() {
     }, 0);
   };
 
-  // Calculate dynamic layout based on screen size and suggestions
-  const hasSuggestions = predictions.length > 0 || isLoading;
+  // Calculate dynamic layout based on screen size
   const isMobile = screenSize.width <= 768;
   const isTablet = screenSize.width > 768 && screenSize.width <= 1024;
   
