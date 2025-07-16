@@ -155,6 +155,11 @@ export default function KeyboardPage() {
             onKeyPress={onKeyPress}
             physicalKeyboardHighlight={true}
             layoutName= {caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")}
+            display= {{
+            '{bksp}': 'BACKSPACE',
+            '{enter}': 'ENTER',
+            '{lock}': 'CAPS',
+            '{space}': 'SPACE'}}
             layout={{
               qwerty: [
                 "1 2 3 4 5 6 7 8 9 0",
