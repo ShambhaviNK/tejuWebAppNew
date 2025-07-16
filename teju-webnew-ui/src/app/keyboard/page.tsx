@@ -251,30 +251,18 @@ export default function KeyboardPage() {
     }, 0);
   };
 
-  // Calculate dynamic layout based on screen size and suggestions
-  const hasSuggestions = predictions.length > 0 || isLoading;
+  // Calculate dynamic layout based on screen size
   const isMobile = screenSize.width <= 768;
   const isTablet = screenSize.width > 768 && screenSize.width <= 1024;
   
-  // Dynamic height calculation
-  const getKeyboardHeight = () => {
-    if (isMobile) {
-      return hasSuggestions ? '45vh' : '55vh';
-    } else if (isTablet) {
-      return hasSuggestions ? '50vh' : '60vh';
-    } else {
-      return hasSuggestions ? '55vh' : '65vh';
-    }
-  };
-
-  // Dynamic button size calculation
+  // Fixed button size calculation - not affected by suggestions
   const getButtonSize = () => {
     if (isMobile) {
-      return hasSuggestions ? 'clamp(50px, 12vw, 80px)' : 'clamp(60px, 15vw, 100px)';
+      return 'clamp(55px, 13vw, 90px)';
     } else if (isTablet) {
-      return hasSuggestions ? 'clamp(60px, 10vw, 100px)' : 'clamp(70px, 12vw, 120px)';
+      return 'clamp(65px, 11vw, 110px)';
     } else {
-      return hasSuggestions ? 'clamp(70px, 8vw, 120px)' : 'clamp(80px, 10vw, 140px)';
+      return 'clamp(75px, 9vw, 130px)';
     }
   };
 
@@ -303,14 +291,14 @@ export default function KeyboardPage() {
         onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
         onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
         aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
-      <div style={{
+            <div style={{
         width: '100vw',
         height: '100vh',
         background: "#23242a",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         boxSizing: 'border-box',
         padding: 0,
         position: 'fixed',
@@ -318,185 +306,201 @@ export default function KeyboardPage() {
         left: 0,
         zIndex: 1
       }}>
-        <div style={{ 
-          width: '100%', 
-          maxWidth: 900, 
-          margin: '0 auto', 
-          marginTop: isMobile ? '16px' : '32px', 
-          marginBottom: isMobile ? '16px' : '32px' 
+        {/* Top Content Area - Scrollable */}
+        <div style={{
+          flex: 1,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          paddingTop: isMobile ? '16px' : '32px',
+          paddingBottom: isMobile ? '16px' : '32px',
+          overflow: 'auto',
+          maxHeight: '40vh'
         }}>
-          <div style={{ position: 'relative', width: '100%' }}>
-            <TextArea
-              ref={textAreaRef}
-            placeholder="Enter your message here..."
-            value={text}
-              onChange={(e) => {
-                setText(e.target.value);
-                getWordPredictions(e.target.value);
-              }}
-              onFocus={() => {
-                // Ensure cursor is visible when text area is focused
-                if (textAreaRef.current) {
-                  textAreaRef.current.setSelectionRange(text.length, text.length);
-                }
-              }}
-            style={{
-                fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
-                padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
-                borderRadius: isMobile ? 16 : 20,
-              border: "2px solid #2196f3",
-              width: "100%",
-                minHeight: isMobile ? 80 : 100,
-              background: "#181920",
-              color: "#fff",
-              outline: "none",
-              resize: "none",
-              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-              boxSizing: 'border-box',
-                maxWidth: 900,
-              fontFamily: 'inherit',
-              transition: 'border 0.2s',
-            }}
-          />
-          <button
-            onClick={() => handleSpeakOption(text)}
-            style={{
-              position: 'absolute',
-                right: isMobile ? 12 : 18,
-                top: '50%',
-              transform: 'translateY(-50%)',
-              background: '#2196f3',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '50%',
-                width: isMobile ? 40 : 48,
-                height: isMobile ? 40 : 48,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-                fontSize: isMobile ? 20 : 28,
-              boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
-              transition: 'background 0.2s',
-              zIndex: 2
-            }}
-          >
-            <FaVolumeUp />
-          </button>
-        </div>
-        </div>
-
-        {/* Word Prediction Bar */}
-        {(predictions.length > 0 || isLoading) && (
-          <div style={{
-            width: '100%',
-            maxWidth: 900,
-            margin: '0 auto',
-            marginBottom: isMobile ? '16px' : '30px',
-            padding: isMobile ? '12px' : '16px',
-            background: 'rgba(33, 150, 243, 0.05)',
-            borderRadius: isMobile ? '12px' : '16px',
-            border: '1px solid rgba(33, 150, 243, 0.2)'
+          {/* Text Input Area */}
+          <div style={{ 
+            width: '100%', 
+            maxWidth: 900, 
+            margin: '0 auto'
           }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '8px',
-              fontSize: isMobile ? '10px' : '12px',
-              color: '#2196f3',
-              fontWeight: '600'
-            }}>
-              <span>{isLoading ? '⏳' : '💡'}</span>
-              <span>
-                {isLoading ? 'Searching dictionary...' : 'Word Suggestions'}
-              </span>
-            </div>
-            <div style={{
-              display: 'flex',
-              gap: isMobile ? '6px' : '8px',
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
-              {isLoading ? (
-                <div style={{
+            <div style={{ position: 'relative', width: '100%' }}>
+              <TextArea
+                ref={textAreaRef}
+                placeholder="Enter your message here..."
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  getWordPredictions(e.target.value);
+                }}
+                onFocus={() => {
+                  // Ensure cursor is visible when text area is focused
+                  if (textAreaRef.current) {
+                    textAreaRef.current.setSelectionRange(text.length, text.length);
+                  }
+                }}
+                style={{
+                  fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
+                  padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
+                  borderRadius: isMobile ? 16 : 20,
+                  border: "2px solid #2196f3",
+                  width: "100%",
+                  minHeight: isMobile ? 80 : 100,
+                  background: "#181920",
+                  color: "#fff",
+                  outline: "none",
+                  resize: "none",
+                  boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+                  boxSizing: 'border-box',
+                  maxWidth: 900,
+                  fontFamily: 'inherit',
+                  transition: 'border 0.2s',
+                }}
+              />
+              <button 
+                onClick={() => handleSpeakOption(text)}
+                style={{
+                  position: 'absolute',
+                  right: isMobile ? 12 : 18,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: '#2196f3',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: isMobile ? 40 : 48,
+                  height: isMobile ? 40 : 48,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  color: '#2196f3',
-                  fontSize: isMobile ? '12px' : '14px'
-                }}>
-                  <div style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid #2196f3',
-                    borderTop: '2px solid transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite'
-                  }}></div>
-                  <span>Finding words...</span>
-                </div>
-              ) : (
-                predictions.map((prediction, index) => {
-                  // Determine if this is a common word or dictionary word
-                  const isCommonWord = commonWords.includes(prediction.toLowerCase());
-                  
-                  const buttonStyle = {
-                    background: isCommonWord ? 'rgba(33, 150, 243, 0.1)' : 'rgba(76, 175, 80, 0.1)',
-                    color: isCommonWord ? '#2196f3' : '#4caf50',
-                    border: isCommonWord ? '1px solid rgba(33, 150, 243, 0.3)' : '1px solid rgba(76, 175, 80, 0.3)',
-                    borderRadius: '20px',
-                    padding: isMobile ? '6px 12px' : '8px 16px',
-                    fontSize: isMobile ? '12px' : '14px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    fontWeight: '500',
-                    boxShadow: 'none',
-                    position: 'relative' as const
-                  };
-
-                  return (
-                <button
-                      key={index}
-                      onClick={() => handlePredictionClick(prediction)}
-                      style={buttonStyle}
-                      onMouseOver={e => {
-                        e.currentTarget.style.background = isCommonWord ? '#1976d2' : '#388e3c';
-                        e.currentTarget.style.color = '#fff';
-                        e.currentTarget.style.border = 'none';
-                  }}
-                      onMouseOut={e => {
-                        if (!isCommonWord) {
-                          e.currentTarget.style.background = 'rgba(76, 175, 80, 0.1)';
-                          e.currentTarget.style.color = '#4caf50';
-                          e.currentTarget.style.border = '1px solid rgba(76, 175, 80, 0.3)';
-                        } else {
-                          e.currentTarget.style.background = 'rgba(33, 150, 243, 0.1)';
-                          e.currentTarget.style.color = '#2196f3';
-                          e.currentTarget.style.border = '1px solid rgba(33, 150, 243, 0.3)';
-                        }
-                  }}
-                      title={isCommonWord ? 'Common word' : 'Dictionary word'}
-                    >
-                      {prediction}
-                </button>
-                  );
-                })
-              )}
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: isMobile ? 20 : 28,
+                  boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+                  transition: 'background 0.2s',
+                  zIndex: 2
+                }}
+              >
+                <FaVolumeUp />
+              </button>
             </div>
           </div>
-        )}
 
+          {/* Word Prediction Bar */}
+          {(predictions.length > 0 || isLoading) && (
+            <div style={{
+              width: '100%',
+              maxWidth: 900,
+              margin: '0 auto',
+              marginTop: isMobile ? '16px' : '24px',
+              padding: isMobile ? '12px' : '16px',
+              background: 'rgba(33, 150, 243, 0.05)',
+              borderRadius: isMobile ? '12px' : '16px',
+              border: '1px solid rgba(33, 150, 243, 0.2)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                marginBottom: '8px',
+                fontSize: isMobile ? '10px' : '12px',
+                color: '#2196f3',
+                fontWeight: '600'
+              }}>
+                <span>{isLoading ? '⏳' : '💡'}</span>
+                <span>
+                  {isLoading ? 'Searching dictionary...' : 'Word Suggestions'}
+                </span>
+              </div>
+              <div style={{
+                display: 'flex',
+                gap: isMobile ? '6px' : '8px',
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+              }}>
+                {isLoading ? (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: '#2196f3',
+                    fontSize: isMobile ? '12px' : '14px'
+                  }}>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid #2196f3',
+                      borderTop: '2px solid transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite'
+                    }}></div>
+                    <span>Finding words...</span>
+                  </div>
+                ) : (
+                  predictions.map((prediction, index) => {
+                    // Determine if this is a common word or dictionary word
+                    const isCommonWord = commonWords.includes(prediction.toLowerCase());
+                    
+                    const buttonStyle = {
+                      background: isCommonWord ? 'rgba(33, 150, 243, 0.1)' : 'rgba(76, 175, 80, 0.1)',
+                      color: isCommonWord ? '#2196f3' : '#4caf50',
+                      border: isCommonWord ? '1px solid rgba(33, 150, 243, 0.3)' : '1px solid rgba(76, 175, 80, 0.3)',
+                      borderRadius: '20px',
+                      padding: isMobile ? '6px 12px' : '8px 16px',
+                      fontSize: isMobile ? '12px' : '14px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      fontWeight: '500',
+                      boxShadow: 'none',
+                      position: 'relative' as const
+                    };
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handlePredictionClick(prediction)}
+                        style={buttonStyle}
+                        onMouseOver={e => {
+                          e.currentTarget.style.background = isCommonWord ? '#1976d2' : '#388e3c';
+                          e.currentTarget.style.color = '#fff';
+                          e.currentTarget.style.border = 'none';
+                        }}
+                        onMouseOut={e => {
+                          if (!isCommonWord) {
+                            e.currentTarget.style.background = 'rgba(76, 175, 80, 0.1)';
+                            e.currentTarget.style.color = '#4caf50';
+                            e.currentTarget.style.border = '1px solid rgba(76, 175, 80, 0.3)';
+                          } else {
+                            e.currentTarget.style.background = 'rgba(33, 150, 243, 0.1)';
+                            e.currentTarget.style.color = '#2196f3';
+                            e.currentTarget.style.border = '1px solid rgba(33, 150, 243, 0.3)';
+                          }
+                        }}
+                        title={isCommonWord ? 'Common word' : 'Dictionary word'}
+                      >
+                        {prediction}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Fixed Keyboard Section - Always at bottom */}
         <div className="keyboard-container" style={{
-          paddingBottom: isMobile ? '16px' : '25px', 
           width: '100%', 
-          height: getKeyboardHeight(),
+          height: '60vh',
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center',
           gap: 0,
-          margin: 0
+          margin: 0,
+          position: 'relative',
+          zIndex: 2,
+          flexShrink: 0
         }}>
           <div style={{
             alignSelf: 'normal', 
