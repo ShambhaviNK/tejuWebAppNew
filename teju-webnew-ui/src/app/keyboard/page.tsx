@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { TextArea } from "../components/MainInterface.styles";
 import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
@@ -365,10 +365,10 @@ export default function KeyboardPage() {
                   // Determine if this is a common word or dictionary word
                   const isCommonWord = commonWords.includes(prediction.toLowerCase());
                   
-                  let buttonStyle = {
-                    background: 'rgba(33, 150, 243, 0.1)',
-                    color: '#2196f3',
-                    border: '1px solid rgba(33, 150, 243, 0.3)',
+                  const buttonStyle = {
+                    background: isCommonWord ? 'rgba(33, 150, 243, 0.1)' : 'rgba(76, 175, 80, 0.1)',
+                    color: isCommonWord ? '#2196f3' : '#4caf50',
+                    border: isCommonWord ? '1px solid rgba(33, 150, 243, 0.3)' : '1px solid rgba(76, 175, 80, 0.3)',
                     borderRadius: '20px',
                     padding: '8px 16px',
                     fontSize: '14px',
@@ -378,13 +378,6 @@ export default function KeyboardPage() {
                     boxShadow: 'none',
                     position: 'relative' as const
                   };
-
-                  // Add visual indicator for dictionary words
-                  if (!isCommonWord) {
-                    buttonStyle.background = 'rgba(76, 175, 80, 0.1)';
-                    buttonStyle.color = '#4caf50';
-                    buttonStyle.border = '1px solid rgba(76, 175, 80, 0.3)';
-                  }
 
                   return (
                     <button
