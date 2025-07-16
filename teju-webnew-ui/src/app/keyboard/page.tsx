@@ -418,7 +418,7 @@ export default function KeyboardPage() {
           </div>
         )}
 
-        <div className="keyboard-container" style={{ 
+        <div className="keyboard-container" style={{paddingBottom: '25px', 
           width: '100%', 
           height: '80vh', 
           display: 'flex', 
