@@ -9,9 +9,14 @@ import "./page.css";
 
 
 export default function KeyboardPage() {
+  const [checked, setChecked] = useState(true);
   const [text, setText] = useState("");
   const keyboardRef = useRef<any>(null);
   const router = useRouter();
+
+  const handleClick = () => {
+    setChecked(!checked);
+  }
 
   const handleSpeakOption = (text: string) => {
     const utterance = new window.SpeechSynthesisUtterance(text);
@@ -135,18 +140,30 @@ export default function KeyboardPage() {
             </button>
           </div>
         </div>
-        <div className="keyboard-container" style={{ width: '100%', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="keyboard-container" style={{ width: '100%', height: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
+          <input onClick={handleClick} type="checkbox"/>
+          <label> Toggle between QWERTY and ABCD keyboard layout</label>
+          </div>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
             theme={"hg-theme-default hg-layout-default myTheme"}
             onKeyPress={onKeyPress}
             physicalKeyboardHighlight={true}
-            layoutName="default"
+            layoutName= {checked ? "default" : "abcd"}
             layout={{
               default: [
+                "1 2 3 4 5 6 7 8 9 0",
                 "q w e r t y u i o p {bksp}",
                 "a s d f g h j k l {enter}",
-                "z x c v b n m",
+                "z x c v b n m , . ? '",
+                "{space}"
+              ],
+              abcd: [
+                "1 2 3 4 5 6 7 8 9 0",
+                "a b c d e f g h i {bksp}",
+                "j k l m n o p q r s ' {enter}",
+                "t u v w x y z , . ?",
                 "{space}"
               ]
             }}

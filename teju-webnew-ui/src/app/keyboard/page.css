@@ -45,7 +45,7 @@
 .hg-theme-default .hg-button {
   height: 100% !important;
   min-height: 60px !important;
-  font-size: clamp(16px, 3vw, 24px) !important;
+  font-size: clamp(35px, 3vw, 24px) !important;
 }
 
 /* Make keyboard container truly responsive */
