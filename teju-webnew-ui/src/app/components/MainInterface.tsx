@@ -31,7 +31,7 @@ export default function MainInterface() {
   const accumulatedTranscriptRef = useRef("");
   const [clicked, setClicked] = useState(-1);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  // const [userProfile, setUserProfile] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {

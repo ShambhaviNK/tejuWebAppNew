@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { TextArea, SmallButton } from "../components/MainInterface.styles";
+import { TextArea } from "../components/MainInterface.styles";
 import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
