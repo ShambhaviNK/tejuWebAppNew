@@ -35,9 +35,24 @@ export default function KeyboardPage() {
   const [predictions, setPredictions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
+  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const keyboardRef = useRef<any>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+
+  // Track screen size changes
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    updateScreenSize();
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
 
   // Focus text area when component mounts
   useEffect(() => {
@@ -200,12 +215,6 @@ export default function KeyboardPage() {
     }, 0);
   };
 
-  // const onChange = (input: string) => {
-  //   setText((prev) => prev + input);
-  // };
-  // let keyboard = new Keyboard({keyboardRef: keyboardRef.current});
-  // useEffect(() => {keyboard.getCaretPosition();})
-
   const onKeyPress = (button: string) => {
     let cursor_pos = keyboardRef.current.getCaretPosition();
     if(keyboardRef.current.getCaretPosition() === null) {
@@ -240,6 +249,33 @@ export default function KeyboardPage() {
         textAreaRef.current.setSelectionRange(cursor_pos + (button === "{bksp}" ? -1 : button.length), cursor_pos + (button === "{bksp}" ? -1 : button.length));
       }
     }, 0);
+  };
+
+  // Calculate dynamic layout based on screen size and suggestions
+  const hasSuggestions = predictions.length > 0 || isLoading;
+  const isMobile = screenSize.width <= 768;
+  const isTablet = screenSize.width > 768 && screenSize.width <= 1024;
+  
+  // Dynamic height calculation
+  const getKeyboardHeight = () => {
+    if (isMobile) {
+      return hasSuggestions ? '45vh' : '55vh';
+    } else if (isTablet) {
+      return hasSuggestions ? '50vh' : '60vh';
+    } else {
+      return hasSuggestions ? '55vh' : '65vh';
+    }
+  };
+
+  // Dynamic button size calculation
+  const getButtonSize = () => {
+    if (isMobile) {
+      return hasSuggestions ? 'clamp(50px, 12vw, 80px)' : 'clamp(60px, 15vw, 100px)';
+    } else if (isTablet) {
+      return hasSuggestions ? 'clamp(60px, 10vw, 100px)' : 'clamp(70px, 12vw, 120px)';
+    } else {
+      return hasSuggestions ? 'clamp(70px, 8vw, 120px)' : 'clamp(80px, 10vw, 140px)';
+    }
   };
 
   return (
@@ -282,12 +318,18 @@ export default function KeyboardPage() {
         left: 0,
         zIndex: 1
       }}>
-        <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', marginTop: 32, marginBottom: 32 }}>
+        <div style={{ 
+          width: '100%', 
+          maxWidth: 900, 
+          margin: '0 auto', 
+          marginTop: isMobile ? '16px' : '32px', 
+          marginBottom: isMobile ? '16px' : '32px' 
+        }}>
           <div style={{ position: 'relative', width: '100%' }}>
             <TextArea
               ref={textAreaRef}
-              placeholder="Enter your message here..."
-              value={text}
+            placeholder="Enter your message here..."
+            value={text}
               onChange={(e) => {
                 setText(e.target.value);
                 getWordPredictions(e.target.value);
@@ -298,50 +340,50 @@ export default function KeyboardPage() {
                   textAreaRef.current.setSelectionRange(text.length, text.length);
                 }
               }}
-              style={{
-                fontSize: 'clamp(22px, 4vw, 32px)',
-                padding: '28px 70px 28px 28px',
-                borderRadius: 20,
-                border: "2px solid #2196f3",
-                width: "100%",
-                minHeight: 100,
-                background: "#181920",
-                color: "#fff",
-                outline: "none",
-                resize: "none",
-                boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-                boxSizing: 'border-box',
+            style={{
+                fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
+                padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
+                borderRadius: isMobile ? 16 : 20,
+              border: "2px solid #2196f3",
+              width: "100%",
+                minHeight: isMobile ? 80 : 100,
+              background: "#181920",
+              color: "#fff",
+              outline: "none",
+              resize: "none",
+              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+              boxSizing: 'border-box',
                 maxWidth: 900,
-                fontFamily: 'inherit',
-                transition: 'border 0.2s',
-              }}
-            />
-            <button 
-              onClick={() => handleSpeakOption(text)}
-              style={{
-                position: 'absolute',
-                right: 18,
+              fontFamily: 'inherit',
+              transition: 'border 0.2s',
+            }}
+          />
+          <button
+            onClick={() => handleSpeakOption(text)}
+            style={{
+              position: 'absolute',
+                right: isMobile ? 12 : 18,
                 top: '50%',
-                transform: 'translateY(-50%)',
-                background: '#2196f3',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '50%',
-                width: 48,
-                height: 48,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                fontSize: 28,
-                boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
-                transition: 'background 0.2s',
-                zIndex: 2
-              }}
-            >
-              <FaVolumeUp />
-            </button>
-          </div>
+              transform: 'translateY(-50%)',
+              background: '#2196f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
+                width: isMobile ? 40 : 48,
+                height: isMobile ? 40 : 48,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+                fontSize: isMobile ? 20 : 28,
+              boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+              transition: 'background 0.2s',
+              zIndex: 2
+            }}
+          >
+            <FaVolumeUp />
+          </button>
+        </div>
         </div>
 
         {/* Word Prediction Bar */}
@@ -349,10 +391,11 @@ export default function KeyboardPage() {
           <div style={{
             width: '100%',
             maxWidth: 900,
-            margin: '0 auto 30px auto',
-            padding: '16px',
+            margin: '0 auto',
+            marginBottom: isMobile ? '16px' : '30px',
+            padding: isMobile ? '12px' : '16px',
             background: 'rgba(33, 150, 243, 0.05)',
-            borderRadius: '16px',
+            borderRadius: isMobile ? '12px' : '16px',
             border: '1px solid rgba(33, 150, 243, 0.2)'
           }}>
             <div style={{
@@ -360,7 +403,7 @@ export default function KeyboardPage() {
               alignItems: 'center',
               gap: '8px',
               marginBottom: '8px',
-              fontSize: '12px',
+              fontSize: isMobile ? '10px' : '12px',
               color: '#2196f3',
               fontWeight: '600'
             }}>
@@ -371,7 +414,7 @@ export default function KeyboardPage() {
             </div>
             <div style={{
               display: 'flex',
-              gap: '8px',
+              gap: isMobile ? '6px' : '8px',
               flexWrap: 'wrap',
               justifyContent: 'center'
             }}>
@@ -381,7 +424,7 @@ export default function KeyboardPage() {
                   alignItems: 'center',
                   gap: '8px',
                   color: '#2196f3',
-                  fontSize: '14px'
+                  fontSize: isMobile ? '12px' : '14px'
                 }}>
                   <div style={{
                     width: '16px',
@@ -403,8 +446,8 @@ export default function KeyboardPage() {
                     color: isCommonWord ? '#2196f3' : '#4caf50',
                     border: isCommonWord ? '1px solid rgba(33, 150, 243, 0.3)' : '1px solid rgba(76, 175, 80, 0.3)',
                     borderRadius: '20px',
-                    padding: '8px 16px',
-                    fontSize: '14px',
+                    padding: isMobile ? '6px 12px' : '8px 16px',
+                    fontSize: isMobile ? '12px' : '14px',
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     fontWeight: '500',
@@ -413,7 +456,7 @@ export default function KeyboardPage() {
                   };
 
                   return (
-                    <button
+                <button
                       key={index}
                       onClick={() => handlePredictionClick(prediction)}
                       style={buttonStyle}
@@ -421,7 +464,7 @@ export default function KeyboardPage() {
                         e.currentTarget.style.background = isCommonWord ? '#1976d2' : '#388e3c';
                         e.currentTarget.style.color = '#fff';
                         e.currentTarget.style.border = 'none';
-                      }}
+                  }}
                       onMouseOut={e => {
                         if (!isCommonWord) {
                           e.currentTarget.style.background = 'rgba(76, 175, 80, 0.1)';
@@ -432,11 +475,11 @@ export default function KeyboardPage() {
                           e.currentTarget.style.color = '#2196f3';
                           e.currentTarget.style.border = '1px solid rgba(33, 150, 243, 0.3)';
                         }
-                      }}
+                  }}
                       title={isCommonWord ? 'Common word' : 'Dictionary word'}
                     >
                       {prediction}
-                    </button>
+                </button>
                   );
                 })
               )}
@@ -444,9 +487,10 @@ export default function KeyboardPage() {
           </div>
         )}
 
-        <div className="keyboard-container" style={{paddingBottom: '25px', 
+        <div className="keyboard-container" style={{
+          paddingBottom: isMobile ? '16px' : '25px', 
           width: '100%', 
-          height: '80vh', 
+          height: getKeyboardHeight(),
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
@@ -454,10 +498,23 @@ export default function KeyboardPage() {
           gap: 0,
           margin: 0
         }}>
-          <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
-          <button onClick={handleClick} type="button">
-          <label> {checked ? "Change to ABCD Keyboard Layout" : "Change to QWERTY Keyboard Layout"}</label>
-          </button>
+          <div style={{
+            alignSelf: 'normal', 
+            paddingLeft: isMobile ? '8px' : '10px',
+            marginBottom: isMobile ? '8px' : '12px'
+          }}>
+            <button onClick={handleClick} type="button" style={{
+              fontSize: isMobile ? '12px' : '14px',
+              padding: isMobile ? '6px 12px' : '8px 16px',
+              borderRadius: '8px',
+              background: 'rgba(33, 150, 243, 0.1)',
+              color: '#2196f3',
+              border: '1px solid rgba(33, 150, 243, 0.3)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}>
+              <label> {checked ? "Change to ABCD Keyboard Layout" : "Change to QWERTY Keyboard Layout"}</label>
+            </button>
           </div>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
@@ -503,11 +560,11 @@ export default function KeyboardPage() {
             style={{
               width: '100%',
               height: '100%',
-              '--hg-button-size': 'clamp(70px, 18vw, 140px)',
+              '--hg-button-size': getButtonSize(),
               '--hg-button-gap': '0px',
               '--hg-button-margin': '0px',
               '--hg-button-padding': '0px',
-              '--hg-button-border-radius': '24px',
+              '--hg-button-border-radius': isMobile ? '16px' : '24px',
               '--hg-button-bg': '#2196f3',
               '--hg-button-color': '#fff',
               '--hg-button-border': 'none',
@@ -525,4 +582,4 @@ export default function KeyboardPage() {
       </div>
     </>
   );
-}
+} 

@@ -5,16 +5,10 @@
   width: calc(100% - 20px);
 }
 
-
 .simple-keyboard.hg-layout-default .hg-button {
   background: white;
   color: black;
 }
-
-/* .simple-keyboard.hg-layout-default .hg-button.hg-black-text {
-  background: white;
-  color: black;
-} */
 
 .simple-keyboard.hg-layout-default .hg-button.hg-highlight {
   box-shadow: 0px 0px 40px 5px rgba(255, 255, 0, 0.5);
@@ -44,8 +38,8 @@
 
 .hg-theme-default .hg-button {
   height: 100% !important;
-  min-height: 60px !important;
-  font-size: clamp(35px, 3vw, 24px) !important;
+  min-height: 50px !important;
+  font-size: clamp(16px, 2.5vw, 24px) !important;
 }
 
 /* Make keyboard container truly responsive */
@@ -55,21 +49,21 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  transition: height 0.3s ease !important;
 }
 
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
   .hg-theme-default {
     padding: 0 !important;
-    max-height: 50vh !important;
     margin: 0 !important;
     gap: 0 !important;
   }
   
   .hg-theme-default .hg-button {
-    min-height: 60px !important;
-    max-height: 70px !important;
-    font-size: clamp(18px, 5vw, 24px) !important;
+    min-height: 45px !important;
+    max-height: 60px !important;
+    font-size: clamp(14px, 4vw, 20px) !important;
     margin: 0 !important;
     border-radius: 0 !important;
     padding: 0 !important;
@@ -80,7 +74,7 @@
     gap: 0 !important;
     margin-bottom: 0 !important;
     height: auto !important;
-    min-height: 62px !important;
+    min-height: 47px !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
@@ -105,7 +99,6 @@
   
   /* Adjust keyboard container for mobile */
   .keyboard-container {
-    height: 65vh !important;
     padding: 0 !important;
     margin: 0 !important;
     gap: 0 !important;
@@ -139,7 +132,7 @@
     margin: 0 !important;
     padding: 0 !important;
     height: auto !important;
-    min-height: 62px !important;
+    min-height: 47px !important;
     border: none !important;
     outline: none !important;
   }
@@ -148,40 +141,11 @@
     gap: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
-    min-height: 60px !important;
-    max-height: 70px !important;
+    min-height: 45px !important;
+    max-height: 60px !important;
   }
   
-  /* Mobile pastel colors for keyboard rows */
-  .simple-keyboard .hg-row:nth-child(1) .hg-button {
-    background: #FFE5E5 !important; /* Light pink pastel */
-    color: #D63384 !important;
-    border: 1px solid #FFB3B3 !important;
-  }
-  
-  .simple-keyboard .hg-row:nth-child(2) .hg-button {
-    background: #E5F3FF !important; /* Light blue pastel */
-    color: #0D6EFD !important;
-    border: 1px solid #B3D9FF !important;
-  }
-  
-  .simple-keyboard .hg-row:nth-child(3) .hg-button {
-    background: #E5FFE5 !important; /* Light green pastel */
-    color: #198754 !important;
-    border: 1px solid #B3FFB3 !important;
-  }
-  
-  .simple-keyboard .hg-row:nth-child(4) .hg-button {
-    background: #FFF2E5 !important; /* Light orange pastel */
-    color: #FD7E14 !important;
-    border: 1px solid #FFD9B3 !important;
-  }
-  
-  .simple-keyboard .hg-row:nth-child(5) .hg-button {
-    background: #F0E5FF !important; /* Light purple pastel */
-    color: #6F42C1 !important;
-    border: 1px solid #D9B3FF !important;
-  }
+
   
   /* Remove column gaps specifically */
   .simple-keyboard .hg-button + .hg-button {
@@ -258,7 +222,7 @@
     margin: 0 !important;
     padding: 0 !important;
     height: auto !important;
-    min-height: 62px !important;
+    min-height: 47px !important;
     border: none !important;
     outline: none !important;
   }
@@ -322,20 +286,28 @@
 /* Tablet improvements */
 @media (min-width: 769px) and (max-width: 1024px) {
   .hg-theme-default .hg-button {
-    min-height: 55px !important;
+    min-height: 50px !important;
     font-size: clamp(16px, 3vw, 20px) !important;
     margin: 3px !important;
     border-radius: 14px !important;
+  }
+  
+  .hg-theme-default .hg-row {
+    min-height: 56px !important;
   }
 }
 
 /* Desktop improvements */
 @media (min-width: 1025px) {
   .hg-theme-default .hg-button {
-    min-height: 70px !important;
+    min-height: 60px !important;
     font-size: clamp(18px, 2vw, 24px) !important;
     margin: 4px !important;
     border-radius: 16px !important;
+  }
+  
+  .hg-theme-default .hg-row {
+    min-height: 68px !important;
   }
 }
 
@@ -345,17 +317,17 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Pastel colors for keyboard rows */
+/* Green and white alternating colors for keyboard rows */
 .simple-keyboard .hg-row:nth-child(1) .hg-button {
-  background: #FFE5E5 !important; /* Light pink pastel */
-  color: #D63384 !important;
-  border: 1px solid #FFB3B3 !important;
+  background: #E5FFE5 !important; /* Light green pastel */
+  color: #198754 !important;
+  border: 1px solid #B3FFB3 !important;
 }
 
 .simple-keyboard .hg-row:nth-child(2) .hg-button {
-  background: #E5F3FF !important; /* Light blue pastel */
-  color: #0D6EFD !important;
-  border: 1px solid #B3D9FF !important;
+  background: #FFFFFF !important; /* White */
+  color: #333333 !important;
+  border: 1px solid #E0E0E0 !important;
 }
 
 .simple-keyboard .hg-row:nth-child(3) .hg-button {
@@ -365,24 +337,24 @@
 }
 
 .simple-keyboard .hg-row:nth-child(4) .hg-button {
-  background: #FFF2E5 !important; /* Light orange pastel */
-  color: #FD7E14 !important;
-  border: 1px solid #FFD9B3 !important;
+  background: #FFFFFF !important; /* White */
+  color: #333333 !important;
+  border: 1px solid #E0E0E0 !important;
 }
 
 .simple-keyboard .hg-row:nth-child(5) .hg-button {
-  background: #F0E5FF !important; /* Light purple pastel */
-  color: #6F42C1 !important;
-  border: 1px solid #D9B3FF !important;
+  background: #E5FFE5 !important; /* Light green pastel */
+  color: #198754 !important;
+  border: 1px solid #B3FFB3 !important;
 }
 
-/* Hover effects for pastel buttons */
+/* Hover effects for green and white buttons */
 .simple-keyboard .hg-row:nth-child(1) .hg-button:hover {
-  background: #FFCCCC !important;
+  background: #CCFFCC !important;
 }
 
 .simple-keyboard .hg-row:nth-child(2) .hg-button:hover {
-  background: #CCE5FF !important;
+  background: #F5F5F5 !important;
 }
 
 .simple-keyboard .hg-row:nth-child(3) .hg-button:hover {
@@ -390,9 +362,27 @@
 }
 
 .simple-keyboard .hg-row:nth-child(4) .hg-button:hover {
-  background: #FFE5CC !important;
+  background: #F5F5F5 !important;
 }
 
 .simple-keyboard .hg-row:nth-child(5) .hg-button:hover {
-  background: #E5CCFF !important;
+  background: #CCFFCC !important;
+}
+
+/* Ensure space button is always visible */
+.simple-keyboard .hg-row:last-child .hg-button {
+  min-height: 50px !important;
+}
+
+@media (max-width: 768px) {
+  .simple-keyboard .hg-row:last-child .hg-button {
+    min-height: 45px !important;
+  }
+}
+
+/* Smooth transitions for responsive changes */
+.keyboard-container,
+.hg-theme-default,
+.hg-theme-default .hg-button {
+  transition: all 0.3s ease !important;
 }
