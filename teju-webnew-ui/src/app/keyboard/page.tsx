@@ -333,7 +333,7 @@ export default function KeyboardPage() {
             }}>
               <span>{isLoading ? '⏳' : '💡'}</span>
               <span>
-                {isLoading ? 'Searching dictionary...' : 'Word Suggestions (Current + Next Word)'}
+                {isLoading ? 'Searching dictionary...' : 'Word Suggestions'}
               </span>
             </div>
             <div style={{
