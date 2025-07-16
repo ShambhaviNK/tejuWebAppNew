@@ -10,6 +10,7 @@ import "./page.css";
 
 export default function KeyboardPage() {
   const [checked, setChecked] = useState(true);
+  const [caps, setCaps] = useState(false);
   const [text, setText] = useState("");
   const keyboardRef = useRef<any>(null);
   const router = useRouter();
@@ -44,7 +45,10 @@ export default function KeyboardPage() {
       setText((prev) => prev.slice(0, cursor_pos) + " " + prev.slice(cursor_pos));
     } else if (button === "{enter}") {
       handleSpeakOption(text);
-    } else if (!button.startsWith("{")) {
+    } else if (button === "{lock}") {
+      setCaps(!caps);
+    } 
+    else if (!button.startsWith("{")) {
       setText((prev) => prev.slice(0, cursor_pos) + button + prev.slice(cursor_pos));
     }
   };
@@ -150,20 +154,34 @@ export default function KeyboardPage() {
             theme={"hg-theme-default hg-layout-default myTheme"}
             onKeyPress={onKeyPress}
             physicalKeyboardHighlight={true}
-            layoutName= {checked ? "default" : "abcd"}
+            layoutName= {caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")}
             layout={{
-              default: [
+              qwerty: [
                 "1 2 3 4 5 6 7 8 9 0",
                 "q w e r t y u i o p {bksp}",
-                "a s d f g h j k l {enter}",
-                "z x c v b n m , . ? '",
+                "{lock} a s d f g h j k l ' {enter}",
+                "z x c v b n m , . ?",
+                "{space}"
+              ],
+              QWERTY: [
+                "1 2 3 4 5 6 7 8 9 0",
+                "Q W E R T Y U I O P {bksp}",
+                "{lock} A S D F G H J K L ' {enter}",
+                "Z X C V B N M , . ?",
                 "{space}"
               ],
               abcd: [
                 "1 2 3 4 5 6 7 8 9 0",
                 "a b c d e f g h i {bksp}",
-                "j k l m n o p q r s {enter}",
-                "t u v w x y z , . ? '",
+                "{lock} j k l m n o p q r s ' {enter}",
+                "t u v w x y z , . ?",
+                "{space}"
+              ],
+              ABCD: [
+                "1 2 3 4 5 6 7 8 9 0",
+                "A B C D E F G H I {bksp}",
+                "{lock} J K L M N O P Q R S ' {enter}",
+                "T U V W X Y Z , . ?",
                 "{space}"
               ]
             }}
