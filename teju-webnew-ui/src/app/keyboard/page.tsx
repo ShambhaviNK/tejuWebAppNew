@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TextArea } from "../components/MainInterface.styles";
 import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
@@ -36,7 +36,15 @@ export default function KeyboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
   const keyboardRef = useRef<any>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+
+  // Focus text area when component mounts
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.focus();
+    }
+  }, []);
 
   const handleClick = () => {
     setChecked(!checked);
@@ -181,6 +189,15 @@ export default function KeyboardPage() {
     const newText = words.join(' ') + ' ';
     setText(newText);
     setPredictions([]);
+    
+    // Refocus text area after prediction selection to maintain cursor visibility
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+        // Set cursor to end of text
+        textAreaRef.current.setSelectionRange(newText.length, newText.length);
+      }
+    }, 0);
   };
 
   // const onChange = (input: string) => {
@@ -214,6 +231,15 @@ export default function KeyboardPage() {
 
     setText(newText);
     getWordPredictions(newText);
+    
+    // Refocus text area after keyboard input to maintain cursor visibility
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+        // Set cursor position to maintain where user was typing
+        textAreaRef.current.setSelectionRange(cursor_pos + (button === "{bksp}" ? -1 : button.length), cursor_pos + (button === "{bksp}" ? -1 : button.length));
+      }
+    }, 0);
   };
 
   return (
@@ -259,11 +285,18 @@ export default function KeyboardPage() {
         <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', marginTop: 32, marginBottom: 32 }}>
           <div style={{ position: 'relative', width: '100%' }}>
             <TextArea
+              ref={textAreaRef}
               placeholder="Enter your message here..."
               value={text}
               onChange={(e) => {
                 setText(e.target.value);
                 getWordPredictions(e.target.value);
+              }}
+              onFocus={() => {
+                // Ensure cursor is visible when text area is focused
+                if (textAreaRef.current) {
+                  textAreaRef.current.setSelectionRange(text.length, text.length);
+                }
               }}
               style={{
                 fontSize: 'clamp(22px, 4vw, 32px)',
@@ -422,8 +455,9 @@ export default function KeyboardPage() {
           margin: 0
         }}>
           <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
-          <input onClick={handleClick} type="checkbox"/>
-          <label> Toggle between QWERTY and ABCD keyboard layout</label>
+          <button onClick={handleClick} type="button">
+          <label> {checked ? "Change to ABCD Keyboard Layout" : "Change to QWERTY Keyboard Layout"}</label>
+          </button>
           </div>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
