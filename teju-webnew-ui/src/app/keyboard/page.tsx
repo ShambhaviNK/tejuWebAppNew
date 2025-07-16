@@ -189,6 +189,15 @@ export default function KeyboardPage() {
     const newText = words.join(' ') + ' ';
     setText(newText);
     setPredictions([]);
+    
+    // Refocus text area after prediction selection to maintain cursor visibility
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+        // Set cursor to end of text
+        textAreaRef.current.setSelectionRange(newText.length, newText.length);
+      }
+    }, 0);
   };
 
   // const onChange = (input: string) => {
@@ -222,6 +231,15 @@ export default function KeyboardPage() {
 
     setText(newText);
     getWordPredictions(newText);
+    
+    // Refocus text area after keyboard input to maintain cursor visibility
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+        // Set cursor position to maintain where user was typing
+        textAreaRef.current.setSelectionRange(cursor_pos + (button === "{bksp}" ? -1 : button.length), cursor_pos + (button === "{bksp}" ? -1 : button.length));
+      }
+    }, 0);
   };
 
   return (
@@ -273,6 +291,12 @@ export default function KeyboardPage() {
               onChange={(e) => {
                 setText(e.target.value);
                 getWordPredictions(e.target.value);
+              }}
+              onFocus={() => {
+                // Ensure cursor is visible when text area is focused
+                if (textAreaRef.current) {
+                  textAreaRef.current.setSelectionRange(text.length, text.length);
+                }
               }}
               style={{
                 fontSize: 'clamp(22px, 4vw, 32px)',
