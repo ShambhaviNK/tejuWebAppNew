@@ -34,12 +34,16 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  min-height: 55px !important;
+  max-height: 85px !important;
+  gap: 2px !important;
 }
 
 .hg-theme-default .hg-button {
   height: 100% !important;
-  min-height: 50px !important;
-  font-size: clamp(16px, 2.5vw, 24px) !important;
+  min-height: 40px !important;
+  max-height: 70px !important;
+  font-size: clamp(14px, 2.2vw, 22px) !important;
 }
 
 /* Make keyboard container truly responsive */
@@ -60,20 +64,35 @@
   }
   
   .hg-theme-default .hg-button {
-    min-height: 45px !important;
-    max-height: 60px !important;
-    font-size: clamp(14px, 4vw, 20px) !important;
-    margin: 0 !important;
+    min-height: 35px !important;
+    max-height: 50px !important;
+    font-size: clamp(12px, 3.5vw, 18px) !important;
+    margin: 0px !important;
     border-radius: 0 !important;
     padding: 0 !important;
-    gap: 0 !important;
+    gap: 1px !important;
+  }
+  
+  /* Smaller buttons for mobile landscape */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .hg-theme-default .hg-button {
+      min-height: 25px !important;
+      max-height: 35px !important;
+      font-size: clamp(10px, 2.5vw, 14px) !important;
+      margin: 0px !important;
+      gap: 0px !important;
+    }
+    
+    .hg-theme-default .hg-row {
+      min-height: 25px !important;
+    }
   }
   
   .hg-theme-default .hg-row {
     gap: 0 !important;
     margin-bottom: 0 !important;
     height: auto !important;
-    min-height: 47px !important;
+    min-height: 32px !important;
     padding: 0 !important;
     margin: 0 !important;
     border: none !important;
@@ -99,9 +118,18 @@
   /* Adjust keyboard container for mobile */
   .keyboard-container {
     padding: 0 !important;
+    padding-bottom: 8px !important;
     margin: 0 !important;
     gap: 0 !important;
-    height: 60vh !important;
+    height: 35vh !important;
+  }
+  
+  /* Adjust keyboard container for mobile landscape */
+  @media (max-width: 768px) and (orientation: landscape) {
+    .keyboard-container {
+      height: 25vh !important;
+      padding-bottom: 4px !important;
+    }
   }
   
   /* Remove all spacing from keyboard elements */
@@ -377,6 +405,39 @@
 @media (max-width: 768px) {
   .simple-keyboard .hg-row:last-child .hg-button {
     min-height: 45px !important;
+  }
+}
+
+/* Mobile icons for special keys */
+@media (max-width: 768px) {
+  .simple-keyboard .hg-button[data-skbtn="{bksp}"] {
+    font-size: 0 !important;
+  }
+  
+  .simple-keyboard .hg-button[data-skbtn="{bksp}"]::before {
+    content: "⌫";
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .simple-keyboard .hg-button[data-skbtn="{enter}"] {
+    font-size: 0 !important;
+  }
+  
+  .simple-keyboard .hg-button[data-skbtn="{enter}"]::before {
+    content: "↵";
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .simple-keyboard .hg-button[data-skbtn="{lock}"] {
+    font-size: 0 !important;
+  }
+  
+  .simple-keyboard .hg-button[data-skbtn="{lock}"]::before {
+    content: "⇪";
+    font-size: 16px;
+    font-weight: bold;
   }
 }
 

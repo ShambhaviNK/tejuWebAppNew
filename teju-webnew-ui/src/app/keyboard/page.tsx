@@ -251,18 +251,19 @@ export default function KeyboardPage() {
     }, 0);
   };
 
-  // Calculate dynamic layout based on screen size
+  // Calculate dynamic layout based on screen size and orientation
   const isMobile = screenSize.width <= 768;
   const isTablet = screenSize.width > 768 && screenSize.width <= 1024;
+  const isLandscape = screenSize.width > screenSize.height;
   
   // Fixed button size calculation - not affected by suggestions
   const getButtonSize = () => {
     if (isMobile) {
-      return 'clamp(55px, 13vw, 90px)';
+      return 'clamp(65px, 15vw, 110px)';
     } else if (isTablet) {
-      return 'clamp(65px, 11vw, 110px)';
+      return 'clamp(75px, 13vw, 130px)';
     } else {
-      return 'clamp(75px, 9vw, 130px)';
+      return 'clamp(85px, 11vw, 150px)';
     }
   };
 
@@ -291,7 +292,7 @@ export default function KeyboardPage() {
         onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
         onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
         aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
-            <div style={{
+      <div style={{
         width: '100vw',
         height: '100vh',
         background: "#23242a",
@@ -317,7 +318,7 @@ export default function KeyboardPage() {
           paddingTop: isMobile ? '16px' : '32px',
           paddingBottom: isMobile ? '16px' : '32px',
           overflow: 'auto',
-          maxHeight: '40vh'
+          maxHeight: isMobile && isLandscape ? '75vh' : isMobile ? '65vh' : '50vh'
         }}>
           {/* Text Input Area */}
           <div style={{ 
@@ -328,8 +329,8 @@ export default function KeyboardPage() {
             <div style={{ position: 'relative', width: '100%' }}>
               <TextArea
                 ref={textAreaRef}
-                placeholder="Enter your message here..."
-                value={text}
+            placeholder="Enter your message here..."
+            value={text}
                 onChange={(e) => {
                   setText(e.target.value);
                   getWordPredictions(e.target.value);
@@ -340,50 +341,50 @@ export default function KeyboardPage() {
                     textAreaRef.current.setSelectionRange(text.length, text.length);
                   }
                 }}
-                style={{
+            style={{
                   fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
                   padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
                   borderRadius: isMobile ? 16 : 20,
-                  border: "2px solid #2196f3",
-                  width: "100%",
+              border: "2px solid #2196f3",
+              width: "100%",
                   minHeight: isMobile ? 80 : 100,
-                  background: "#181920",
-                  color: "#fff",
-                  outline: "none",
-                  resize: "none",
-                  boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-                  boxSizing: 'border-box',
+              background: "#181920",
+              color: "#fff",
+              outline: "none",
+              resize: "none",
+              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+              boxSizing: 'border-box',
                   maxWidth: 900,
-                  fontFamily: 'inherit',
-                  transition: 'border 0.2s',
-                }}
-              />
-              <button 
-                onClick={() => handleSpeakOption(text)}
-                style={{
-                  position: 'absolute',
+              fontFamily: 'inherit',
+              transition: 'border 0.2s',
+            }}
+          />
+          <button
+            onClick={() => handleSpeakOption(text)}
+            style={{
+              position: 'absolute',
                   right: isMobile ? 12 : 18,
                   top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: '#2196f3',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '50%',
+              transform: 'translateY(-50%)',
+              background: '#2196f3',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '50%',
                   width: isMobile ? 40 : 48,
                   height: isMobile ? 40 : 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
                   fontSize: isMobile ? 20 : 28,
-                  boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
-                  transition: 'background 0.2s',
-                  zIndex: 2
-                }}
-              >
-                <FaVolumeUp />
-              </button>
-            </div>
+              boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+              transition: 'background 0.2s',
+              zIndex: 2
+            }}
+          >
+            <FaVolumeUp />
+          </button>
+        </div>
           </div>
 
           {/* Word Prediction Bar */}
@@ -456,7 +457,7 @@ export default function KeyboardPage() {
                     };
 
                     return (
-                      <button
+                <button
                         key={index}
                         onClick={() => handlePredictionClick(prediction)}
                         style={buttonStyle}
@@ -479,7 +480,7 @@ export default function KeyboardPage() {
                         title={isCommonWord ? 'Common word' : 'Dictionary word'}
                       >
                         {prediction}
-                      </button>
+                </button>
                     );
                   })
                 )}
@@ -491,13 +492,14 @@ export default function KeyboardPage() {
         {/* Fixed Keyboard Section - Always at bottom */}
         <div className="keyboard-container" style={{
           width: '100%', 
-          height: '60vh',
+          height: isMobile && isLandscape ? '25vh' : isMobile ? '35vh' : '50vh',
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center',
           gap: 0,
           margin: 0,
+          paddingBottom: isMobile && isLandscape ? '4px' : isMobile ? '8px' : '24px',
           position: 'relative',
           zIndex: 2,
           flexShrink: 0
@@ -527,9 +529,9 @@ export default function KeyboardPage() {
             physicalKeyboardHighlight={true}
             layoutName= {caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")}
             display= {{
-            '{bksp}': 'BACKSPACE',
-            '{enter}': 'ENTER',
-            '{lock}': 'CAPS',
+            '{bksp}': isMobile ? '' : 'BACKSPACE',
+            '{enter}': isMobile ? '' : 'ENTER',
+            '{lock}': isMobile ? '' : 'CAPS',
             '{space}': 'SPACE'}}
             layout={{
               qwerty: [
@@ -565,8 +567,8 @@ export default function KeyboardPage() {
               width: '100%',
               height: '100%',
               '--hg-button-size': getButtonSize(),
-              '--hg-button-gap': '0px',
-              '--hg-button-margin': '0px',
+              '--hg-button-gap': '2px',
+              '--hg-button-margin': '1px',
               '--hg-button-padding': '0px',
               '--hg-button-border-radius': isMobile ? '16px' : '24px',
               '--hg-button-bg': '#2196f3',
