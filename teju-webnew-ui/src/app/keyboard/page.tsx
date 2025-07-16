@@ -431,8 +431,9 @@ export default function KeyboardPage() {
           margin: 0
         }}>
           <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
-          <input onClick={handleClick} type="checkbox"/>
-          <label> Toggle between QWERTY and ABCD keyboard layout</label>
+          <button onClick={handleClick} type="button">
+          <label> {checked ? "Change to ABCD Keyboard Layout" : "Change to QWERTY Keyboard Layout"}</label>
+          </button>
           </div>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
