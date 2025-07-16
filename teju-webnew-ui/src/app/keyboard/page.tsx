@@ -111,7 +111,7 @@ export default function KeyboardPage() {
                transition: 'border 0.2s',
              }}
            />
-           <SmallButton 
+           <button 
              onClick={() => handleSpeakOption(text)}
              style={{
                position: 'absolute',
@@ -122,20 +122,20 @@ export default function KeyboardPage() {
                color: '#fff',
                border: 'none',
                borderRadius: '50%',
-               width: 40,
-               height: 40,
+               width: 36,
+               height: 36,
                display: 'flex',
                alignItems: 'center',
                justifyContent: 'center',
                cursor: 'pointer',
-               fontSize: 22,
+               fontSize: 18,
                boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
                transition: 'background 0.2s',
                zIndex: 2
              }}
            >
              <FaVolumeUp />
-           </SmallButton>
+           </button>
          </div>
       {/* </TextAreaContainer> */}
       <Keyboard
