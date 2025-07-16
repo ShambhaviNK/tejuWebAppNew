@@ -316,7 +316,7 @@ export default function KeyboardPage() {
           <div style={{
             width: '100%',
             maxWidth: 900,
-            margin: '0 auto 16px auto',
+            margin: '0 auto 30px auto',
             padding: '16px',
             background: 'rgba(33, 150, 243, 0.05)',
             borderRadius: '16px',
