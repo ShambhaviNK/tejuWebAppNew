@@ -60,37 +60,231 @@
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
   .hg-theme-default {
-    padding: 2px !important;
+    padding: 0 !important;
     max-height: 50vh !important;
+    margin: 0 !important;
+    gap: 0 !important;
   }
   
   .hg-theme-default .hg-button {
-    min-height: 40px !important;
-    max-height: 50px !important;
-    font-size: clamp(14px, 4vw, 18px) !important;
+    min-height: 60px !important;
+    max-height: 70px !important;
+    font-size: clamp(18px, 5vw, 24px) !important;
     margin: 0 !important;
-    border-radius: 6px !important;
-    padding: 2px 4px !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
   }
   
   .hg-theme-default .hg-row {
     gap: 0 !important;
     margin-bottom: 0 !important;
     height: auto !important;
-    min-height: 42px !important;
+    min-height: 62px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  .hg-theme-default .hg-rows {
+    gap: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    outline: none !important;
   }
   
   /* Improve overall keyboard appearance */
   .hg-theme-default {
     background: #23242a !important;
-    border-radius: 12px !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    gap: 0 !important;
   }
   
   /* Adjust keyboard container for mobile */
   .keyboard-container {
-    height: 50vh !important;
-    padding: 4px !important;
+    height: 65vh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+  
+  /* Remove all spacing from keyboard elements */
+  .simple-keyboard.hg-theme-default.myTheme {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    border: none !important;
+  }
+  
+  /* Force remove all gaps and spacing */
+  .simple-keyboard * {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .simple-keyboard .hg-rows {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  .simple-keyboard .hg-row {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 62px !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  .simple-keyboard .hg-button {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 60px !important;
+    max-height: 70px !important;
+  }
+  
+  /* Remove column gaps specifically */
+  .simple-keyboard .hg-button + .hg-button {
+    margin-left: 0 !important;
+  }
+  
+  /* Force buttons to be adjacent */
+  .simple-keyboard .hg-row .hg-button {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Remove any remaining horizontal spacing */
+  .simple-keyboard .hg-row {
+    justify-content: stretch !important;
+  }
+  
+  .simple-keyboard .hg-button {
+    flex: 1 !important;
+    width: auto !important;
+  }
+  
+  /* Ensure buttons touch each other */
+  .simple-keyboard .hg-row .hg-button:not(:last-child) {
+    margin-right: 0 !important;
+  }
+  
+  .simple-keyboard .hg-row .hg-button:not(:first-child) {
+    margin-left: 0 !important;
+  }
+  
+  /* Force complete removal of spacing */
+  .simple-keyboard .hg-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .simple-keyboard .hg-button {
+    flex: 1 1 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Remove any default spacing from the keyboard library */
+  .simple-keyboard .hg-row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+  
+  /* Ensure no gaps between buttons */
+  .simple-keyboard .hg-row .hg-button + .hg-button {
+    margin-left: 0 !important;
+    border-left: none !important;
+  }
+  
+  /* Remove all row-level spacing */
+  .simple-keyboard .hg-rows {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  .simple-keyboard .hg-row {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 62px !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  /* Remove any default spacing from the keyboard library */
+  .simple-keyboard .hg-row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+  
+  /* Force complete removal of spacing */
+  .simple-keyboard .hg-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .simple-keyboard .hg-button {
+    flex: 1 1 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Remove any default spacing from the keyboard library */
+  .simple-keyboard .hg-row > * {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+  
+  /* Ensure no gaps between buttons */
+  .simple-keyboard .hg-row .hg-button + .hg-button {
+    margin-left: 0 !important;
+    border-left: none !important;
+  }
+  
+  /* Additional row spacing removal */
+  .simple-keyboard .hg-rows .hg-row {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  /* Remove any remaining row margins */
+  .simple-keyboard .hg-row:not(:last-child) {
+    margin-bottom: 0 !important;
+  }
+  
+  .simple-keyboard .hg-row:not(:first-child) {
+    margin-top: 0 !important;
   }
 }
 

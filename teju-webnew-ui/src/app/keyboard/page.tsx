@@ -144,7 +144,17 @@ export default function KeyboardPage() {
             </button>
           </div>
         </div>
-        <div className="keyboard-container" style={{ width: '100%', height: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="keyboard-container" style={{ 
+          width: '100%', 
+          height: '80vh', 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          gap: 0,
+          padding: 0,
+          margin: 0
+        }}>
           <div style={{alignSelf: 'normal', paddingLeft: '10px'}}>
           <input onClick={handleClick} type="checkbox"/>
           <label> Toggle between QWERTY and ABCD keyboard layout</label>
@@ -193,8 +203,10 @@ export default function KeyboardPage() {
             style={{
               width: '100%',
               height: '100%',
-              '--hg-button-size': 'clamp(80px, 12vw, 150px)',
-              '--hg-button-gap': '20px',
+              '--hg-button-size': 'clamp(70px, 18vw, 140px)',
+              '--hg-button-gap': '0px',
+              '--hg-button-margin': '0px',
+              '--hg-button-padding': '0px',
               '--hg-button-border-radius': '24px',
               '--hg-button-bg': '#2196f3',
               '--hg-button-color': '#fff',
