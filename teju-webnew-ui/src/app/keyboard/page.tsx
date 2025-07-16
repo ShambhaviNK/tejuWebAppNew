@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { TextArea } from "../components/MainInterface.styles";
-import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
+import { FaArrowLeft, FaVolumeUp, FaBackspace, FaLock, FaArrowRight } from "react-icons/fa";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "./page.css";
@@ -251,18 +251,19 @@ export default function KeyboardPage() {
     }, 0);
   };
 
-  // Calculate dynamic layout based on screen size
+  // Calculate dynamic layout based on screen size and orientation
   const isMobile = screenSize.width <= 768;
   const isTablet = screenSize.width > 768 && screenSize.width <= 1024;
+  const isLandscape = screenSize.width > screenSize.height;
   
   // Fixed button size calculation - not affected by suggestions
   const getButtonSize = () => {
     if (isMobile) {
-      return 'clamp(55px, 13vw, 90px)';
+      return 'clamp(65px, 15vw, 110px)';
     } else if (isTablet) {
-      return 'clamp(65px, 11vw, 110px)';
+      return 'clamp(75px, 13vw, 130px)';
     } else {
-      return 'clamp(75px, 9vw, 130px)';
+      return 'clamp(85px, 11vw, 150px)';
     }
   };
 
@@ -317,7 +318,7 @@ export default function KeyboardPage() {
           paddingTop: isMobile ? '16px' : '32px',
           paddingBottom: isMobile ? '16px' : '32px',
           overflow: 'auto',
-          maxHeight: '40vh'
+          maxHeight: isMobile && isLandscape ? '75vh' : isMobile ? '65vh' : '50vh'
         }}>
           {/* Text Input Area */}
           <div style={{ 
@@ -491,13 +492,14 @@ export default function KeyboardPage() {
         {/* Fixed Keyboard Section - Always at bottom */}
         <div className="keyboard-container" style={{
           width: '100%', 
-          height: '60vh',
+          height: isMobile && isLandscape ? '25vh' : isMobile ? '35vh' : '50vh',
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center',
           gap: 0,
           margin: 0,
+          paddingBottom: isMobile && isLandscape ? '4px' : isMobile ? '8px' : '24px',
           position: 'relative',
           zIndex: 2,
           flexShrink: 0
@@ -527,9 +529,9 @@ export default function KeyboardPage() {
             physicalKeyboardHighlight={true}
             layoutName= {caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")}
             display= {{
-            '{bksp}': 'BACKSPACE',
-            '{enter}': 'ENTER',
-            '{lock}': 'CAPS',
+            '{bksp}': isMobile ? '' : 'BACKSPACE',
+            '{enter}': isMobile ? '' : 'ENTER',
+            '{lock}': isMobile ? '' : 'CAPS',
             '{space}': 'SPACE'}}
             layout={{
               qwerty: [
@@ -565,8 +567,8 @@ export default function KeyboardPage() {
               width: '100%',
               height: '100%',
               '--hg-button-size': getButtonSize(),
-              '--hg-button-gap': '0px',
-              '--hg-button-margin': '0px',
+              '--hg-button-gap': '2px',
+              '--hg-button-margin': '1px',
               '--hg-button-padding': '0px',
               '--hg-button-border-radius': isMobile ? '16px' : '24px',
               '--hg-button-bg': '#2196f3',
