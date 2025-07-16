@@ -56,3 +56,60 @@
   align-items: center !important;
   justify-content: center !important;
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  .hg-theme-default {
+    padding: 2px !important;
+    max-height: 50vh !important;
+  }
+  
+  .hg-theme-default .hg-button {
+    min-height: 40px !important;
+    max-height: 50px !important;
+    font-size: clamp(14px, 4vw, 18px) !important;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    padding: 2px 4px !important;
+  }
+  
+  .hg-theme-default .hg-row {
+    gap: 0 !important;
+    margin-bottom: 0 !important;
+    height: auto !important;
+    min-height: 42px !important;
+  }
+  
+  /* Improve overall keyboard appearance */
+  .hg-theme-default {
+    background: #23242a !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2) !important;
+  }
+  
+  /* Adjust keyboard container for mobile */
+  .keyboard-container {
+    height: 50vh !important;
+    padding: 4px !important;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hg-theme-default .hg-button {
+    min-height: 55px !important;
+    font-size: clamp(16px, 3vw, 20px) !important;
+    margin: 3px !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* Desktop improvements */
+@media (min-width: 1025px) {
+  .hg-theme-default .hg-button {
+    min-height: 70px !important;
+    font-size: clamp(18px, 2vw, 24px) !important;
+    margin: 4px !important;
+    border-radius: 16px !important;
+  }
+}
