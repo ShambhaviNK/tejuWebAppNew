@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { TextAreaContainer, TextArea, SmallButton } from "../components/MainInterface.styles";
+import { TextArea, SmallButton } from "../components/MainInterface.styles";
 import { FaArrowLeft, FaVolumeUp } from "react-icons/fa";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
-import { ImFontSize } from "react-icons/im";
 import "./page.css";
 
 
@@ -70,96 +69,107 @@ export default function KeyboardPage() {
         onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
         onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
         aria-label="Back"><FaArrowLeft></FaArrowLeft></SmallButton>
-       <div style={{
+      <div style={{
+        width: '100vw',
+        height: '100vh',
         background: "#23242a",
-        borderRadius: 24,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.22)",
-        width: '98vw',
-        maxWidth: 480,
-        margin: '0 auto',
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: 'flex-end',
-        padding: '24px 12px 18px 12px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         boxSizing: 'border-box',
-        minHeight: '20vh',
-        maxHeight: '1000vh'
+        padding: 0,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 1
       }}>
-        {/* <div style={{ position: 'relative', width: '100%', maxWidth: 440 }}></div> */}
-      {/* <TextAreaContainer style={{ position: 'relative' }}> */}
-                 <div style={{ position: 'relative', width: '100%', maxWidth: 440 }}>
-           <TextArea
-             placeholder="Enter your message here..."
-             value={text}
-             onChange={(e) => setText(e.target.value)}
-             style={{
-               fontSize: 'clamp(16px, 4vw, 22px)',
-               padding: '16px 60px 16px 16px',
-               borderRadius: 14,
-               border: "2px solid #2196f3",
-               width: "100%",
-               minHeight: 48,
-               background: "#181920",
-               color: "#fff",
-               outline: "none",
-               resize: "none",
-               boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-               boxSizing: 'border-box',
-               maxWidth: 440,
-               fontFamily: 'inherit',
-               transition: 'border 0.2s',
-             }}
-           />
-           <button 
-             onClick={() => handleSpeakOption(text)}
-             style={{
-               position: 'absolute',
-               right: 12,
-               top: '50%',
-               transform: 'translateY(-50%)',
-               background: '#2196f3',
-               color: '#fff',
-               border: 'none',
-               borderRadius: '50%',
-               width: 36,
-               height: 36,
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'center',
-               cursor: 'pointer',
-               fontSize: 18,
-               boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
-               transition: 'background 0.2s',
-               zIndex: 2
-             }}
-           >
-             <FaVolumeUp />
-           </button>
-         </div>
-      {/* </TextAreaContainer> */}
-      <Keyboard
-        keyboardRef={r => (keyboardRef.current = r)}
-        theme={"hg-theme-default hg-layout-default myTheme"}
-        onKeyPress={onKeyPress}
-        physicalKeyboardHighlight={true}
-        layoutName="default"
-        // physicalKeyboardHighlightPress={true}
-        layout={{
-          default: [
-            "q w e r t y u i o p {bksp}",
-            "a s d f g h j k l {enter}",
-            "z x c v b n m",
-            "{space}"
-          ]
-        }}
-        // buttonTheme={[
-        //   {
-        //     class: "hg-black-text",
-        //     buttons: ""
-        //   }
-        // ]}
-      />
+        <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', marginTop: 32, marginBottom: 32 }}>
+          <div style={{ position: 'relative', width: '100%' }}>
+            <TextArea
+              placeholder="Enter your message here..."
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              style={{
+                fontSize: 'clamp(22px, 4vw, 32px)',
+                padding: '28px 70px 28px 28px',
+                borderRadius: 20,
+                border: "2px solid #2196f3",
+                width: "100%",
+                minHeight: 100,
+                background: "#181920",
+                color: "#fff",
+                outline: "none",
+                resize: "none",
+                boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+                boxSizing: 'border-box',
+                maxWidth: 900,
+                fontFamily: 'inherit',
+                transition: 'border 0.2s',
+              }}
+            />
+            <button 
+              onClick={() => handleSpeakOption(text)}
+              style={{
+                position: 'absolute',
+                right: 18,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: '#2196f3',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '50%',
+                width: 48,
+                height: 48,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                fontSize: 28,
+                boxShadow: '0 2px 8px rgba(33,150,243,0.13)',
+                transition: 'background 0.2s',
+                zIndex: 2
+              }}
+            >
+              <FaVolumeUp />
+            </button>
+          </div>
+        </div>
+        <div className="keyboard-container" style={{ width: '100%', height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Keyboard
+            keyboardRef={r => (keyboardRef.current = r)}
+            theme={"hg-theme-default hg-layout-default myTheme"}
+            onKeyPress={onKeyPress}
+            physicalKeyboardHighlight={true}
+            layoutName="default"
+            layout={{
+              default: [
+                "q w e r t y u i o p {bksp}",
+                "a s d f g h j k l {enter}",
+                "z x c v b n m",
+                "{space}"
+              ]
+            }}
+            style={{
+              width: '100%',
+              height: '100%',
+              '--hg-button-size': 'clamp(80px, 12vw, 150px)',
+              '--hg-button-gap': '20px',
+              '--hg-button-border-radius': '24px',
+              '--hg-button-bg': '#2196f3',
+              '--hg-button-color': '#fff',
+              '--hg-button-border': 'none',
+              '--hg-button-box-shadow': '0 2px 8px rgba(33,150,243,0.13)',
+              '--hg-button-font-weight': '700',
+              '--hg-button-letter-spacing': '1px',
+              '--hg-button-transition': 'background 0.15s, transform 0.08s, box-shadow 0.15s',
+              '--hg-button-hover-bg': '#1976d2',
+              '--hg-button-active-bg': '#1565c0',
+              '--hg-button-active-transform': 'scale(0.96)',
+              '--hg-button-active-filter': 'brightness(0.93)',
+            }}
+          />
+        </div>
       </div>
     </>
   );
