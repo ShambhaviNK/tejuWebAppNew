@@ -271,16 +271,16 @@ export default function KeyboardPage() {
 
   return (
     <>
-      <div style={{
-        width: '100vw',
+    <div style={{
+      width: '100vw',
         minHeight: '100vh',
         background: "#23242a",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-between',
-        boxSizing: 'border-box',
-        padding: 0,
+      boxSizing: 'border-box',
+      padding: 0,
         position: 'relative',
         top: 0,
         left: 0,
@@ -301,30 +301,30 @@ export default function KeyboardPage() {
         }}>
           {/* Back Button */}
           <button onClick={() => router.push("/")}
-            style={{
+        style={{
               position: "absolute",
               top: isMobile ? '16px' : '32px',
               left: isMobile ? '16px' : '32px',
               width: isMobile ? 40 : 48,
               height: isMobile ? 40 : 48,
-              borderRadius: "50%",
-              background: "#2196f3",
-              color: "#fff",
-              border: "2px solid #fff2",
-              boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+          borderRadius: "50%",
+          background: "#2196f3",
+          color: "#fff",
+          border: "2px solid #fff2",
+          boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
               fontSize: isMobile ? 20 : 26,
-              cursor: "pointer",
-              transition: "background 0.2s, border 0.2s",
+          cursor: "pointer",
+          transition: "background 0.2s, border 0.2s",
               zIndex: 1000,
-            }}
-            onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
-            onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
+        }}
+        onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
+        onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
             aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
           {/* Text Input Area */}
-          <div style={{ 
+      <div style={{
             width: '100%', 
             maxWidth: 900, 
             marginTop: isMobile ? '35px' : '45px',
@@ -347,25 +347,25 @@ export default function KeyboardPage() {
                     textAreaRef.current.setSelectionRange(text.length, text.length);
                   }
                 }}
-                          style={{
+            style={{
                 fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
                 padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
                 borderRadius: isMobile ? 16 : 20,
-                border: "2px solid #2196f3",
-                width: "100%",
+              border: "2px solid #2196f3",
+              width: "100%",
                 // minHeight: isMobile ? 80 : 100,
-                background: "#181920",
-                color: "#fff",
-                outline: "none",
-                resize: "none",
-                boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-                boxSizing: 'border-box',
+              background: "#181920",
+              color: "#fff",
+              outline: "none",
+              resize: "none",
+              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+              boxSizing: 'border-box',
                 maxWidth: 900,
-                fontFamily: 'inherit',
-                transition: 'border 0.2s',
+              fontFamily: 'inherit',
+              transition: 'border 0.2s',
                 maxHeight: isMobile? 15 : 20,
                 lineHeight: isMobile? 0.5 : 0.25
-              }}
+            }}
           />
           <button
             onClick={() => handleSpeakOption(text)}
@@ -499,6 +499,46 @@ export default function KeyboardPage() {
           )}
         </div>
 
+        {/* Layout Toggle Button - Above Keyboard */}
+        <div style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          padding: isMobile ? '8px 16px' : '12px 24px',
+          marginBottom: isMobile ? '8px' : '12px',
+          background: 'transparent'
+        }}>
+          <button 
+            onClick={handleClick} 
+            type="button" 
+            style={{
+              fontSize: isMobile ? '12px' : '14px',
+              padding: isMobile ? '8px 16px' : '10px 20px',
+              borderRadius: '12px',
+              background: '#007aff',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontWeight: '500',
+              boxShadow: '0 2px 8px rgba(0, 122, 255, 0.3)',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = '#0056cc';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 122, 255, 0.4)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = '#007aff';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 122, 255, 0.3)';
+            }}
+          >
+            {checked ? "ABCD" : "QWERTY"}
+          </button>
+        </div>
+
         {/* Keyboard Section */}
         <div className="keyboard-container" style={{
           width: '100%', 
@@ -517,24 +557,6 @@ export default function KeyboardPage() {
           zIndex: 2,
           flexShrink: 0
         }}>
-          <div style={{
-            alignSelf: 'normal', 
-            paddingLeft: isMobile ? '8px' : '10px',
-            marginBottom: isMobile ? '8px' : '12px'
-          }}>
-            <button onClick={handleClick} type="button" style={{
-              fontSize: isMobile ? '12px' : '14px',
-              padding: isMobile ? '6px 12px' : '8px 16px',
-              borderRadius: '8px',
-              background: 'rgba(33, 150, 243, 0.1)',
-              color: '#2196f3',
-              border: '1px solid rgba(33, 150, 243, 0.3)',
-              cursor: 'pointer',
-              transition: 'all 0.2s'
-            }}>
-              <label> {checked ? "Change to ABCD Keyboard Layout" : "Change to QWERTY Keyboard Layout"}</label>
-            </button>
-          </div>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
             theme={"hg-theme-default hg-layout-default myTheme"}
