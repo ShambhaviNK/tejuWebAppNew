@@ -258,7 +258,9 @@ export default function KeyboardPage() {
   
   // Fixed button size calculation - not affected by suggestions
   const getButtonSize = () => {
-    if (isMobile) {
+    if (isMobile && isLandscape) {
+      return 'clamp(45px, 12vw, 80px)';
+    } else if (isMobile) {
       return 'clamp(65px, 15vw, 110px)';
     } else if (isTablet) {
       return 'clamp(75px, 13vw, 130px)';
@@ -269,47 +271,24 @@ export default function KeyboardPage() {
 
   return (
     <>
-      <button onClick={() => router.push("/")}
-        style={{
-          position: "fixed",
-          top: 18,
-          left: 18,
-          width: 48,
-          height: 48,
-          borderRadius: "50%",
-          background: "#2196f3",
-          color: "#fff",
-          border: "2px solid #fff2",
-          boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 26,
-          cursor: "pointer",
-          transition: "background 0.2s, border 0.2s",
-          zIndex: 10,
-        }}
-        onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
-        onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
-        aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
       <div style={{
         width: '100vw',
-        height: '100vh',
+        minHeight: '100vh',
         background: "#23242a",
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         boxSizing: 'border-box',
         padding: 0,
-        position: 'fixed',
+        position: 'relative',
         top: 0,
         left: 0,
-        zIndex: 1
+        zIndex: 1,
+        overflow: 'auto'
       }}>
-        {/* Top Content Area - Scrollable */}
+        {/* Top Content Area */}
         <div style={{
-          flex: 1,
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -317,14 +296,41 @@ export default function KeyboardPage() {
           justifyContent: 'flex-start',
           paddingTop: isMobile ? '16px' : '32px',
           paddingBottom: isMobile ? '16px' : '32px',
-          overflow: 'auto',
-          maxHeight: isMobile && isLandscape ? '75vh' : isMobile ? '65vh' : '50vh'
+          position: 'relative',
+          flex: 1
         }}>
+          {/* Back Button */}
+          <button onClick={() => router.push("/")}
+            style={{
+              position: "absolute",
+              top: isMobile ? '16px' : '32px',
+              left: isMobile ? '16px' : '32px',
+              width: isMobile ? 40 : 48,
+              height: isMobile ? 40 : 48,
+              borderRadius: "50%",
+              background: "#2196f3",
+              color: "#fff",
+              border: "2px solid #fff2",
+              boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: isMobile ? 20 : 26,
+              cursor: "pointer",
+              transition: "background 0.2s, border 0.2s",
+              zIndex: 1000,
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
+            onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
+            aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
           {/* Text Input Area */}
           <div style={{ 
             width: '100%', 
             maxWidth: 900, 
-            margin: '0 auto'
+            marginTop: isMobile ? '35px' : '45px',
+            marginRight: 'auto',
+            marginBottom: 0,
+            marginLeft: 'auto'
           }}>
             <div style={{ position: 'relative', width: '100%' }}>
               <TextArea
@@ -341,23 +347,25 @@ export default function KeyboardPage() {
                     textAreaRef.current.setSelectionRange(text.length, text.length);
                   }
                 }}
-            style={{
-                  fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
-                  padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
-                  borderRadius: isMobile ? 16 : 20,
-              border: "2px solid #2196f3",
-              width: "100%",
-                  minHeight: isMobile ? 80 : 100,
-              background: "#181920",
-              color: "#fff",
-              outline: "none",
-              resize: "none",
-              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-              boxSizing: 'border-box',
-                  maxWidth: 900,
-              fontFamily: 'inherit',
-              transition: 'border 0.2s',
-            }}
+                          style={{
+                fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
+                padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
+                borderRadius: isMobile ? 16 : 20,
+                border: "2px solid #2196f3",
+                width: "100%",
+                // minHeight: isMobile ? 80 : 100,
+                background: "#181920",
+                color: "#fff",
+                outline: "none",
+                resize: "none",
+                boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+                boxSizing: 'border-box',
+                maxWidth: 900,
+                fontFamily: 'inherit',
+                transition: 'border 0.2s',
+                maxHeight: isMobile? 15 : 20,
+                lineHeight: isMobile? 0.5 : 0.25
+              }}
           />
           <button
             onClick={() => handleSpeakOption(text)}
@@ -392,8 +400,10 @@ export default function KeyboardPage() {
             <div style={{
               width: '100%',
               maxWidth: 900,
-              margin: '0 auto',
               marginTop: isMobile ? '16px' : '24px',
+              marginRight: 'auto',
+              marginBottom: 0,
+              marginLeft: 'auto',
               padding: isMobile ? '12px' : '16px',
               background: 'rgba(33, 150, 243, 0.05)',
               borderRadius: isMobile ? '12px' : '16px',
@@ -489,17 +499,20 @@ export default function KeyboardPage() {
           )}
         </div>
 
-        {/* Fixed Keyboard Section - Always at bottom */}
+        {/* Keyboard Section */}
         <div className="keyboard-container" style={{
           width: '100%', 
-          height: isMobile && isLandscape ? '25vh' : isMobile ? '35vh' : '50vh',
+          minHeight: isMobile ? '350px' : '450px',
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'center', 
           justifyContent: 'center',
           gap: 0,
-          margin: 0,
-          paddingBottom: isMobile && isLandscape ? '4px' : isMobile ? '8px' : '24px',
+          marginTop: 0,
+          marginRight: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          paddingBottom: isMobile ? '8px' : '24px',
           position: 'relative',
           zIndex: 2,
           flexShrink: 0
@@ -565,7 +578,6 @@ export default function KeyboardPage() {
             }}
             style={{
               width: '100%',
-              height: '100%',
               '--hg-button-size': getButtonSize(),
               '--hg-button-gap': '2px',
               '--hg-button-margin': '1px',
