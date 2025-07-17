@@ -38,6 +38,8 @@ export default function KeyboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
+  const [storedTexts, setStoredTexts] = useState<string[]>([]);
+  const [showStoredTexts, setShowStoredTexts] = useState(false);
   const keyboardRef = useRef<any>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -73,6 +75,38 @@ export default function KeyboardPage() {
     if (!isNumberMode) {
       setIsLettersOnly(true);
     }
+  }
+
+  const handleStoreText = () => {
+    if (text.trim()) {
+      const timestamp = new Date().toLocaleString();
+      const textWithTimestamp = `${timestamp}: ${text}`;
+      setStoredTexts(prev => [...prev, textWithTimestamp]);
+      setText(""); // Clear the text after storing
+      setPredictions([]); // Clear predictions
+    }
+  }
+
+  const handleShowStoredTexts = () => {
+    setShowStoredTexts(!showStoredTexts);
+  }
+
+  const handleLoadStoredText = (storedText: string) => {
+    // Extract just the text part (remove timestamp)
+    const textOnly = storedText.split(': ').slice(1).join(': ');
+    setText(textOnly);
+    setShowStoredTexts(false);
+    // Focus back to text area
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+        textAreaRef.current.setSelectionRange(textOnly.length, textOnly.length);
+      }
+    }, 0);
+  }
+
+  const handleDeleteStoredText = (index: number) => {
+    setStoredTexts(prev => prev.filter((_, i) => i !== index));
   }
 
   const handleSpeakOption = (text: string) => {
@@ -584,26 +618,185 @@ export default function KeyboardPage() {
           >
             {isNumberMode ? "ABC" : "123"}
           </button>
+
+          <button 
+            onClick={handleStoreText} 
+            type="button" 
+            style={{
+              fontSize: isMobile ? '12px' : '14px',
+              padding: isMobile ? '8px 16px' : '10px 20px',
+              borderRadius: '12px',
+              background: '#ff9500',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontWeight: '500',
+              boxShadow: '0 2px 8px rgba(255, 149, 0, 0.3)',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = '#e6850e';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 149, 0, 0.4)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = '#ff9500';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 149, 0, 0.3)';
+            }}
+          >
+            Store
+          </button>
+
+          <button 
+            onClick={handleShowStoredTexts} 
+            type="button" 
+            style={{
+              fontSize: isMobile ? '12px' : '14px',
+              padding: isMobile ? '8px 16px' : '10px 20px',
+              borderRadius: '12px',
+              background: showStoredTexts ? '#5856d6' : '#ff3b30',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontWeight: '500',
+              boxShadow: showStoredTexts ? '0 2px 8px rgba(88, 86, 214, 0.3)' : '0 2px 8px rgba(255, 59, 48, 0.3)',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = showStoredTexts ? '#4a4a9e' : '#d70015';
+              e.currentTarget.style.boxShadow = showStoredTexts ? '0 4px 12px rgba(88, 86, 214, 0.4)' : '0 4px 12px rgba(255, 59, 48, 0.4)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = showStoredTexts ? '#5856d6' : '#ff3b30';
+              e.currentTarget.style.boxShadow = showStoredTexts ? '0 2px 8px rgba(88, 86, 214, 0.3)' : '0 2px 8px rgba(255, 59, 48, 0.3)';
+            }}
+          >
+            {showStoredTexts ? 'Hide' : 'View'}
+          </button>
         </div>
 
+        {/* Stored Texts Display */}
+        {showStoredTexts && (
+          <div style={{
+            width: '100%',
+            maxWidth: 900,
+            marginTop: isMobile ? '8px' : '12px',
+            marginRight: 'auto',
+            marginBottom: isMobile ? '8px' : '12px',
+            marginLeft: 'auto',
+            padding: isMobile ? '12px' : '16px',
+            background: 'rgba(88, 86, 214, 0.15)',
+            borderRadius: isMobile ? '12px' : '16px',
+            border: '1px solid rgba(88, 86, 214, 0.3)',
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '12px',
+              fontSize: isMobile ? '12px' : '14px',
+              color: '#5856d6',
+              fontWeight: '600'
+            }}>
+              <span>📝</span>
+              <span>Stored Texts ({storedTexts.length})</span>
+            </div>
+            {storedTexts.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                color: '#ffffff',
+                fontSize: isMobile ? '12px' : '14px',
+                padding: '20px'
+              }}>
+                No stored texts yet. Type something and click "Store" to save it.
+              </div>
+            ) : (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }}>
+                {storedTexts.map((storedText, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 12px',
+                    background: 'rgba(88, 86, 214, 0.25)',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(88, 86, 214, 0.4)'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      fontSize: isMobile ? '12px' : '14px',
+                      color: '#ffffff',
+                      cursor: 'pointer',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      transition: 'background 0.2s'
+                    }}
+                    onClick={() => handleLoadStoredText(storedText)}
+                    onMouseOver={e => {
+                      e.currentTarget.style.background = 'rgba(88, 86, 214, 0.3)';
+                    }}
+                    onMouseOut={e => {
+                      e.currentTarget.style.background = 'transparent';
+                    }}
+                    >
+                      {storedText}
+                    </div>
+                    <button
+                      onClick={() => handleDeleteStoredText(index)}
+                      style={{
+                        background: '#ff3b30',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '4px 8px',
+                        fontSize: isMobile ? '10px' : '12px',
+                        cursor: 'pointer',
+                        transition: 'background 0.2s'
+                      }}
+                      onMouseOver={e => {
+                        e.currentTarget.style.background = '#d70015';
+                      }}
+                      onMouseOut={e => {
+                        e.currentTarget.style.background = '#ff3b30';
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Keyboard Section */}
-        <div className="keyboard-container" style={{
-          width: '100%', 
-          minHeight: isMobile ? '350px' : '450px',
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          gap: 0,
-          marginTop: 0,
-          marginRight: 0,
-          marginBottom: 0,
-          marginLeft: 0,
-          paddingBottom: isMobile ? '8px' : '24px',
-          position: 'relative',
-          zIndex: 2,
-          flexShrink: 0
-        }}>
+        {!showStoredTexts && (
+          <div className="keyboard-container" style={{
+            width: '100%', 
+            minHeight: isMobile ? '350px' : '450px',
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            gap: 0,
+            marginTop: 0,
+            marginRight: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            paddingBottom: isMobile ? '8px' : '24px',
+            position: 'relative',
+            zIndex: 2,
+            flexShrink: 0
+          }}>
           <Keyboard
             keyboardRef={r => (keyboardRef.current = r)}
             theme={"hg-theme-default hg-layout-default myTheme"}
@@ -712,6 +905,7 @@ export default function KeyboardPage() {
             }}
           />
         </div>
+        )}
       </div>
     </>
   );
