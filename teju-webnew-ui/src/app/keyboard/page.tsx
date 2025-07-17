@@ -269,29 +269,6 @@ export default function KeyboardPage() {
 
   return (
     <>
-      <button onClick={() => router.push("/")}
-        style={{
-          position: "fixed",
-          top: 18,
-          left: 18,
-          width: 48,
-          height: 48,
-          borderRadius: "50%",
-          background: "#2196f3",
-          color: "#fff",
-          border: "2px solid #fff2",
-          boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 26,
-          cursor: "pointer",
-          transition: "background 0.2s, border 0.2s",
-          zIndex: 10,
-        }}
-        onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
-        onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
-        aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
       <div style={{
         width: '100vw',
         height: '100vh',
@@ -318,13 +295,39 @@ export default function KeyboardPage() {
           paddingTop: isMobile ? '16px' : '32px',
           paddingBottom: isMobile ? '16px' : '32px',
           overflow: 'auto',
-          maxHeight: isMobile && isLandscape ? '75vh' : isMobile ? '65vh' : '50vh'
+          maxHeight: isMobile && isLandscape ? '75vh' : isMobile ? '65vh' : '50vh',
+          position: 'relative'
         }}>
+          {/* Back Button */}
+          <button onClick={() => router.push("/")}
+            style={{
+              position: "absolute",
+              top: isMobile ? '16px' : '32px',
+              left: isMobile ? '16px' : '32px',
+              width: isMobile ? 40 : 48,
+              height: isMobile ? 40 : 48,
+              borderRadius: "50%",
+              background: "#2196f3",
+              color: "#fff",
+              border: "2px solid #fff2",
+              boxShadow: "0 2px 12px rgba(33,150,243,0.18)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: isMobile ? 20 : 26,
+              cursor: "pointer",
+              transition: "background 0.2s, border 0.2s",
+              zIndex: 1000,
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = '#1976d2')}
+            onMouseOut={e => (e.currentTarget.style.background = '#2196f3')}
+            aria-label="Back"><FaArrowLeft></FaArrowLeft></button>
           {/* Text Input Area */}
           <div style={{ 
             width: '100%', 
             maxWidth: 900, 
-            margin: '0 auto'
+            margin: '0 auto',
+            marginTop: isMobile ? '35px' : '45px'
           }}>
             <div style={{ position: 'relative', width: '100%' }}>
               <TextArea
@@ -341,25 +344,25 @@ export default function KeyboardPage() {
                     textAreaRef.current.setSelectionRange(text.length, text.length);
                   }
                 }}
-            style={{
-                  fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
-                  padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
-                  borderRadius: isMobile ? 16 : 20,
-              border: "2px solid #2196f3",
-              width: "100%",
-                  // minHeight: isMobile ? 80 : 100,
-              background: "#181920",
-              color: "#fff",
-              outline: "none",
-              resize: "none",
-              boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
-              boxSizing: 'border-box',
-                  maxWidth: 900,
-              fontFamily: 'inherit',
-              transition: 'border 0.2s',
-              maxHeight: isMobile? 15 : 20,
-              lineHeight: isMobile? 0.5 : 0.25
-            }}
+                          style={{
+                fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
+                padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
+                borderRadius: isMobile ? 16 : 20,
+                border: "2px solid #2196f3",
+                width: "100%",
+                // minHeight: isMobile ? 80 : 100,
+                background: "#181920",
+                color: "#fff",
+                outline: "none",
+                resize: "none",
+                boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
+                boxSizing: 'border-box',
+                maxWidth: 900,
+                fontFamily: 'inherit',
+                transition: 'border 0.2s',
+                maxHeight: isMobile? 15 : 20,
+                lineHeight: isMobile? 0.5 : 0.25
+              }}
           />
           <button
             onClick={() => handleSpeakOption(text)}
