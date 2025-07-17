@@ -31,6 +31,8 @@ const DICTIONARY_API = "https://api.datamuse.com/words";
 export default function KeyboardPage() {
   const [checked, setChecked] = useState(true);
   const [caps, setCaps] = useState(false);
+  const [isNumberMode, setIsNumberMode] = useState(false);
+  const [isLettersOnly, setIsLettersOnly] = useState(false);
   const [text, setText] = useState("");
   const [predictions, setPredictions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +65,14 @@ export default function KeyboardPage() {
 
   const handleClick = () => {
     setChecked(!checked);
+    setIsLettersOnly(false);
+  }
+
+  const handleNumberToggle = () => {
+    setIsNumberMode(!isNumberMode);
+    if (!isNumberMode) {
+      setIsLettersOnly(true);
+    }
   }
 
   const handleSpeakOption = (text: string) => {
@@ -233,6 +243,13 @@ export default function KeyboardPage() {
       return;
     } else if (button === "{lock}") {
       setCaps(!caps);
+      return;
+    } else if (button === "{abc}") {
+      setIsNumberMode(false);
+      setIsLettersOnly(true);
+      return;
+    } else if (button === "{123}") {
+      setIsNumberMode(true);
       return;
     } else if (!button.startsWith("{")) {
       newText = text.slice(0, cursor_pos) + button + text.slice(cursor_pos);
@@ -499,12 +516,13 @@ export default function KeyboardPage() {
           )}
         </div>
 
-        {/* Layout Toggle Button - Above Keyboard */}
+        {/* Layout Toggle Buttons - Above Keyboard */}
         <div style={{
           width: '100%',
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
+          gap: isMobile ? '8px' : '12px',
           padding: isMobile ? '8px 16px' : '12px 24px',
           marginBottom: isMobile ? '8px' : '12px',
           background: 'transparent'
@@ -537,6 +555,35 @@ export default function KeyboardPage() {
           >
             {checked ? "ABCD" : "QWERTY"}
           </button>
+          
+          <button 
+            onClick={handleNumberToggle} 
+            type="button" 
+            style={{
+              fontSize: isMobile ? '12px' : '14px',
+              padding: isMobile ? '8px 16px' : '10px 20px',
+              borderRadius: '12px',
+              background: isNumberMode ? '#34c759' : '#007aff',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontWeight: '500',
+              boxShadow: isNumberMode ? '0 2px 8px rgba(52, 199, 89, 0.3)' : '0 2px 8px rgba(0, 122, 255, 0.3)',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
+              whiteSpace: 'nowrap'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = isNumberMode ? '#28a745' : '#0056cc';
+              e.currentTarget.style.boxShadow = isNumberMode ? '0 4px 12px rgba(52, 199, 89, 0.4)' : '0 4px 12px rgba(0, 122, 255, 0.4)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = isNumberMode ? '#34c759' : '#007aff';
+              e.currentTarget.style.boxShadow = isNumberMode ? '0 2px 8px rgba(52, 199, 89, 0.3)' : '0 2px 8px rgba(0, 122, 255, 0.3)';
+            }}
+          >
+            {isNumberMode ? "ABC" : "123"}
+          </button>
         </div>
 
         {/* Keyboard Section */}
@@ -562,12 +609,27 @@ export default function KeyboardPage() {
             theme={"hg-theme-default hg-layout-default myTheme"}
             onKeyPress={onKeyPress}
             physicalKeyboardHighlight={true}
-            layoutName= {caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")}
+            layoutName={isNumberMode ? "numbers" : (isLettersOnly ? (caps ? (checked ? "QWERTY_letters" : "ABCD_letters") : (checked ? "qwerty_letters" : "abcd_letters")) : (caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")))}
             display= {{
             '{bksp}': isMobile ? '' : 'BACKSPACE',
             '{enter}': isMobile ? '' : 'ENTER',
             '{lock}': isMobile ? '' : 'CAPS',
-            '{space}': 'SPACE'}}
+            '{space}': 'SPACE',
+            '{abc}': 'ABC',
+            '{123}': '123',
+            '+': '+',
+            '-': '-',
+            '*': '×',
+            '/': '÷',
+            '%': '%',
+            '^': '^',
+            '(': '(',
+            ')': ')',
+            '=': '=',
+            '.': '.',
+            ',': ',',
+            '?': '?',
+            "'": "'"}}
             layout={{
               qwerty: [
                 "1 2 3 4 5 6 7 8 9 0",
@@ -596,6 +658,37 @@ export default function KeyboardPage() {
                 "{lock} J K L M N O P Q R S ' {enter}",
                 "T U V W X Y Z , . ?",
                 "{space}"
+              ],
+              qwerty_letters: [
+                "q w e r t y u i o p {bksp}",
+                "{lock} a s d f g h j k l ' {enter}",
+                "z x c v b n m , . ?",
+                "{space}"
+              ],
+              QWERTY_letters: [
+                "Q W E R T Y U I O P {bksp}",
+                "{lock} A S D F G H J K L ' {enter}",
+                "Z X C V B N M , . ?",
+                "{space}"
+              ],
+              abcd_letters: [
+                "a b c d e f g h i {bksp}",
+                "{lock} j k l m n o p q r s ' {enter}",
+                "t u v w x y z , . ?",
+                "{space}"
+              ],
+              ABCD_letters: [
+                "A B C D E F G H I {bksp}",
+                "{lock} J K L M N O P Q R S ' {enter}",
+                "T U V W X Y Z , . ?",
+                "{space}"
+              ],
+              numbers: [
+                "1 2 3 + -",
+                "4 5 6 * /",
+                "7 8 9 % ^",
+                ". 0 ( ) =",
+                "{abc} {space} {enter} {bksp}"
               ]
             }}
             style={{
