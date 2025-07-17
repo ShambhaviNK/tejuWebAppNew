@@ -501,6 +501,7 @@ export default function KeyboardPage() {
           justifyContent: 'center',
           gap: 0,
           margin: 0,
+          marginBottom: isMobile && isLandscape ? '100px' : isMobile ? '110px' : '70px',
           paddingBottom: isMobile && isLandscape ? '4px' : isMobile ? '8px' : '24px',
           position: 'relative',
           zIndex: 2,
