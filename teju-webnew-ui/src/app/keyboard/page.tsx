@@ -485,12 +485,8 @@ export default function KeyboardPage() {
     } else if (button === "{lock}") {
       setCaps(!caps);
       return;
-    } else if (button === "{abc}") {
-      setIsNumberMode(false);
-      setIsLettersOnly(true);
-      return;
-    } else if (button === "{123}") {
-      setIsNumberMode(true);
+    } else if (button === "{abc}" || button === "{123}") {
+      setIsNumberMode(!isNumberMode);
       return;
     } else if (button === "{abcd}" || button === "{qwerty}") {
       handleClick();
@@ -958,16 +954,16 @@ export default function KeyboardPage() {
               theme={"hg-theme-default hg-layout-default myTheme"}
               onKeyPress={onKeyPress}
               physicalKeyboardHighlight={true}
-              layoutName={isNumberMode ? "numbers" : (isLettersOnly ? (caps ? (checked ? "QWERTY_letters" : "ABCD_letters") : (checked ? "qwerty_letters" : "abcd_letters")) : (caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")))}
+              layoutName={isNumberMode ? "numbers" : (caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd"))}
               display= {{
               '{bksp}': isMobile ? '' : 'BACKSPACE',
               '{enter}': isMobile ? '' : 'ENTER',
               '{lock}': isMobile ? '' : 'CAPS',
               '{space}': 'SPACE',
-              '{abc}': 'ABC',
-              '{123}': '123',
-              '{abcd}': checked ? 'ABCD' : 'QWERTY',
-              '{qwerty}': checked ? 'QWERTY' : 'ABCD',
+                          '{abc}': isNumberMode ? 'ABC' : '123',
+            '{123}': isNumberMode ? 'ABC' : '123',
+                          '{abcd}': !checked ? 'QWERTY' : 'ABCD',
+            '{qwerty}': !checked ? 'QWERTY' : 'ABCD',
               '{store}': 'Store',
               '{view}': 'View',
               '+': '+',
@@ -1050,7 +1046,7 @@ export default function KeyboardPage() {
                   "4 5 6 * /",
                   "7 8 9 % ^",
                   ". 0 ( ) =",
-                  "{abc} {space} {enter} {bksp}"
+                  "{123} {space} {enter} {bksp}"
                 ]
               }}
               style={{
