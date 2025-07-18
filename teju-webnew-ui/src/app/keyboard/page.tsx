@@ -24,10 +24,7 @@ const inappropriateWords = new Set([
   // Leetspeak variations
   "f*ck", "sh*t", "b*tch", "a$$", "d*mn", "h*ll", "cr*p", "p*ss", "d*ck", "c*ck", "p*ssy", "c*nt",
   "f*cking", "sh*tting", "b*tching", "a$$hole", "d*mned", "h*llish", "cr*ppy", "p*ssing", "d*cking",
-  
-  // Partial matches that could be problematic
-  "fuc", "shi", "bit", "ass", "cra", "pis", "dic", "coc", "pus", "cun",
-  
+    
   // Offensive terms
   "nigger", "nigga", "faggot", "fag", "dyke", "whore", "slut", "hoe", "skank", "tramp",
   "n*gger", "n*gga", "f*ggot", "f*g", "d*ke", "wh*re", "sl*t", "h*e", "sk*nk", "tr*mp",
