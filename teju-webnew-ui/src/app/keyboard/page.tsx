@@ -178,7 +178,13 @@ export default function KeyboardPage() {
 
   const handleClick = () => {
     setChecked(!checked);
-    setIsLettersOnly(false);
+    // If we're in number mode, switch back to letters mode
+    if (isNumberMode) {
+      setIsNumberMode(false);
+      setIsLettersOnly(false);
+    } else {
+      setIsLettersOnly(false);
+    }
   }
 
   const handleNumberToggle = () => {
