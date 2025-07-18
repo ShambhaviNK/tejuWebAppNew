@@ -877,7 +877,7 @@ export default function KeyboardPage() {
                 fontSize: isMobile ? '12px' : '14px',
                 padding: '20px'
               }}>
-                No stored texts yet. Type something and click "Store" to save it.
+                No stored texts yet. Type something and click &quot;Store&quot; to save it.
               </div>
             ) : (
               <div style={{
