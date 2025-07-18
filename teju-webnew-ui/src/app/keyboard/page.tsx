@@ -136,7 +136,14 @@ export default function KeyboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
-  const [storedTexts, setStoredTexts] = useState<{[date: string]: string[]}>({});
+  const [storedTexts, setStoredTexts] = useState<{[date: string]: string[]}>(() => {
+    // Load stored texts from localStorage on component mount
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('keyboardStoredTexts');
+      return saved ? JSON.parse(saved) : {};
+    }
+    return {};
+  });
   const [showStoredTexts, setShowStoredTexts] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
   const keyboardRef = useRef<any>(null);
@@ -172,6 +179,13 @@ export default function KeyboardPage() {
       }
     };
   }, [debounceTimer]);
+
+  // Save stored texts to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('keyboardStoredTexts', JSON.stringify(storedTexts));
+    }
+  }, [storedTexts]);
 
   const handleClick = () => {
     setChecked(!checked);
@@ -228,6 +242,12 @@ export default function KeyboardPage() {
       }
       return newStoredTexts;
     });
+  }
+
+  const handleClearAllStoredTexts = () => {
+    if (window.confirm('Are you sure you want to delete all stored texts? This action cannot be undone.')) {
+      setStoredTexts({});
+    }
   }
 
   const handleSpeakOption = (text: string) => {
@@ -545,13 +565,15 @@ export default function KeyboardPage() {
           {/* Text Input Area */}
       <div style={{
             width: '100%', 
-            maxWidth: 900, 
-            marginTop: isMobile ? '35px' : '45px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: isMobile ? '50px' : '70px',
             marginRight: 'auto',
             marginBottom: 0,
             marginLeft: 'auto'
           }}>
-            <div style={{ position: 'relative', width: '100%' }}>
+            <div style={{ position: 'relative', width: isMobile ? '400px' : '600px' }}>
               <TextArea
                 ref={textAreaRef}
             placeholder="Enter your message here..."
@@ -567,23 +589,22 @@ export default function KeyboardPage() {
                   }
                 }}
             style={{
-                fontSize: isMobile ? 'clamp(18px, 4vw, 24px)' : 'clamp(22px, 4vw, 32px)',
-                padding: isMobile ? '20px 60px 20px 20px' : '28px 70px 28px 28px',
-                borderRadius: isMobile ? 16 : 20,
+                fontSize: isMobile ? '16px' : '18px',
+                padding: isMobile ? '12px 50px 12px 16px' : '16px 60px 16px 20px',
+                borderRadius: isMobile ? 12 : 16,
               border: "2px solid #2196f3",
               width: "100%",
-                minHeight: isMobile ? 80 : 120,
-                maxHeight: isMobile ? 200 : 300,
+                minHeight: isMobile ? 45 : 55,
+                maxHeight: isMobile ? 45 : 55,
               background: "#181920",
               color: "#fff",
               outline: "none",
               resize: "none",
               boxShadow: "0 2px 8px rgba(33,150,243,0.10)",
               boxSizing: 'border-box',
-                maxWidth: 900,
               fontFamily: 'inherit',
               transition: 'border 0.2s',
-                lineHeight: isMobile ? '1.4' : '1.5',
+                lineHeight: '1.2',
                 overflowY: 'auto',
                 overflowX: 'hidden',
                 scrollbarWidth: 'thin',
@@ -869,14 +890,43 @@ export default function KeyboardPage() {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              marginBottom: '12px',
-              fontSize: isMobile ? '12px' : '14px',
-              color: '#5856d6',
-              fontWeight: '600'
+              justifyContent: 'space-between',
+              marginBottom: '12px'
             }}>
-              <span>📝</span>
-                              <span>Stored Texts ({Object.values(storedTexts).flat().length})</span>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: isMobile ? '12px' : '14px',
+                color: '#5856d6',
+                fontWeight: '600'
+              }}>
+                <span>📝</span>
+                <span>Stored Texts ({Object.values(storedTexts).flat().length})</span>
+              </div>
+              {Object.keys(storedTexts).length > 0 && (
+                <button
+                  onClick={handleClearAllStoredTexts}
+                  style={{
+                    background: '#ff3b30',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '6px 12px',
+                    fontSize: isMobile ? '10px' : '12px',
+                    cursor: 'pointer',
+                    transition: 'background 0.2s'
+                  }}
+                  onMouseOver={e => {
+                    e.currentTarget.style.background = '#d70015';
+                  }}
+                  onMouseOut={e => {
+                    e.currentTarget.style.background = '#ff3b30';
+                  }}
+                >
+                  Clear All
+                </button>
+              )}
             </div>
             {Object.keys(storedTexts).length === 0 ? (
               <div style={{
@@ -963,8 +1013,8 @@ export default function KeyboardPage() {
                         </button>
                       </div>
                     ))}
-                  </div>
-                ))}
+            </div>
+          ))}
               </div>
             )}
           </div>
