@@ -565,7 +565,8 @@ export default function KeyboardPage() {
                 borderRadius: isMobile ? 16 : 20,
               border: "2px solid #2196f3",
               width: "100%",
-                // minHeight: isMobile ? 80 : 100,
+                minHeight: isMobile ? 80 : 120,
+                maxHeight: isMobile ? 200 : 300,
               background: "#181920",
               color: "#fff",
               outline: "none",
@@ -575,8 +576,11 @@ export default function KeyboardPage() {
                 maxWidth: 900,
               fontFamily: 'inherit',
               transition: 'border 0.2s',
-                maxHeight: isMobile? 15 : 20,
-                lineHeight: isMobile? 0.5 : 0.25
+                lineHeight: isMobile ? '1.4' : '1.5',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#2196f3 #181920'
             }}
           />
           <button
