@@ -204,18 +204,7 @@ export default function KeyboardPage() {
     }, 0);
   }
 
-  const handleNumberToggle = () => {
-    setIsNumberMode(!isNumberMode);
-    if (!isNumberMode) {
-      setIsLettersOnly(true);
-    }
-    // Focus back to text area
-    setTimeout(() => {
-      if (textAreaRef.current) {
-        textAreaRef.current.focus();
-      }
-    }, 0);
-  }
+
 
   const handleStoreText = () => {
     if (text.trim()) {
