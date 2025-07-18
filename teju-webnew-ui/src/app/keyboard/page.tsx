@@ -130,7 +130,6 @@ export default function KeyboardPage() {
   const [checked, setChecked] = useState(true);
   const [caps, setCaps] = useState(false);
   const [isNumberMode, setIsNumberMode] = useState(false);
-  const [isLettersOnly, setIsLettersOnly] = useState(false);
   const [text, setText] = useState("");
   const [predictions, setPredictions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -192,10 +191,7 @@ export default function KeyboardPage() {
     // If we're in number mode, switch back to letters mode
     if (isNumberMode) {
       setIsNumberMode(false);
-      setIsLettersOnly(false);
-    } else {
-      setIsLettersOnly(false);
-    }
+    } 
     // Focus back to text area
     setTimeout(() => {
       if (textAreaRef.current) {
