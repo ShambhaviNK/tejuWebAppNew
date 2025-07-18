@@ -136,7 +136,7 @@ export default function KeyboardPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [dictionaryCache, setDictionaryCache] = useState<{[key: string]: string[]}>({});
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
-  const [storedTexts, setStoredTexts] = useState<string[]>([]);
+  const [storedTexts, setStoredTexts] = useState<{[date: string]: string[]}>({});
   const [showStoredTexts, setShowStoredTexts] = useState(false);
   const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
   const keyboardRef = useRef<any>(null);
@@ -193,9 +193,11 @@ export default function KeyboardPage() {
 
   const handleStoreText = () => {
     if (text.trim()) {
-      const timestamp = new Date().toLocaleString();
-      const textWithTimestamp = `${timestamp}: ${text}`;
-      setStoredTexts(prev => [...prev, textWithTimestamp]);
+      const today = new Date().toLocaleDateString();
+      setStoredTexts(prev => ({
+        ...prev,
+        [today]: [...(prev[today] || []), text]
+      }));
       setText(""); // Clear the text after storing
       setPredictions([]); // Clear predictions
     }
@@ -205,22 +207,27 @@ export default function KeyboardPage() {
     setShowStoredTexts(!showStoredTexts);
   }
 
-  const handleLoadStoredText = (storedText: string) => {
-    // Extract just the text part (remove timestamp)
-    const textOnly = storedText.split(': ').slice(1).join(': ');
-    setText(textOnly);
+  const handleLoadStoredText = (text: string) => {
+    setText(text);
     setShowStoredTexts(false);
     // Focus back to text area
     setTimeout(() => {
       if (textAreaRef.current) {
         textAreaRef.current.focus();
-        textAreaRef.current.setSelectionRange(textOnly.length, textOnly.length);
+        textAreaRef.current.setSelectionRange(text.length, text.length);
       }
     }, 0);
   }
 
-  const handleDeleteStoredText = (index: number) => {
-    setStoredTexts(prev => prev.filter((_, i) => i !== index));
+  const handleDeleteStoredText = (date: string, index: number) => {
+    setStoredTexts(prev => {
+      const newStoredTexts = { ...prev };
+      newStoredTexts[date] = newStoredTexts[date].filter((_, i) => i !== index);
+      if (newStoredTexts[date].length === 0) {
+        delete newStoredTexts[date];
+      }
+      return newStoredTexts;
+    });
   }
 
   const handleSpeakOption = (text: string) => {
@@ -869,9 +876,9 @@ export default function KeyboardPage() {
               fontWeight: '600'
             }}>
               <span>📝</span>
-              <span>Stored Texts ({storedTexts.length})</span>
+                              <span>Stored Texts ({Object.values(storedTexts).flat().length})</span>
             </div>
-            {storedTexts.length === 0 ? (
+            {Object.keys(storedTexts).length === 0 ? (
               <div style={{
                 textAlign: 'center',
                 color: '#ffffff',
@@ -884,60 +891,80 @@ export default function KeyboardPage() {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px'
+                gap: '16px'
               }}>
-                {storedTexts.map((storedText, index) => (
-                  <div key={index} style={{
+                {Object.entries(storedTexts).map(([date, texts]) => (
+                  <div key={date} style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 12px',
-                    background: 'rgba(88, 86, 214, 0.25)',
-                    borderRadius: '8px',
-                    border: '1px solid rgba(88, 86, 214, 0.4)'
+                    flexDirection: 'column',
+                    gap: '8px'
                   }}>
+                    {/* Date Header */}
                     <div style={{
-                      flex: 1,
-                      fontSize: isMobile ? '12px' : '14px',
-                      color: '#ffffff',
-                      cursor: 'pointer',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      transition: 'background 0.2s'
-                    }}
-                    onClick={() => handleLoadStoredText(storedText)}
-                    onMouseOver={e => {
-                      e.currentTarget.style.background = 'rgba(88, 86, 214, 0.3)';
-                    }}
-                    onMouseOut={e => {
-                      e.currentTarget.style.background = 'transparent';
-                    }}
-                    >
-                      {storedText}
+                      fontSize: isMobile ? '14px' : '16px',
+                      color: '#2196f3',
+                      fontWeight: '600',
+                      padding: '8px 0',
+                      borderBottom: '1px solid rgba(33, 150, 243, 0.3)'
+                    }}>
+                      {date}
                     </div>
-                    <button
-                      onClick={() => handleDeleteStoredText(index)}
-                      style={{
-                        background: '#ff3b30',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '4px 8px',
-                        fontSize: isMobile ? '10px' : '12px',
-                        cursor: 'pointer',
-                        transition: 'background 0.2s'
-                      }}
-                      onMouseOver={e => {
-                        e.currentTarget.style.background = '#d70015';
-                      }}
-                      onMouseOut={e => {
-                        e.currentTarget.style.background = '#ff3b30';
-                      }}
-                    >
-                      Delete
-                    </button>
-            </div>
-          ))}
+                    {/* Texts for this date */}
+                    {texts.map((text, index) => (
+                      <div key={`${date}-${index}`} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 12px',
+                        background: 'rgba(88, 86, 214, 0.25)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(88, 86, 214, 0.4)',
+                        marginLeft: '16px'
+                      }}>
+                        <div style={{
+                          flex: 1,
+                          fontSize: isMobile ? '12px' : '14px',
+                          color: '#ffffff',
+                          cursor: 'pointer',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          transition: 'background 0.2s'
+                        }}
+                        onClick={() => handleLoadStoredText(text)}
+                        onMouseOver={e => {
+                          e.currentTarget.style.background = 'rgba(88, 86, 214, 0.3)';
+                        }}
+                        onMouseOut={e => {
+                          e.currentTarget.style.background = 'transparent';
+                        }}
+                        >
+                          {text}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteStoredText(date, index)}
+                          style={{
+                            background: '#ff3b30',
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '4px 8px',
+                            fontSize: isMobile ? '10px' : '12px',
+                            cursor: 'pointer',
+                            transition: 'background 0.2s'
+                          }}
+                          onMouseOver={e => {
+                            e.currentTarget.style.background = '#d70015';
+                          }}
+                          onMouseOut={e => {
+                            e.currentTarget.style.background = '#ff3b30';
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             )}
           </div>
