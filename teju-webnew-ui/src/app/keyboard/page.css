@@ -80,7 +80,8 @@ textarea {
 .simple-keyboard .hg-row:nth-child(2) .hg-button,
 .simple-keyboard .hg-row:nth-child(3) .hg-button,
 .simple-keyboard .hg-row:nth-child(4) .hg-button,
-.simple-keyboard .hg-row:nth-child(5) .hg-button {
+.simple-keyboard .hg-row:nth-child(5) .hg-button,
+.simple-keyboard .hg-row:nth-child(6) .hg-button {
   background: #ffffff;
   color: #000000;
   border: none;
@@ -90,9 +91,18 @@ textarea {
 .simple-keyboard .hg-row:nth-child(2) .hg-button:hover,
 .simple-keyboard .hg-row:nth-child(3) .hg-button:hover,
 .simple-keyboard .hg-row:nth-child(4) .hg-button:hover,
-.simple-keyboard .hg-row:nth-child(5) .hg-button:hover {
+.simple-keyboard .hg-row:nth-child(5) .hg-button:hover,
+.simple-keyboard .hg-row:nth-child(6) .hg-button:hover {
   background: #f2f2f2;
   transform: none;
+}
+
+/* Function buttons row styling */
+.simple-keyboard .hg-row:first-child .hg-button {
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-weight: 500 !important;
+  font-size: clamp(10px, 2vw, 12px) !important;
 }
 
 /* Special keys styling - iOS style */
@@ -109,6 +119,30 @@ textarea {
 .simple-keyboard .hg-button[data-skbtn="{enter}"]:hover,
 .simple-keyboard .hg-button[data-skbtn="{lock}"]:hover {
   background: #4b5563 !important;
+  transform: none !important;
+}
+
+/* Function buttons styling - consistent with keyboard */
+.simple-keyboard .hg-button[data-skbtn="{abcd}"],
+.simple-keyboard .hg-button[data-skbtn="{qwerty}"],
+.simple-keyboard .hg-button[data-skbtn="{123}"],
+.simple-keyboard .hg-button[data-skbtn="{store}"],
+.simple-keyboard .hg-button[data-skbtn="{view}"],
+.simple-keyboard .hg-button[data-skbtn="{abc}"] {
+  background: #ffffff !important;
+  color: #000000 !important;
+  font-weight: 400 !important;
+  border: none !important;
+  font-size: clamp(12px, 2vw, 14px) !important;
+}
+
+.simple-keyboard .hg-button[data-skbtn="{abcd}"]:hover,
+.simple-keyboard .hg-button[data-skbtn="{qwerty}"]:hover,
+.simple-keyboard .hg-button[data-skbtn="{123}"]:hover,
+.simple-keyboard .hg-button[data-skbtn="{store}"]:hover,
+.simple-keyboard .hg-button[data-skbtn="{view}"]:hover,
+.simple-keyboard .hg-button[data-skbtn="{abc}"]:hover {
+  background: #f2f2f2 !important;
   transform: none !important;
 }
 
@@ -233,6 +267,18 @@ textarea {
     gap: 2px !important;
     border: none !important;
     border-radius: 0 !important;
+  }
+  
+  /* Mobile function buttons */
+  .simple-keyboard .hg-button[data-skbtn="{abcd}"],
+  .simple-keyboard .hg-button[data-skbtn="{qwerty}"],
+  .simple-keyboard .hg-button[data-skbtn="{123}"],
+  .simple-keyboard .hg-button[data-skbtn="{store}"],
+  .simple-keyboard .hg-button[data-skbtn="{view}"],
+  .simple-keyboard .hg-button[data-skbtn="{abc}"] {
+    font-size: clamp(10px, 3vw, 12px) !important;
+    min-height: 35px !important;
+    max-height: 45px !important;
   }
 }
 

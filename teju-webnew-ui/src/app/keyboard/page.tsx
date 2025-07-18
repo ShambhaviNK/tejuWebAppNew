@@ -196,6 +196,12 @@ export default function KeyboardPage() {
     } else {
       setIsLettersOnly(false);
     }
+    // Focus back to text area
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+      }
+    }, 0);
   }
 
   const handleNumberToggle = () => {
@@ -203,6 +209,12 @@ export default function KeyboardPage() {
     if (!isNumberMode) {
       setIsLettersOnly(true);
     }
+    // Focus back to text area
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+      }
+    }, 0);
   }
 
   const handleStoreText = () => {
@@ -214,11 +226,23 @@ export default function KeyboardPage() {
       }));
       setText(""); // Clear the text after storing
       setPredictions([]); // Clear predictions
+      // Focus back to text area
+      setTimeout(() => {
+        if (textAreaRef.current) {
+          textAreaRef.current.focus();
+        }
+      }, 0);
     }
   }
 
   const handleShowStoredTexts = () => {
     setShowStoredTexts(!showStoredTexts);
+    // Focus back to text area
+    setTimeout(() => {
+      if (textAreaRef.current) {
+        textAreaRef.current.focus();
+      }
+    }, 0);
   }
 
   const handleLoadStoredText = (text: string) => {
@@ -247,6 +271,12 @@ export default function KeyboardPage() {
   const handleClearAllStoredTexts = () => {
     if (window.confirm('Are you sure you want to delete all stored texts? This action cannot be undone.')) {
       setStoredTexts({});
+      // Focus back to text area
+      setTimeout(() => {
+        if (textAreaRef.current) {
+          textAreaRef.current.focus();
+        }
+      }, 0);
     }
   }
 
@@ -473,6 +503,15 @@ export default function KeyboardPage() {
     } else if (button === "{123}") {
       setIsNumberMode(true);
       return;
+    } else if (button === "{abcd}" || button === "{qwerty}") {
+      handleClick();
+      return;
+    } else if (button === "{store}") {
+      handleStoreText();
+      return;
+    } else if (button === "{view}") {
+      handleShowStoredTexts();
+      return;
     } else if (!button.startsWith("{")) {
       newText = text.slice(0, cursor_pos) + button + text.slice(cursor_pos);
     }
@@ -485,7 +524,8 @@ export default function KeyboardPage() {
       if (textAreaRef.current) {
         textAreaRef.current.focus();
         // Set cursor position to maintain where user was typing
-        textAreaRef.current.setSelectionRange(cursor_pos + (button === "{bksp}" ? -1 : button.length), cursor_pos + (button === "{bksp}" ? -1 : button.length));
+        const newCursorPos = cursor_pos + (button === "{bksp}" ? -1 : button.length);
+        textAreaRef.current.setSelectionRange(newCursorPos, newCursorPos);
       }
     }, 0);
   };
@@ -534,9 +574,10 @@ export default function KeyboardPage() {
           alignItems: 'center',
           justifyContent: 'flex-start',
           paddingTop: isMobile ? '16px' : '32px',
-          paddingBottom: isMobile ? '16px' : '32px',
+          paddingBottom: showStoredTexts ? '0px' : (isMobile ? '16px' : '32px'),
           position: 'relative',
-          flex: 1
+          flex: 1,
+          minHeight: 0
         }}>
           {/* Back Button */}
           <button onClick={() => router.push("/")}
@@ -743,149 +784,26 @@ export default function KeyboardPage() {
           )}
         </div>
 
-        {/* Layout Toggle Buttons - Above Keyboard */}
-        <div style={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-          gap: isMobile ? '8px' : '12px',
-          padding: isMobile ? '8px 16px' : '12px 24px',
-          marginBottom: isMobile ? '8px' : '12px',
-          background: 'transparent'
-        }}>
-          <button 
-            onClick={handleClick} 
-            type="button" 
-            style={{
-              fontSize: isMobile ? '12px' : '14px',
-              padding: isMobile ? '8px 16px' : '10px 20px',
-              borderRadius: '12px',
-              background: '#007aff',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              fontWeight: '500',
-              boxShadow: '0 2px 8px rgba(0, 122, 255, 0.3)',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = '#0056cc';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 122, 255, 0.4)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = '#007aff';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 122, 255, 0.3)';
-            }}
-          >
-            {checked ? "ABCD" : "QWERTY"}
-          </button>
-          
-          <button 
-            onClick={handleNumberToggle} 
-            type="button" 
-          style={{
-              fontSize: isMobile ? '12px' : '14px',
-              padding: isMobile ? '8px 16px' : '10px 20px',
-              borderRadius: '12px',
-              background: isNumberMode ? '#34c759' : '#007aff',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              fontWeight: '500',
-              boxShadow: isNumberMode ? '0 2px 8px rgba(52, 199, 89, 0.3)' : '0 2px 8px rgba(0, 122, 255, 0.3)',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = isNumberMode ? '#28a745' : '#0056cc';
-              e.currentTarget.style.boxShadow = isNumberMode ? '0 4px 12px rgba(52, 199, 89, 0.4)' : '0 4px 12px rgba(0, 122, 255, 0.4)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = isNumberMode ? '#34c759' : '#007aff';
-              e.currentTarget.style.boxShadow = isNumberMode ? '0 2px 8px rgba(52, 199, 89, 0.3)' : '0 2px 8px rgba(0, 122, 255, 0.3)';
-            }}
-          >
-            {isNumberMode ? "ABC" : "123"}
-          </button>
 
-                <button
-            onClick={handleStoreText} 
-            type="button" 
-                  style={{
-              fontSize: isMobile ? '12px' : '14px',
-              padding: isMobile ? '8px 16px' : '10px 20px',
-              borderRadius: '12px',
-              background: '#ff9500',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              fontWeight: '500',
-              boxShadow: '0 2px 8px rgba(255, 149, 0, 0.3)',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = '#e6850e';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255, 149, 0, 0.4)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = '#ff9500';
-              e.currentTarget.style.boxShadow = '0 2px 8px rgba(255, 149, 0, 0.3)';
-            }}
-          >
-            Store
-          </button>
-
-          <button 
-            onClick={handleShowStoredTexts} 
-            type="button" 
-            style={{
-              fontSize: isMobile ? '12px' : '14px',
-              padding: isMobile ? '8px 16px' : '10px 20px',
-              borderRadius: '12px',
-              background: showStoredTexts ? '#5856d6' : '#ff3b30',
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              fontWeight: '500',
-              boxShadow: showStoredTexts ? '0 2px 8px rgba(88, 86, 214, 0.3)' : '0 2px 8px rgba(255, 59, 48, 0.3)',
-              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
-              whiteSpace: 'nowrap'
-            }}
-            onMouseOver={e => {
-              e.currentTarget.style.background = showStoredTexts ? '#4a4a9e' : '#d70015';
-              e.currentTarget.style.boxShadow = showStoredTexts ? '0 4px 12px rgba(88, 86, 214, 0.4)' : '0 4px 12px rgba(255, 59, 48, 0.4)';
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.background = showStoredTexts ? '#5856d6' : '#ff3b30';
-              e.currentTarget.style.boxShadow = showStoredTexts ? '0 2px 8px rgba(88, 86, 214, 0.3)' : '0 2px 8px rgba(255, 59, 48, 0.3)';
-            }}
-          >
-            {showStoredTexts ? 'Hide' : 'View'}
-                </button>
-        </div>
 
         {/* Stored Texts Display */}
         {showStoredTexts && (
           <div style={{
             width: '100%',
             maxWidth: 900,
-            marginTop: isMobile ? '8px' : '12px',
+            marginTop: isMobile ? '16px' : '24px',
             marginRight: 'auto',
-            marginBottom: isMobile ? '8px' : '12px',
+            marginBottom: 0,
             marginLeft: 'auto',
             padding: isMobile ? '12px' : '16px',
             background: 'rgba(88, 86, 214, 0.15)',
             borderRadius: isMobile ? '12px' : '16px',
             border: '1px solid rgba(88, 86, 214, 0.3)',
-            maxHeight: '200px',
-            overflowY: 'auto'
+            flex: 1,
+            overflowY: 'auto',
+            zIndex: 3,
+            display: 'flex',
+            flexDirection: 'column'
           }}>
             <div style={{
               display: 'flex',
@@ -933,7 +851,11 @@ export default function KeyboardPage() {
                 textAlign: 'center',
                 color: '#ffffff',
                 fontSize: isMobile ? '12px' : '14px',
-                padding: '20px'
+                padding: '20px',
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
                 No stored texts yet. Type something and click &quot;Store&quot; to save it.
               </div>
@@ -941,7 +863,9 @@ export default function KeyboardPage() {
               <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px'
+                gap: '16px',
+                flex: 1,
+                overflowY: 'auto'
               }}>
                 {Object.entries(storedTexts).map(([date, texts]) => (
                   <div key={date} style={{
@@ -1021,7 +945,7 @@ export default function KeyboardPage() {
         )}
 
         {/* Keyboard Section */}
-        {!showStoredTexts && (
+        {!showStoredTexts ? (
           <div className="keyboard-container" style={{
             width: '100%', 
             minHeight: isMobile ? '350px' : '450px',
@@ -1039,114 +963,167 @@ export default function KeyboardPage() {
             zIndex: 2,
             flexShrink: 0
           }}>
-          <Keyboard
-            keyboardRef={r => (keyboardRef.current = r)}
-            theme={"hg-theme-default hg-layout-default myTheme"}
-            onKeyPress={onKeyPress}
-            physicalKeyboardHighlight={true}
-            layoutName={isNumberMode ? "numbers" : (isLettersOnly ? (caps ? (checked ? "QWERTY_letters" : "ABCD_letters") : (checked ? "qwerty_letters" : "abcd_letters")) : (caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")))}
-            display= {{
-            '{bksp}': isMobile ? '' : 'BACKSPACE',
-            '{enter}': isMobile ? '' : 'ENTER',
-            '{lock}': isMobile ? '' : 'CAPS',
-            '{space}': 'SPACE',
-            '{abc}': 'ABC',
-            '{123}': '123',
-            '+': '+',
-            '-': '-',
-            '*': '×',
-            '/': '÷',
-            '%': '%',
-            '^': '^',
-            '(': '(',
-            ')': ')',
-            '=': '=',
-            '.': '.',
-            ',': ',',
-            '?': '?',
-            "'": "'"}}
-            layout={{
-              qwerty: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "q w e r t y u i o p {bksp}",
-                "{lock} a s d f g h j k l ' {enter}",
-                "z x c v b n m , . ?",
-                "{space}"
-              ],
-              QWERTY: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "Q W E R T Y U I O P {bksp}",
-                "{lock} A S D F G H J K L ' {enter}",
-                "Z X C V B N M , . ?",
-                "{space}"
-              ],
-              abcd: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "a b c d e f g h i {bksp}",
-                "{lock} j k l m n o p q r s ' {enter}",
-                "t u v w x y z , . ?",
-                "{space}"
-              ],
-              ABCD: [
-                "1 2 3 4 5 6 7 8 9 0",
-                "A B C D E F G H I {bksp}",
-                "{lock} J K L M N O P Q R S ' {enter}",
-                "T U V W X Y Z , . ?",
-                "{space}"
-              ],
-              qwerty_letters: [
-                "q w e r t y u i o p {bksp}",
-                "{lock} a s d f g h j k l ' {enter}",
-                "z x c v b n m , . ?",
-                "{space}"
-              ],
-              QWERTY_letters: [
-                "Q W E R T Y U I O P {bksp}",
-                "{lock} A S D F G H J K L ' {enter}",
-                "Z X C V B N M , . ?",
-                "{space}"
-              ],
-              abcd_letters: [
-                "a b c d e f g h i {bksp}",
-                "{lock} j k l m n o p q r s ' {enter}",
-                "t u v w x y z , . ?",
-                "{space}"
-              ],
-              ABCD_letters: [
-                "A B C D E F G H I {bksp}",
-                "{lock} J K L M N O P Q R S ' {enter}",
-                "T U V W X Y Z , . ?",
-                "{space}"
-              ],
-              numbers: [
-                "1 2 3 + -",
-                "4 5 6 * /",
-                "7 8 9 % ^",
-                ". 0 ( ) =",
-                "{abc} {space} {enter} {bksp}"
-              ]
-            }}
-            style={{
-              width: '100%',
-              '--hg-button-size': getButtonSize(),
-              '--hg-button-gap': '2px',
-              '--hg-button-margin': '1px',
-              '--hg-button-padding': '0px',
-              '--hg-button-border-radius': isMobile ? '16px' : '24px',
-              '--hg-button-bg': '#2196f3',
-              '--hg-button-color': '#fff',
-              '--hg-button-border': 'none',
-              '--hg-button-box-shadow': '0 2px 8px rgba(33,150,243,0.13)',
-              '--hg-button-font-weight': '700',
-              '--hg-button-letter-spacing': '1px',
-              '--hg-button-transition': 'background 0.15s, transform 0.08s, box-shadow 0.15s',
-              '--hg-button-hover-bg': '#1976d2',
-              '--hg-button-active-bg': '#1565c0',
-              '--hg-button-active-transform': 'scale(0.96)',
-              '--hg-button-active-filter': 'brightness(0.93)',
-            }}
-          />
-        </div>
+            <Keyboard
+              key={`${checked}-${isNumberMode}-${caps}-${showStoredTexts}`}
+              keyboardRef={r => (keyboardRef.current = r)}
+              theme={"hg-theme-default hg-layout-default myTheme"}
+              onKeyPress={onKeyPress}
+              physicalKeyboardHighlight={true}
+              layoutName={isNumberMode ? "numbers" : (isLettersOnly ? (caps ? (checked ? "QWERTY_letters" : "ABCD_letters") : (checked ? "qwerty_letters" : "abcd_letters")) : (caps ? (checked ? "QWERTY" : "ABCD") : (checked ? "qwerty" : "abcd")))}
+              display= {{
+              '{bksp}': isMobile ? '' : 'BACKSPACE',
+              '{enter}': isMobile ? '' : 'ENTER',
+              '{lock}': isMobile ? '' : 'CAPS',
+              '{space}': 'SPACE',
+              '{abc}': 'ABC',
+              '{123}': '123',
+              '{abcd}': checked ? 'ABCD' : 'QWERTY',
+              '{qwerty}': checked ? 'QWERTY' : 'ABCD',
+              '{store}': 'Store',
+              '{view}': 'View',
+              '+': '+',
+              '-': '-',
+              '*': '×',
+              '/': '÷',
+              '%': '%',
+              '^': '^',
+              '(': '(',
+              ')': ')',
+              '=': '=',
+              '.': '.',
+              ',': ',',
+              '?': '?',
+              "'": "'"}}
+              layout={{
+                qwerty: [
+                  "{abcd} {123} {store} {view}",
+                  "1 2 3 4 5 6 7 8 9 0",
+                  "q w e r t y u i o p {bksp}",
+                  "{lock} a s d f g h j k l ' {enter}",
+                  "z x c v b n m , . ?",
+                  "{space}"
+                ],
+                QWERTY: [
+                  "{abcd} {123} {store} {view}",
+                  "1 2 3 4 5 6 7 8 9 0",
+                  "Q W E R T Y U I O P {bksp}",
+                  "{lock} A S D F G H J K L ' {enter}",
+                  "Z X C V B N M , . ?",
+                  "{space}"
+                ],
+                abcd: [
+                  "{qwerty} {123} {store} {view}",
+                  "1 2 3 4 5 6 7 8 9 0",
+                  "a b c d e f g h i {bksp}",
+                  "{lock} j k l m n o p q r s ' {enter}",
+                  "t u v w x y z , . ?",
+                  "{space}"
+                ],
+                ABCD: [
+                  "{qwerty} {123} {store} {view}",
+                  "1 2 3 4 5 6 7 8 9 0",
+                  "A B C D E F G H I {bksp}",
+                  "{lock} J K L M N O P Q R S ' {enter}",
+                  "T U V W X Y Z , . ?",
+                  "{space}"
+                ],
+                qwerty_letters: [
+                  "{abcd} {123} {store} {view}",
+                  "q w e r t y u i o p {bksp}",
+                  "{lock} a s d f g h j k l ' {enter}",
+                  "z x c v b n m , . ?",
+                  "{space}"
+                ],
+                QWERTY_letters: [
+                  "{abcd} {123} {store} {view}",
+                  "Q W E R T Y U I O P {bksp}",
+                  "{lock} A S D F G H J K L ' {enter}",
+                  "Z X C V B N M , . ?",
+                  "{space}"
+                ],
+                abcd_letters: [
+                  "{qwerty} {123} {store} {view}",
+                  "a b c d e f g h i {bksp}",
+                  "{lock} j k l m n o p q r s ' {enter}",
+                  "t u v w x y z , . ?",
+                  "{space}"
+                ],
+                ABCD_letters: [
+                  "{qwerty} {123} {store} {view}",
+                  "A B C D E F G H I {bksp}",
+                  "{lock} J K L M N O P Q R S ' {enter}",
+                  "T U V W X Y Z , . ?",
+                  "{space}"
+                ],
+                numbers: [
+                  "{abcd} {qwerty} {store} {view}",
+                  "1 2 3 + -",
+                  "4 5 6 * /",
+                  "7 8 9 % ^",
+                  ". 0 ( ) =",
+                  "{abc} {space} {enter} {bksp}"
+                ]
+              }}
+              style={{
+                width: '100%',
+                '--hg-button-size': getButtonSize(),
+                '--hg-button-gap': '2px',
+                '--hg-button-margin': '1px',
+                '--hg-button-padding': '0px',
+                '--hg-button-border-radius': isMobile ? '16px' : '24px',
+                '--hg-button-bg': '#2196f3',
+                '--hg-button-color': '#fff',
+                '--hg-button-border': 'none',
+                '--hg-button-box-shadow': '0 2px 8px rgba(33,150,243,0.13)',
+                '--hg-button-font-weight': '700',
+                '--hg-button-letter-spacing': '1px',
+                '--hg-button-transition': 'background 0.15s, transform 0.08s, box-shadow 0.15s',
+                '--hg-button-hover-bg': '#1976d2',
+                '--hg-button-active-bg': '#1565c0',
+                '--hg-button-active-transform': 'scale(0.96)',
+                '--hg-button-active-filter': 'brightness(0.93)',
+              }}
+            />
+          </div>
+        ) : (
+          /* Hide Button Only */
+          <div style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: isMobile ? '16px' : '24px',
+            background: '#9ca3af',
+            borderTop: '1px solid #6b7280'
+          }}>
+            <button
+              onClick={handleShowStoredTexts}
+              style={{
+                fontSize: isMobile ? '14px' : '16px',
+                padding: isMobile ? '12px 24px' : '16px 32px',
+                borderRadius: '12px',
+                background: '#ffffff',
+                color: '#000000',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                fontWeight: '500',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif',
+                minWidth: '80px'
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.background = '#f2f2f2';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+              }}
+            >
+              Hide
+            </button>
+          </div>
         )}
       </div>
     </>
