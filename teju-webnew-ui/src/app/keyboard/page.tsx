@@ -7,22 +7,123 @@ import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import "./page.css";
 
-// Common words for prediction
+// Profanity filter - comprehensive list of inappropriate words to exclude
+const inappropriateWords = new Set([
+  // Common profanities (censored for safety)
+  "fuck", "shit", "bitch", "ass", "crap", "piss", "dick", "cock", "pussy", "cunt",
+  "fucking", "shitting", "bitching", "asshole", "pissing", "dicking",
+  "fucker", "shitter", "bitchy", "asshat", "hellfire", "crapper", "pisser", "dickhead",
+  "motherfucker", "bullshit", "horseshit", "dumbass", "smartass", "jackass", "badass", "hardass",
+  "fuckin", "shittin", "bitchin", "asshole", "damnit", "hellish", "pissin", "dickin",
+  
+  // Common misspellings and variations
+  "fuk", "shyt", "bich", "azz", "krap", "piz", "dik", "kok", "pusy", "kunt",
+  "fukin", "shytin", "bichin", "azzhole", "dammit", "helfire", "krapper", "pizer", "dikhead",
+  "muthafuka", "bullshyt", "horseshyt", "dumbazz", "smartazz", "jackazz", "badazz", "hardazz",
+  
+  // Leetspeak variations
+  "f*ck", "sh*t", "b*tch", "a$$", "d*mn", "h*ll", "cr*p", "p*ss", "d*ck", "c*ck", "p*ssy", "c*nt",
+  "f*cking", "sh*tting", "b*tching", "a$$hole", "d*mned", "h*llish", "cr*ppy", "p*ssing", "d*cking",
+  
+  // Partial matches that could be problematic
+  "fuc", "shi", "bit", "ass", "cra", "pis", "dic", "coc", "pus", "cun",
+  
+  // Offensive terms
+  "nigger", "nigga", "faggot", "fag", "dyke", "whore", "slut", "hoe", "skank", "tramp",
+  "n*gger", "n*gga", "f*ggot", "f*g", "d*ke", "wh*re", "sl*t", "h*e", "sk*nk", "tr*mp",
+  
+  // Racial slurs and offensive terms
+  "chink", "spic", "kike", "wop", "dago", "kraut", "jap", "gook", "ch*nk", "sp*c", "k*ke", "w*p",
+  
+  // Common offensive phrases
+  "suck", "blow", "jerk", "wank", "fap", "cum", "jizz", "semen", "penis", "vagina", "boob", "tit",
+  "s*ck", "bl*w", "j*rk", "w*nk", "f*p", "c*m", "j*zz", "s*men", "p*nis", "v*gina", "b*ob", "t*t"
+]);
+
+// Function to check if a word is inappropriate
+const isInappropriateWord = (word: string): boolean => {
+  const lowerWord = word.toLowerCase();
+  
+  // Check exact matches
+  if (inappropriateWords.has(lowerWord)) {
+    return true;
+  }
+  
+  // Check if word contains any inappropriate substring
+  for (const badWord of inappropriateWords) {
+    if (lowerWord.includes(badWord) || badWord.includes(lowerWord)) {
+      return true;
+    }
+  }
+  
+  // Check for common patterns (like adding numbers or special characters)
+  const cleanWord = lowerWord.replace(/[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '');
+  if (inappropriateWords.has(cleanWord)) {
+    return true;
+  }
+  
+  return false;
+};
+
+// Enhanced word prediction system with profanity filter
 const commonWords = [
+  // Most common words (highest priority)
   "the", "be", "to", "of", "and", "a", "in", "that", "have", "I", "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
   "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
   "so", "up", "out", "if", "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him", "know", "take",
   "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also",
   "back", "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give", "day", "most", "us",
+  
+  // Verb forms and conjugations
   "is", "are", "was", "were", "been", "being", "have", "has", "had", "do", "does", "did", "will", "would", "could", "should", "may", "might", "can", "must",
-  "here", "there", "where", "when", "why", "how", "what", "which", "who", "whom", "whose",
-  "yes", "no", "not", "never", "always", "sometimes", "often", "usually", "rarely",
-  "very", "really", "quite", "rather", "too", "so", "much", "many", "few", "little",
-  "big", "small", "large", "tiny", "huge", "enormous", "great", "good", "bad", "nice", "beautiful", "ugly",
-  "happy", "sad", "angry", "excited", "tired", "hungry", "thirsty", "hot", "cold", "warm", "cool",
-  "today", "tomorrow", "yesterday", "morning", "afternoon", "evening", "night", "week", "month", "year",
-  "please", "thank", "sorry", "excuse", "pardon", "hello", "goodbye", "welcome", "congratulations"
-];
+  "am", "going", "went", "gone", "see", "saw", "seen", "come", "came", "get", "got", "gotten", "make", "made", "know", "knew", "known", "think", "thought",
+  
+  // Question words and pronouns
+  "here", "there", "where", "when", "why", "how", "what", "which", "who", "whom", "whose", "this", "that", "these", "those", "my", "your", "his", "her", "its", "our", "their",
+  
+  // Adverbs and modifiers
+  "yes", "no", "not", "never", "always", "sometimes", "often", "usually", "rarely", "very", "really", "quite", "rather", "too", "so", "much", "many", "few", "little",
+  "more", "most", "less", "least", "better", "best", "worse", "worst", "faster", "fastest", "slower", "slowest",
+  
+  // Adjectives
+  "big", "small", "large", "tiny", "huge", "enormous", "great", "good", "bad", "nice", "beautiful", "ugly", "happy", "sad", "angry", "excited", "tired", "hungry", "thirsty", "hot", "cold", "warm", "cool",
+  "new", "old", "young", "fresh", "clean", "dirty", "bright", "dark", "light", "heavy", "easy", "hard", "simple", "complex", "important", "necessary", "possible", "impossible",
+  
+  // Time-related
+  "today", "tomorrow", "yesterday", "morning", "afternoon", "evening", "night", "week", "month", "year", "hour", "minute", "second", "now", "then", "soon", "later", "early", "late",
+  
+  // Social and communication
+  "please", "thank", "sorry", "excuse", "pardon", "hello", "goodbye", "welcome", "congratulations", "thanks", "appreciate", "understand", "agree", "disagree", "help", "support",
+  
+  // Technology and modern words
+  "email", "phone", "computer", "internet", "website", "app", "online", "offline", "download", "upload", "share", "like", "follow", "post", "message", "text", "call", "video",
+  
+  // Common phrases and contractions
+  "don't", "can't", "won't", "isn't", "aren't", "wasn't", "weren't", "hasn't", "haven't", "doesn't", "didn't", "wouldn't", "couldn't", "shouldn't", "let's", "that's", "it's", "he's", "she's", "we're", "they're", "you're", "I'm"
+].filter(word => !isInappropriateWord(word)); // Filter out any inappropriate words from the list
+
+// Word frequency data for better ranking
+const wordFrequency: { [key: string]: number } = {
+  "the": 100, "be": 95, "to": 90, "of": 85, "and": 80, "a": 75, "in": 70, "that": 65, "have": 60, "I": 55,
+  "it": 50, "for": 45, "not": 40, "on": 35, "with": 30, "he": 25, "as": 20, "you": 15, "do": 10, "at": 5
+};
+
+// Common word pairs for better context
+const wordPairs: { [key: string]: string[] } = {
+  "the": ["best", "most", "only", "same", "other", "new", "good", "big", "small", "first", "last", "next", "previous", "current", "main", "important"],
+  "is": ["good", "bad", "great", "nice", "beautiful", "wonderful", "amazing", "perfect", "ready", "available", "possible", "necessary", "important"],
+  "I": ["am", "will", "would", "could", "should", "think", "know", "want", "like", "love", "need", "have", "can", "must", "should"],
+  "you": ["are", "will", "would", "could", "should", "think", "know", "want", "like", "need", "can", "must", "should", "have"],
+  "we": ["are", "will", "would", "could", "should", "think", "know", "want", "like", "need", "can", "must", "have"],
+  "they": ["are", "will", "would", "could", "should", "think", "know", "want", "like", "need", "can", "have"],
+  "this": ["is", "was", "will", "can", "should", "could", "would", "has", "had", "does", "did"],
+  "that": ["is", "was", "will", "can", "should", "could", "would", "has", "had", "does", "did"],
+  "what": ["is", "was", "will", "can", "should", "could", "would", "has", "had", "does", "did", "do", "are", "were"],
+  "how": ["are", "is", "was", "were", "will", "can", "should", "could", "would", "do", "does", "did"],
+  "when": ["is", "was", "will", "can", "should", "could", "would", "do", "does", "did", "are", "were"],
+  "where": ["is", "was", "will", "can", "should", "could", "would", "do", "does", "did", "are", "were"],
+  "why": ["is", "was", "will", "can", "should", "could", "would", "do", "does", "did", "are", "were"]
+};
 
 // Dictionary API endpoint
 const DICTIONARY_API = "https://api.datamuse.com/words";
@@ -40,6 +141,7 @@ export default function KeyboardPage() {
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
   const [storedTexts, setStoredTexts] = useState<string[]>([]);
   const [showStoredTexts, setShowStoredTexts] = useState(false);
+  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
   const keyboardRef = useRef<any>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
@@ -64,6 +166,15 @@ export default function KeyboardPage() {
       textAreaRef.current.focus();
     }
   }, []);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    };
+  }, [debounceTimer]);
 
   const handleClick = () => {
     setChecked(!checked);
@@ -114,6 +225,19 @@ export default function KeyboardPage() {
     window.speechSynthesis.speak(utterance);
   };
 
+  // Debounced word prediction to reduce API calls
+  const debouncedGetWordPredictions = (text: string) => {
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    
+    const timer = setTimeout(() => {
+      getWordPredictions(text);
+    }, 300); // Wait 300ms after user stops typing
+    
+    setDebounceTimer(timer);
+  };
+
   // Fetch words from dictionary API
   const fetchDictionaryWords = async (prefix: string): Promise<string[]> => {
     if (prefix.length < 2) return [];
@@ -131,7 +255,9 @@ export default function KeyboardPage() {
       
       if (data && Array.isArray(data)) {
         const words = data.map((item: any) => item.word).filter((word: string) => 
-          word.toLowerCase().startsWith(prefix.toLowerCase()) && word.length > prefix.length
+          word.toLowerCase().startsWith(prefix.toLowerCase()) && 
+          word.length > prefix.length &&
+          !isInappropriateWord(word) // Filter out inappropriate words from API
         );
         
         // Cache the results
@@ -148,7 +274,7 @@ export default function KeyboardPage() {
     }
   };
 
-  // Enhanced word prediction function with dictionary
+  // Enhanced word prediction function with improved ranking
   const getWordPredictions = async (currentText: string) => {
     const words = currentText.split(' ');
     const currentWord = words[words.length - 1] || '';
@@ -164,45 +290,70 @@ export default function KeyboardPage() {
       return;
     }
 
-    // Get common word predictions
+    // Get common word predictions with frequency ranking and profanity filter
     const commonSuggestions = commonWords
       .filter(word => word.toLowerCase().startsWith(currentWord.toLowerCase()))
-      .slice(0, 3);
+      .filter(word => !isInappropriateWord(word)) // Filter out inappropriate words
+      .sort((a, b) => (wordFrequency[b] || 0) - (wordFrequency[a] || 0))
+      .slice(0, 5);
 
     // Get dictionary-based predictions
     const dictionaryPredictions = await fetchDictionaryWords(currentWord);
     
-    // Combine and deduplicate predictions
+    // Combine and rank all suggestions with profanity filter
     const allSuggestions = [...commonSuggestions, ...dictionaryPredictions]
       .filter((word, index, arr) => arr.indexOf(word) === index) // Remove duplicates
+      .filter(word => !isInappropriateWord(word)) // Filter out inappropriate words
+      .sort((a, b) => {
+        // Prioritize common words over dictionary words
+        const aIsCommon = commonWords.includes(a.toLowerCase());
+        const bIsCommon = commonWords.includes(b.toLowerCase());
+        
+        if (aIsCommon && !bIsCommon) return -1;
+        if (!aIsCommon && bIsCommon) return 1;
+        
+        // If both are common, use frequency ranking
+        if (aIsCommon && bIsCommon) {
+          return (wordFrequency[b] || 0) - (wordFrequency[a] || 0);
+        }
+        
+        // For dictionary words, prefer shorter words
+        return a.length - b.length;
+      })
       .slice(0, 5);
 
     setPredictions(allSuggestions);
   };
 
-  // Predict next word based on context
+  // Enhanced next word prediction with better context awareness
   const getNextWordPredictions = async (previousText: string) => {
     const words = previousText.split(' ').filter(word => word.length > 0);
     const lastWord = words[words.length - 1] || '';
     
-    // Context-based word suggestions
+    // Enhanced context-based word suggestions
     const contextWords = {
-      question: ["what", "when", "where", "why", "how", "which", "who", "is", "are", "can", "will", "would", "could"],
-      greeting: ["hello", "hi", "good", "morning", "afternoon", "evening", "how", "are", "you", "nice", "meet"],
-      weather: ["sunny", "rainy", "cloudy", "hot", "cold", "warm", "cool", "temperature", "weather", "today"],
-      food: ["hungry", "eat", "food", "meal", "breakfast", "lunch", "dinner", "snack", "delicious", "tasty"],
-      time: ["today", "tomorrow", "yesterday", "morning", "afternoon", "evening", "night", "time", "hour", "minute"]
+      question: ["what", "when", "where", "why", "how", "which", "who", "is", "are", "can", "will", "would", "could", "do", "does", "did"],
+      greeting: ["hello", "hi", "good", "morning", "afternoon", "evening", "how", "are", "you", "nice", "meet", "doing", "going", "feeling"],
+      weather: ["sunny", "rainy", "cloudy", "hot", "cold", "warm", "cool", "temperature", "weather", "today", "tomorrow", "forecast", "nice", "bad"],
+      food: ["hungry", "eat", "food", "meal", "breakfast", "lunch", "dinner", "snack", "delicious", "tasty", "good", "bad", "restaurant", "cooking"],
+      time: ["today", "tomorrow", "yesterday", "morning", "afternoon", "evening", "night", "time", "hour", "minute", "week", "month", "year", "now", "later"],
+      work: ["work", "job", "office", "meeting", "project", "task", "deadline", "busy", "free", "available", "schedule", "appointment"],
+      technology: ["computer", "phone", "internet", "app", "website", "email", "message", "call", "text", "online", "download", "upload"],
+      emotions: ["happy", "sad", "excited", "worried", "angry", "surprised", "confused", "tired", "energetic", "relaxed", "stressed", "calm"]
     };
 
-    // Detect context from previous words
+    // Enhanced context detection
     let contextType = "";
     const previousWords = words.join(' ').toLowerCase();
     
     if (previousWords.includes('?')) contextType = "question";
-    else if (previousWords.includes('hello') || previousWords.includes('hi')) contextType = "greeting";
-    else if (previousWords.includes('weather') || previousWords.includes('sunny') || previousWords.includes('rainy')) contextType = "weather";
-    else if (previousWords.includes('hungry') || previousWords.includes('eat') || previousWords.includes('food')) contextType = "food";
-    else if (previousWords.includes('time') || previousWords.includes('today') || previousWords.includes('tomorrow')) contextType = "time";
+    else if (previousWords.includes('hello') || previousWords.includes('hi') || previousWords.includes('hey')) contextType = "greeting";
+    else if (previousWords.includes('weather') || previousWords.includes('sunny') || previousWords.includes('rainy') || previousWords.includes('temperature')) contextType = "weather";
+    else if (previousWords.includes('hungry') || previousWords.includes('eat') || previousWords.includes('food') || previousWords.includes('meal')) contextType = "food";
+    else if (previousWords.includes('time') || previousWords.includes('today') || previousWords.includes('tomorrow') || previousWords.includes('schedule')) contextType = "time";
+    else if (previousWords.includes('work') || previousWords.includes('job') || previousWords.includes('office') || previousWords.includes('meeting')) contextType = "work";
+    else if (previousWords.includes('computer') || previousWords.includes('phone') || previousWords.includes('internet') || previousWords.includes('app')) contextType = "technology";
+    else if (previousWords.includes('happy') || previousWords.includes('sad') || previousWords.includes('excited') || previousWords.includes('worried')) contextType = "emotions";
 
     // Get context-appropriate words
     let suggestions: string[] = [];
@@ -210,34 +361,41 @@ export default function KeyboardPage() {
       suggestions = contextWords[contextType as keyof typeof contextWords].slice(0, 3);
     }
 
-    // Add common words that frequently follow other words
-    const commonNextWords = [
-      "the", "a", "an", "is", "are", "was", "were", "will", "would", "could", "should",
-      "in", "on", "at", "to", "for", "of", "with", "by", "from", "about", "like",
-      "very", "really", "quite", "rather", "too", "so", "much", "many", "few", "little",
-      "good", "bad", "big", "small", "new", "old", "high", "low", "long", "short",
-      "today", "tomorrow", "yesterday", "now", "then", "soon", "later", "early", "late"
-    ];
+    // Use word pairs for better next word prediction
+    let pairSuggestions: string[] = [];
+    if (wordPairs[lastWord.toLowerCase()]) {
+      pairSuggestions = wordPairs[lastWord.toLowerCase()];
+    }
 
-    // Filter common words based on last word context
-    const filteredCommonWords = commonNextWords.filter(word => {
-      // Add logic to suggest appropriate words based on last word
-      if (lastWord.toLowerCase() === 'the') return ['best', 'most', 'only', 'same', 'other', 'new', 'good', 'big', 'small', 'first', 'last'].includes(word);
-      if (lastWord.toLowerCase() === 'is') return ['good', 'bad', 'great', 'nice', 'beautiful', 'wonderful', 'amazing', 'perfect'].includes(word);
-      if (lastWord.toLowerCase() === 'i') return ['am', 'will', 'would', 'could', 'should', 'think', 'know', 'want', 'like', 'love'].includes(word);
-      if (lastWord.toLowerCase() === 'you') return ['are', 'will', 'would', 'could', 'should', 'think', 'know', 'want', 'like'].includes(word);
-      return true;
-    });
+    // Add high-frequency common words
+    const highFrequencyWords = ["the", "a", "an", "is", "are", "was", "were", "will", "would", "could", "should", "in", "on", "at", "to", "for", "of", "with", "by", "from", "about", "like"];
 
-    suggestions = [...suggestions, ...filteredCommonWords.slice(0, 3)];
-
-    // Get dictionary-based next word predictions
-    const dictionaryPredictions = await fetchDictionaryWords(lastWord);
-    
-    // Combine all suggestions
-    const allSuggestions = [...suggestions, ...dictionaryPredictions]
-      .filter((word, index, arr) => arr.indexOf(word) === index) // Remove duplicates
-      .slice(0, 5);
+    // Combine all suggestions with smart ranking and profanity filter
+    const allSuggestions = [
+      ...pairSuggestions,           // Word pairs (highest priority)
+      ...suggestions,               // Context words
+      ...highFrequencyWords,        // High-frequency words
+      ...commonWords.slice(0, 20)   // Top common words
+    ]
+    .filter((word, index, arr) => arr.indexOf(word) === index) // Remove duplicates
+    .filter(word => !isInappropriateWord(word)) // Filter out inappropriate words
+    .sort((a, b) => {
+      // Prioritize word pairs
+      const aIsPair = pairSuggestions.includes(a);
+      const bIsPair = pairSuggestions.includes(b);
+      if (aIsPair && !bIsPair) return -1;
+      if (!aIsPair && bIsPair) return 1;
+      
+      // Then prioritize context words
+      const aIsContext = suggestions.includes(a);
+      const bIsContext = suggestions.includes(b);
+      if (aIsContext && !bIsContext) return -1;
+      if (!aIsContext && bIsContext) return 1;
+      
+      // Finally use frequency ranking
+      return (wordFrequency[b] || 0) - (wordFrequency[a] || 0);
+    })
+    .slice(0, 5);
 
     setPredictions(allSuggestions);
   };
@@ -290,7 +448,7 @@ export default function KeyboardPage() {
     }
 
     setText(newText);
-    getWordPredictions(newText);
+    debouncedGetWordPredictions(newText);
     
     // Refocus text area after keyboard input to maintain cursor visibility
     setTimeout(() => {
@@ -390,7 +548,7 @@ export default function KeyboardPage() {
             value={text}
                 onChange={(e) => {
                   setText(e.target.value);
-                  getWordPredictions(e.target.value);
+                  debouncedGetWordPredictions(e.target.value);
                 }}
                 onFocus={() => {
                   // Ensure cursor is visible when text area is focused
@@ -593,7 +751,7 @@ export default function KeyboardPage() {
           <button 
             onClick={handleNumberToggle} 
             type="button" 
-            style={{
+          style={{
               fontSize: isMobile ? '12px' : '14px',
               padding: isMobile ? '8px 16px' : '10px 20px',
               borderRadius: '12px',
@@ -619,10 +777,10 @@ export default function KeyboardPage() {
             {isNumberMode ? "ABC" : "123"}
           </button>
 
-          <button 
+                <button
             onClick={handleStoreText} 
             type="button" 
-            style={{
+                  style={{
               fontSize: isMobile ? '12px' : '14px',
               padding: isMobile ? '8px 16px' : '10px 20px',
               borderRadius: '12px',
@@ -675,7 +833,7 @@ export default function KeyboardPage() {
             }}
           >
             {showStoredTexts ? 'Hide' : 'View'}
-          </button>
+                </button>
         </div>
 
         {/* Stored Texts Display */}
@@ -771,8 +929,8 @@ export default function KeyboardPage() {
                     >
                       Delete
                     </button>
-                  </div>
-                ))}
+            </div>
+          ))}
               </div>
             )}
           </div>
